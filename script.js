@@ -26,7 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkInModal = document.getElementById('check-in-modal');
     const roomsModal = document.getElementById('rooms-modal');
     const upgradeModal = document.getElementById('upgrade-modal');
-    const modals = [checkInModal, roomsModal, upgradeModal];
+    const barcodeModal = document.getElementById('barcode-modal');
+    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal];
 
     const checkInModalText = document.getElementById('check-in-modal-text');
     const confirmCheckInBtn = document.getElementById('confirm-check-in-btn');
@@ -130,7 +131,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     digitalKeyLink.addEventListener('click', (e) => {
         e.preventDefault();
-        console.log('Digital Room Key link clicked.');
+        // Use the first reservation's conf code as an example
+        const sampleCode = reservations.length > 0 ? reservations[0].confirmationCode : "A1B2C3D4";
+        JsBarcode("#barcode", sampleCode.replace('#', ''), {
+            format: "CODE128",
+            lineColor: "#000",
+            width: 2,
+            height: 100,
+            displayValue: true
+        });
+        openModal(barcodeModal);
     });
 
     mobileAccessLink.addEventListener('click', (e) => {

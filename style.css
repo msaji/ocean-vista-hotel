@@ -244,3 +244,8 @@ footer button {
 #confirm-check-in-btn:hover {
     background-color: #218838;
 }
+
+#barcode {
+    display: block;
+    margin: 20px auto;
+}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ocean Vista Hotel Check-In</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    </div>
+    <div class="container">
+        <header>
+            <p id="datetime"></p>
+        </header>
+
+        <main>
+            <h2>Scheduled Check-Ins Today <i class="fas fa-clock"></i></h2>
+            <div id="check-in-list">
+                <!-- Reservation rows will be injected here by JavaScript -->
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-buttons">
+                <button id="available-rooms-btn">AVAILABLE ROOMS: 32</button>
+                <button id="upgrade-room-btn">UPGRADE MY ROOM</button>
+            </div>
+            <div class="footer-links">
+                <a href="#" id="digital-key-link"><i class="fas fa-key"></i> DIGITAL ROOM KEY</a>
+                <a href="#" id="mobile-access-link"><i class="fas fa-mobile-alt"></i> MOBILE ACCESS</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modals -->
+    <div id="check-in-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <p id="check-in-modal-text"></p>
+            <button id="confirm-check-in-btn">Confirm Check-In</button>
+        </div>
+    </div>
+
+    <div id="rooms-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Available Rooms</h3>
+            <ul>
+                <li>Standard: 10</li>
+                <li>Suites: 5</li>
+                <li>Deluxe: 17</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="upgrade-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Upgrade Offer</h3>
+            <p>Upgrade to an Ocean View Suite for $50/night?</p>
+            <button>Yes, Upgrade!</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

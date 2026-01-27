@@ -76,6 +76,27 @@
         </div>
     </div>
 
+    <!-- Mobile Access Input Modal -->
+    <div id="mobile-access-input-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Mobile Access Planner</h3>
+            <p>Please enter the name on the reservation to view your stay planner.</p>
+            <form id="find-reservation-form">
+                <input type="text" id="reservation-name-input" placeholder="e.g., Michael Saji" required>
+                <button type="submit">Find My Stay</button>
+            </form>
+            <p id="reservation-error" class="error-text" style="display: none; color: red;"></p>
+        </div>
+    </div>
+
+    <!-- Mobile Planner Modal -->
+    <div id="mobile-planner-modal" class="modal">
+        <div class="modal-content" id="planner-content">
+            <!-- Planner details will be injected here by JS -->
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
     <script src="script.js"></script>
 </body>

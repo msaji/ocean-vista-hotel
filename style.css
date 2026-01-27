@@ -234,6 +234,8 @@ footer button {
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    font-weight: bold;
+    cursor: pointer;
     font-size: 1em;
     margin-top: 10px;
 }
@@ -248,4 +250,74 @@ footer button {
 #barcode {
     display: block;
     margin: 20px auto;
+}
+
+/* Mobile Access Input Modal Styles */
+#find-reservation-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+#find-reservation-form input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+    text-align: center;
+}
+
+#find-reservation-form button {
+    background-color: var(--accent-blue);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s;
+}
+
+#find-reservation-form button:hover {
+    background-color: #3558be;
+}
+
+.error-text {
+    margin-top: 10px;
+    font-weight: 700;
+}
+
+/* Mobile Planner Modal Styles */
+#planner-content h2 {
+    color: var(--hotel-roof);
+    margin-bottom: 15px;
+}
+
+#planner-content p {
+    text-align: left;
+    margin: 5px 0;
+}
+
+#planner-schedule {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+#planner-schedule li {
+    background-color: #f0f8ff; /* Light background for each day */
+    border: 1px solid #cceeff; /* Light blue border */
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+    text-align: left;
+    font-size: 0.95em;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+#planner-schedule li strong {
+    color: var(--hotel-roof);
 }

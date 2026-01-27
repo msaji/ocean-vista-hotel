@@ -27,7 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const roomsModal = document.getElementById('rooms-modal');
     const upgradeModal = document.getElementById('upgrade-modal');
     const barcodeModal = document.getElementById('barcode-modal');
-    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal];
+    const mobileAccessInputModal = document.getElementById('mobile-access-input-modal');
+    const mobilePlannerModal = document.getElementById('mobile-planner-modal');
+    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, mobileAccessInputModal, mobilePlannerModal];
 
     const checkInModalText = document.getElementById('check-in-modal-text');
     const confirmCheckInBtn = document.getElementById('confirm-check-in-btn');
@@ -36,6 +38,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const upgradeRoomBtn = document.getElementById('upgrade-room-btn');
     const digitalKeyLink = document.getElementById('digital-key-link');
     const mobileAccessLink = document.getElementById('mobile-access-link');
+
+    const findReservationForm = document.getElementById('find-reservation-form');
+    const reservationNameInput = document.getElementById('reservation-name-input');
+    const reservationError = document.getElementById('reservation-error');
 
     let activeReservationId = null;
 
@@ -145,8 +151,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
     mobileAccessLink.addEventListener('click', (e) => {
         e.preventDefault();
-        console.log('Mobile Access link clicked.');
+        openModal(mobileAccessInputModal);
+        reservationError.style.display = 'none'; // Hide previous errors
+        reservationNameInput.value = ''; // Clear input
     });
+
+    findReservationForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const searchName = reservationNameInput.value.trim().toLowerCase();
+        const foundReservation = reservations.find(res => res.guestName.toLowerCase().includes(searchName));
+
+        if (foundReservation) {
+            closeModal(mobileAccessInputModal);
+            displayPlanner(foundReservation);
+        } else {
+            reservationError.textContent = `Reservation for "${reservationNameInput.value}" not found.`;
+            reservationError.style.display = 'block';
+        }
+    });
+
+    function displayPlanner(reservation) {
+        const plannerContent = document.getElementById('planner-content');
+        const checkInDate = new Date();
+        const checkOutDate = new Date();
+        checkOutDate.setDate(checkOutDate.getDate() + reservation.nights);
+
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const checkInDateFormatted = checkInDate.toLocaleDateString('en-US', options);
+        const checkOutDateFormatted = checkOutDate.toLocaleDateString('en-US', options);
+
+        let scheduleHtml = '<h4>Your Itinerary:</h4><ul id="planner-schedule">';
+        for (let i = 0; i < reservation.nights; i++) {
+            const dayDate = new Date(checkInDate);
+            dayDate.setDate(checkInDate.getDate() + i);
+            const dayDateFormatted = dayDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            scheduleHtml += `<li><strong>${dayDateFormatted}:</strong> `;
+            switch (i % 3) { // Simple rotating schedule for demonstration
+                case 0: scheduleHtml += `Check-in formalities, explore the resort.`; break;
+                case 1: scheduleHtml += `Morning swim, afternoon spa session.`; break;
+                case 2: scheduleHtml += `Glass-bottom boat tour, evening dining experience.`; break;
+                default: scheduleHtml += `Relax and enjoy the amenities.`; break;
+            }
+            scheduleHtml += `</li>`;
+        }
+        scheduleHtml += `<li><strong>${checkOutDateFormatted} (Check-out):</strong> Enjoy breakfast, prepare for departure.</li>`;
+        scheduleHtml += '</ul>';
+
+
+        plannerContent.innerHTML = `
+            <span class="close-btn">&times;</span>
+            <h2>${reservation.guestName}'s Stay Planner</h2>
+            <p><strong>Confirmation:</strong> ${reservation.confirmationCode}</p>
+            <p><strong>Room Type:</strong> ${reservation.roomType}</p>
+            <p><strong>Guests:</strong> ${reservation.guestCount}</p>
+            <p><strong>Nights:</strong> ${reservation.nights}</p>
+            <p><strong>Check-in:</strong> ${checkInDateFormatted}</p>
+            <p><strong>Check-out:</strong> ${checkOutDateFormatted}</p>
+            ${scheduleHtml}
+        `;
+        openModal(mobilePlannerModal);
+    }
 
     // --- INITIALIZE ---
     renderReservations();

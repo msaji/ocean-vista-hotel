@@ -37,10 +37,20 @@
     </div>
 
     <!-- Modals -->
+    <div id="reservation-action-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <p id="reservation-action-text"></p>
+            <button id="view-itinerary-btn">View Itinerary</button>
+            <button id="proceed-to-checkin-btn">Check In</button>
+        </div>
+    </div>
+
     <div id="check-in-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
             <p id="check-in-modal-text"></p>
+            <p id="id-check-note" style="color: red; font-weight: bold; margin-bottom: 15px; display: none;"></p>
             <button id="confirm-check-in-btn">Confirm Check-In</button>
         </div>
     </div>

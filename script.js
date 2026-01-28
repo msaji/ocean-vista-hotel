@@ -27,13 +27,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const roomsModal = document.getElementById('rooms-modal');
     const upgradeModal = document.getElementById('upgrade-modal');
     const barcodeModal = document.getElementById('barcode-modal');
+    const reservationActionModal = document.getElementById('reservation-action-modal');
     const mobileAccessInputModal = document.getElementById('mobile-access-input-modal');
     const mobilePlannerModal = document.getElementById('mobile-planner-modal');
-    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, mobileAccessInputModal, mobilePlannerModal];
+    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, reservationActionModal, mobileAccessInputModal, mobilePlannerModal];
 
     const checkInModalText = document.getElementById('check-in-modal-text');
     const confirmCheckInBtn = document.getElementById('confirm-check-in-btn');
+    const idCheckNote = document.getElementById('id-check-note');
     const plannerContent = document.getElementById('planner-content');
+
+    const availableRoomsBtn = document.getElementById('available-rooms-btn');
+    const upgradeRoomBtn = document.getElementById('upgrade-room-btn');
+    const digitalKeyLink = document.getElementById('digital-key-link');
+    const mobileAccessLink = document.getElementById('mobile-access-link');
+
+    const reservationActionText = document.getElementById('reservation-action-text');
+    const viewItineraryBtn = document.getElementById('view-itinerary-btn');
+    const proceedToCheckinBtn = document.getElementById('proceed-to-checkin-btn');
 
     const availableRoomsBtn = document.getElementById('available-rooms-btn');
     const upgradeRoomBtn = document.getElementById('upgrade-room-btn');
@@ -79,9 +90,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
                 checkInListElement.appendChild(row);
-                row.addEventListener('click', () => openCheckInModal(res.id));
+                row.addEventListener('click', () => openReservationActionModal(res.id));
             }
         });
+    }
+
+    // --- MODAL LOGIC ---
+    function openReservationActionModal(reservationId) {
+        const reservation = reservations.find(r => r.id === reservationId);
+        if (reservation) {
+            activeReservationId = reservationId;
+            reservationActionText.textContent = `What would you like to do for ${reservation.guestName}?`;
+            openModal(reservationActionModal);
+        }
     }
 
     // --- MODAL LOGIC ---
@@ -107,11 +128,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- CHECK-IN FLOW ---
+    viewItineraryBtn.addEventListener('click', () => {
+        closeModal(reservationActionModal);
+        if (activeReservationId) {
+            const reservation = reservations.find(r => r.id === activeReservationId);
+            if (reservation) {
+                displayPlanner(reservation);
+            }
+        }
+    });
+
+    proceedToCheckinBtn.addEventListener('click', () => {
+        closeModal(reservationActionModal);
+        if (activeReservationId) {
+            openCheckInModal(activeReservationId);
+        }
+    });
+
     function openCheckInModal(reservationId) {
         const reservation = reservations.find(r => r.id === reservationId);
         if (reservation) {
             activeReservationId = reservationId;
             checkInModalText.textContent = `Ready to check in ${reservation.guestName}? Room: ${reservation.roomType}`;
+            idCheckNote.style.display = 'block'; // Ensure the note is visible
             openModal(checkInModal);
         }
     }

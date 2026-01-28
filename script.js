@@ -181,18 +181,36 @@ document.addEventListener('DOMContentLoaded', () => {
         const checkOutDateFormatted = checkOutDate.toLocaleDateString('en-US', options);
 
         let scheduleHtml = '<h4>Your Itinerary:</h4><ul id="planner-schedule">';
+        const dailyActivities = [
+            `Morning yoga on the beach, followed by a delicious breakfast buffet.`,
+            `Explore the local marine life with a snorkeling trip to Coral Reef.`,
+            `Relax by the infinity pool with a refreshing tropical drink.`,
+            `Visit the historic lighthouse and enjoy panoramic ocean views.`,
+            `Indulge in a rejuvenating spa treatment at the Ocean Spa.`,
+            `Sunset cruise with live music and cocktails.`,
+            `Enjoy a game of beach volleyball or build sandcastles.`,
+            `Experience a guided tour of the nearby eco-park.`,
+            `Evening entertainment: live band at the beach bar.`,
+            `Learn to surf with an introductory lesson.`,
+            `Private dining experience under the stars.`,
+            `Kayaking or paddleboarding along the serene coastline.`,
+            `Explore the local markets and discover unique souvenirs.`,
+            `Cooking class featuring traditional island cuisine.`,
+            `Stargazing session with a resident astronomer.`,
+            `Relax with a good book at the resort library.`,
+            `Early morning dolphin watching tour.`,
+            `Fitness center workout followed by a healthy smoothie.`,
+            `Photography workshop to capture the beauty of Ocean Vista.`,
+            `Take a leisurely stroll along the boardwalk.`
+        ];
+
         for (let i = 0; i < reservation.nights; i++) {
             const dayDate = new Date(checkInDate);
             dayDate.setDate(checkInDate.getDate() + i);
             const dayDateFormatted = dayDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-            scheduleHtml += `<li><strong>${dayDateFormatted}:</strong> `;
-            switch (i % 3) { // Simple rotating schedule for demonstration
-                case 0: scheduleHtml += `Check-in formalities, explore the resort.`; break;
-                case 1: scheduleHtml += `Morning swim, afternoon spa session.`; break;
-                case 2: scheduleHtml += `Glass-bottom boat tour, evening dining experience.`; break;
-                default: scheduleHtml += `Relax and enjoy the amenities.`; break;
-            }
-            scheduleHtml += `</li>`;
+            const activityIndex = i % dailyActivities.length; // Cycle through activities
+            const activity = dailyActivities[activityIndex];
+            scheduleHtml += `<li><strong>${dayDateFormatted}:</strong> ${activity}</li>`;
         }
         scheduleHtml += `<li><strong>${checkOutDateFormatted} (Check-out):</strong> Enjoy breakfast, prepare for departure.</li>`;
         scheduleHtml += '</ul>';

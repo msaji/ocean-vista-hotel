@@ -46,11 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const viewItineraryBtn = document.getElementById('view-itinerary-btn');
     const proceedToCheckinBtn = document.getElementById('proceed-to-checkin-btn');
 
-    const availableRoomsBtn = document.getElementById('available-rooms-btn');
-    const upgradeRoomBtn = document.getElementById('upgrade-room-btn');
-    const digitalKeyLink = document.getElementById('digital-key-link');
-    const mobileAccessLink = document.getElementById('mobile-access-link');
-
     const findReservationForm = document.getElementById('find-reservation-form');
     const reservationNameInput = document.getElementById('reservation-name-input');
     const reservationError = document.getElementById('reservation-error');
@@ -96,6 +91,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- MODAL LOGIC ---
+    function openModal(modal) {
+        modal.style.display = 'flex';
+    }
+
+    function closeModal(modal) {
+        modal.style.display = 'none';
+    }
+
     function openReservationActionModal(reservationId) {
         const reservation = reservations.find(r => r.id === reservationId);
         if (reservation) {
@@ -103,15 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
             reservationActionText.textContent = `What would you like to do for ${reservation.guestName}?`;
             openModal(reservationActionModal);
         }
-    }
-
-    // --- MODAL LOGIC ---
-    function openModal(modal) {
-        modal.style.display = 'flex';
-    }
-
-    function closeModal(modal) {
-        modal.style.display = 'none';
     }
 
     modals.forEach(modal => {
@@ -168,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             activeReservationId = null;
             closeModal(checkInModal);
+            idCheckNote.style.display = 'none'; // Hide the ID check note after check-in
         }
     });
 

@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const checkInModalText = document.getElementById('check-in-modal-text');
     const confirmCheckInBtn = document.getElementById('confirm-check-in-btn');
+    const plannerContent = document.getElementById('planner-content');
 
     const availableRoomsBtn = document.getElementById('available-rooms-btn');
     const upgradeRoomBtn = document.getElementById('upgrade-room-btn');
@@ -171,7 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function displayPlanner(reservation) {
-        const plannerContent = document.getElementById('planner-content');
         const checkInDate = new Date();
         const checkOutDate = new Date();
         checkOutDate.setDate(checkOutDate.getDate() + reservation.nights);
@@ -199,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         plannerContent.innerHTML = `
-            <span class="close-btn">&times;</span>
             <h2>${reservation.guestName}'s Stay Planner</h2>
             <p><strong>Confirmation:</strong> ${reservation.confirmationCode}</p>
             <p><strong>Room Type:</strong> ${reservation.roomType}</p>

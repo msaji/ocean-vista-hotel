@@ -171,6 +171,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- HELPER FUNCTIONS ---
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
     function displayPlanner(reservation) {
         const checkInDate = new Date();
         const checkOutDate = new Date();
@@ -181,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const checkOutDateFormatted = checkOutDate.toLocaleDateString('en-US', options);
 
         let scheduleHtml = '<h4>Your Itinerary:</h4><ul id="planner-schedule">';
-        const dailyActivities = [
+        const baseDailyActivities = [
             `Morning yoga on the beach, followed by a delicious breakfast buffet.`,
             `Explore the local marine life with a snorkeling trip to Coral Reef.`,
             `Relax by the infinity pool with a refreshing tropical drink.`,
@@ -201,15 +210,29 @@ document.addEventListener('DOMContentLoaded', () => {
             `Early morning dolphin watching tour.`,
             `Fitness center workout followed by a healthy smoothie.`,
             `Photography workshop to capture the beauty of Ocean Vista.`,
-            `Take a leisurely stroll along the boardwalk.`
+            `Take a leisurely stroll along the boardwalk.`,
+            `Eating dim sum at the hotel's specialty restaurant.`,
+            `Hang out with friends at the poolside lounge.`,
+            `Eating spicy hot cheetos while watching the sunset.`,
+            `Going for hikes on scenic coastal trails.`,
+            `Doing cartwheels in the gym (with proper supervision, of course!).`,
+            `Go to the mall for some retail therapy.`,
+            `Relax in the hotel with a good book or movie.`,
+            `Go to the beach and soak up the sun.`,
+            `Go to the spa for a relaxing massage.`,
+            `Have teatime in the hotel's elegant lounge.`,
+            `Go to a nice dinner at the hotel's restaurant.`
         ];
+
+        // Create a shuffled copy of activities for this specific planner generation
+        const shuffledActivities = shuffleArray([...baseDailyActivities]);
 
         for (let i = 0; i < reservation.nights; i++) {
             const dayDate = new Date(checkInDate);
             dayDate.setDate(checkInDate.getDate() + i);
             const dayDateFormatted = dayDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-            const activityIndex = i % dailyActivities.length; // Cycle through activities
-            const activity = dailyActivities[activityIndex];
+            // Use modulo operator to cycle through shuffled activities if nights > activities count
+            const activity = shuffledActivities[i % shuffledActivities.length];
             scheduleHtml += `<li><strong>${dayDateFormatted}:</strong> ${activity}</li>`;
         }
         scheduleHtml += `<li><strong>${checkOutDateFormatted} (Check-out):</strong> Enjoy breakfast, prepare for departure.</li>`;

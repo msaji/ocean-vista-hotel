@@ -29,13 +29,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const barcodeModal = document.getElementById('barcode-modal');
     const reservationActionModal = document.getElementById('reservation-action-modal');
     const mobileAccessInputModal = document.getElementById('mobile-access-input-modal');
+    const earlyCheckinInputModal = document.getElementById('early-checkin-input-modal');
+    const earlyCheckinDetailsModal = document.getElementById('early-checkin-details-modal');
     const mobilePlannerModal = document.getElementById('mobile-planner-modal');
-    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, reservationActionModal, mobileAccessInputModal, mobilePlannerModal];
+    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, reservationActionModal, mobileAccessInputModal, earlyCheckinInputModal, earlyCheckinDetailsModal, mobilePlannerModal];
 
     const checkInModalText = document.getElementById('check-in-modal-text');
     const confirmCheckInBtn = document.getElementById('confirm-check-in-btn');
     const idCheckNote = document.getElementById('id-check-note');
     const plannerContent = document.getElementById('planner-content');
+
+    const earlyCheckinBtn = document.getElementById('early-checkin-btn');
+    const earlyCheckinForm = document.getElementById('early-checkin-form');
+    const earlyCheckinNameInput = document.getElementById('early-checkin-name-input');
+    const earlyCheckinError = document.getElementById('early-checkin-error');
+    const earlyCheckinDetails = document.getElementById('early-checkin-details');
+    const confirmEarlyCheckinBtn = document.getElementById('confirm-early-checkin-btn');
 
     const availableRoomsBtn = document.getElementById('available-rooms-btn');
     const upgradeRoomBtn = document.getElementById('upgrade-room-btn');
@@ -167,6 +176,53 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- FOOTER EVENT LISTENERS ---
+    earlyCheckinBtn.addEventListener('click', () => {
+        openModal(earlyCheckinInputModal);
+        earlyCheckinError.style.display = 'none'; // Hide previous errors
+        earlyCheckinNameInput.value = ''; // Clear input
+    });
+
+    earlyCheckinForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const searchName = earlyCheckinNameInput.value.trim().toLowerCase();
+        const foundReservation = reservations.find(res => res.guestName.toLowerCase().includes(searchName));
+
+        if (foundReservation) {
+            closeModal(earlyCheckinInputModal);
+            // Display details in earlyCheckinDetailsModal
+            earlyCheckinDetails.innerHTML = `
+                <h2>Early Check-in for ${foundReservation.guestName}</h2>
+                <p><strong>Confirmation:</strong> ${foundReservation.confirmationCode}</p>
+                <p><strong>Room Type:</strong> ${foundReservation.roomType}</p>
+                <p><strong>Guests:</strong> ${foundReservation.guestCount}</p>
+                <p style="color: red; font-weight: bold; margin-bottom: 15px;">Please verify guest's ID before proceeding!</p>
+            `;
+            activeReservationId = foundReservation.id; // Set active reservation for confirmation
+            openModal(earlyCheckinDetailsModal);
+        } else {
+            earlyCheckinError.textContent = `Reservation for "${earlyCheckinNameInput.value}" not found.`;
+            earlyCheckinError.style.display = 'block';
+        }
+    });
+
+    confirmEarlyCheckinBtn.addEventListener('click', () => {
+        if (activeReservationId) {
+            const rowToRemove = document.getElementById(`res-${activeReservationId}`);
+            if (rowToRemove) {
+                rowToRemove.remove();
+            }
+            // Optional: Remove from array as well
+            const indexToRemove = reservations.findIndex(r => r.id === activeReservationId);
+            if (indexToRemove > -1) {
+                reservations.splice(indexToRemove, 1);
+            }
+            activeReservationId = null;
+            closeModal(earlyCheckinDetailsModal);
+            // Optionally, show a success message
+            alert('Early Check-in successful!');
+        }
+    });
+
     availableRoomsBtn.addEventListener('click', () => openModal(roomsModal));
     upgradeRoomBtn.addEventListener('click', () => openModal(upgradeModal));
 

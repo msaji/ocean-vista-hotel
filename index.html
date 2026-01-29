@@ -26,6 +26,7 @@
 
         <footer>
             <div class="footer-buttons">
+                <button id="early-checkin-btn">EARLY CHECK-IN</button>
                 <button id="available-rooms-btn">AVAILABLE ROOMS: 32</button>
                 <button id="upgrade-room-btn">UPGRADE MY ROOM</button>
             </div>
@@ -70,9 +71,32 @@
     <div id="upgrade-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <h3>Upgrade Offer</h3>
-            <p>Upgrade to an Ocean View Suite for $50/night?</p>
-            <button>Yes, Upgrade!</button>
+            <h3>Upgrade Your Stay</h3>
+            <div id="upgrade-options">
+                <button id="list-rooms-btn">List Rooms & Prices</button>
+                <button id="customize-room-btn">Customize Room</button>
+            </div>
+
+            <div id="room-list-section" style="display: none;">
+                <h4>Available Rooms & Prices</h4>
+                <ul id="available-rooms-list">
+                    <!-- Rooms will be dynamically loaded here -->
+                </ul>
+            </div>
+
+            <div id="customization-section" style="display: none;">
+                <h4>Customize Your Room</h4>
+                <form id="customization-form">
+                    <label><input type="checkbox" name="option" value="extra-towels"> Extra Towels</label><br>
+                    <label><input type="checkbox" name="option" value="flower-arrangement"> Flower Arrangement</label><br>
+                    <label><input type="checkbox" name="option" value="late-checkout"> Late Check-out (1 PM)</label><br>
+                    <label><input type="checkbox" name="option" value="minibar-refill"> Minibar Refill</label><br>
+                    <label><input type="checkbox" name="option" value="pillow-menu"> Pillow Menu Access</label><br>
+                    <label><input type="checkbox" name="option" value="welcome-fruit"> Welcome Fruit Basket</label><br>
+                    <label><input type="checkbox" name="option" value="aromatherapy-diffuser"> Aromatherapy Diffuser</label><br>
+                    <button type="submit" id="submit-customization-btn" style="display: none;">Submit Customization</button>
+                </form>
+            </div>
         </div>
     </div>
 

@@ -148,6 +148,13 @@ footer button {
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
+#early-checkin-btn {
+    background-color: #6c757d; /* A neutral color */
+}
+#early-checkin-btn:hover {
+    background-color: #5a6268;
+}
+
 #available-rooms-btn {
     background-color: var(--accent-blue);
 }

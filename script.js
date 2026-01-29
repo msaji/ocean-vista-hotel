@@ -21,43 +21,75 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- ELEMENTS ---
     const dateTimeElement = document.getElementById('datetime');
+    if (!dateTimeElement) console.error('Element #datetime not found.');
+
     const checkInListElement = document.getElementById('check-in-list');
+    if (!checkInListElement) console.error('Element #check-in-list not found.');
 
     const checkInModal = document.getElementById('check-in-modal');
+    if (!checkInModal) console.error('Element #check-in-modal not found.');
     const roomsModal = document.getElementById('rooms-modal');
+    if (!roomsModal) console.error('Element #rooms-modal not found.');
     const upgradeModal = document.getElementById('upgrade-modal');
+    if (!upgradeModal) console.error('Element #upgrade-modal not found.');
     const barcodeModal = document.getElementById('barcode-modal');
+    if (!barcodeModal) console.error('Element #barcode-modal not found.');
     const reservationActionModal = document.getElementById('reservation-action-modal');
+    if (!reservationActionModal) console.error('Element #reservation-action-modal not found.');
     const mobileAccessInputModal = document.getElementById('mobile-access-input-modal');
+    if (!mobileAccessInputModal) console.error('Element #mobile-access-input-modal not found.');
     const earlyCheckinInputModal = document.getElementById('early-checkin-input-modal');
+    if (!earlyCheckinInputModal) console.error('Element #early-checkin-input-modal not found.');
     const earlyCheckinDetailsModal = document.getElementById('early-checkin-details-modal');
+    if (!earlyCheckinDetailsModal) console.error('Element #early-checkin-details-modal not found.');
     const mobilePlannerModal = document.getElementById('mobile-planner-modal');
-    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, reservationActionModal, mobileAccessInputModal, earlyCheckinInputModal, earlyCheckinDetailsModal, mobilePlannerModal];
+    if (!mobilePlannerModal) console.error('Element #mobile-planner-modal not found.');
+    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, reservationActionModal, mobileAccessInputModal, earlyCheckinInputModal, earlyCheckinDetailsModal, mobilePlannerModal].filter(Boolean); // Filter out nulls
 
     const checkInModalText = document.getElementById('check-in-modal-text');
+    if (!checkInModalText) console.error('Element #check-in-modal-text not found.');
     const confirmCheckInBtn = document.getElementById('confirm-check-in-btn');
+    if (!confirmCheckInBtn) console.error('Element #confirm-check-in-btn not found.');
     const idCheckNote = document.getElementById('id-check-note');
+    if (!idCheckNote) console.error('Element #id-check-note not found.');
     const plannerContent = document.getElementById('planner-content');
+    if (!plannerContent) console.error('Element #planner-content not found.');
 
     const earlyCheckinBtn = document.getElementById('early-checkin-btn');
+    if (!earlyCheckinBtn) console.error('Element #early-checkin-btn not found.');
     const earlyCheckinForm = document.getElementById('early-checkin-form');
+    if (!earlyCheckinForm) console.error('Element #early-checkin-form not found.');
     const earlyCheckinNameInput = document.getElementById('early-checkin-name-input');
+    if (!earlyCheckinNameInput) console.error('Element #early-checkin-name-input not found.');
     const earlyCheckinError = document.getElementById('early-checkin-error');
+    if (!earlyCheckinError) console.error('Element #early-checkin-error not found.');
     const earlyCheckinDetails = document.getElementById('early-checkin-details');
+    if (!earlyCheckinDetails) console.error('Element #early-checkin-details not found.');
     const confirmEarlyCheckinBtn = document.getElementById('confirm-early-checkin-btn');
+    if (!confirmEarlyCheckinBtn) console.error('Element #confirm-early-checkin-btn not found.');
 
     const availableRoomsBtn = document.getElementById('available-rooms-btn');
+    if (!availableRoomsBtn) console.error('Element #available-rooms-btn not found.');
     const upgradeRoomBtn = document.getElementById('upgrade-room-btn');
+    if (!upgradeRoomBtn) console.error('Element #upgrade-room-btn not found.');
     const digitalKeyLink = document.getElementById('digital-key-link');
+    if (!digitalKeyLink) console.error('Element #digital-key-link not found.');
     const mobileAccessLink = document.getElementById('mobile-access-link');
+    if (!mobileAccessLink) console.error('Element #mobile-access-link not found.');
 
     const reservationActionText = document.getElementById('reservation-action-text');
+    if (!reservationActionText) console.error('Element #reservation-action-text not found.');
     const viewItineraryBtn = document.getElementById('view-itinerary-btn');
+    if (!viewItineraryBtn) console.error('Element #view-itinerary-btn not found.');
     const proceedToCheckinBtn = document.getElementById('proceed-to-checkin-btn');
+    if (!proceedToCheckinBtn) console.error('Element #proceed-to-checkin-btn not found.');
 
     const findReservationForm = document.getElementById('find-reservation-form');
+    if (!findReservationForm) console.error('Element #find-reservation-form not found.');
     const reservationNameInput = document.getElementById('reservation-name-input');
+    if (!reservationNameInput) console.error('Element #reservation-name-input not found.');
     const reservationError = document.getElementById('reservation-error');
+    if (!reservationError) console.error('Element #reservation-error not found.');
 
     let activeReservationId = null;
 

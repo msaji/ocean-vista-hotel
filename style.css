@@ -149,10 +149,10 @@ footer button {
 }
 
 #early-checkin-btn {
-    background-color: #6c757d; /* A neutral color */
+    background-color: #8A2BE2; /* Purple */
 }
 #early-checkin-btn:hover {
-    background-color: #5a6268;
+    background-color: #6A1BA0; /* Darker Purple on hover */
 }
 
 #available-rooms-btn {

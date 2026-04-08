@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- ELEMENTS ---
     const dateTimeElement = document.getElementById('datetime');
     const checkInListElement = document.getElementById('check-in-list');
-
     const checkInModal = document.getElementById('check-in-modal');
     const roomsModal = document.getElementById('rooms-modal');
     const upgradeModal = document.getElementById('upgrade-modal');
@@ -30,19 +29,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileAccessInputModal = document.getElementById('mobile-access-input-modal');
     const mobilePlannerModal = document.getElementById('mobile-planner-modal');
     const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, mobileAccessInputModal, mobilePlannerModal];
-
     const checkInModalText = document.getElementById('check-in-modal-text');
     const confirmCheckInBtn = document.getElementById('confirm-check-in-btn');
     const plannerContent = document.getElementById('planner-content');
-
     const availableRoomsBtn = document.getElementById('available-rooms-btn');
     const upgradeRoomBtn = document.getElementById('upgrade-room-btn');
     const digitalKeyLink = document.getElementById('digital-key-link');
     const mobileAccessLink = document.getElementById('mobile-access-link');
-
     const findReservationForm = document.getElementById('find-reservation-form');
     const reservationNameInput = document.getElementById('reservation-name-input');
     const reservationError = document.getElementById('reservation-error');
+    const confirmationMsg = document.getElementById('confirmation-message'); // New element
 
     let activeReservationId = null;
 
@@ -117,19 +114,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     confirmCheckInBtn.addEventListener('click', () => {
+		// 4. Display confirmation message
+		confirmationMsg.textContent = 'Check-in Successful!';
+		confirmationMsg.classList.add('show');
+
+		// 5. Hide confirmation message after 2 seconds
+		setTimeout(() => {
+			confirmationMsg.classList.remove('show');
+			closeModal(checkInModal);
+		}, 1000);
+		
         if (activeReservationId) {
             const rowToRemove = document.getElementById(`res-${activeReservationId}`);
             if (rowToRemove) {
-                rowToRemove.remove();
+            	
+                // 1. Start fade-out animation
+                rowToRemove.classList.add('fade-out');
+
+                // 2. Wait for the animation to complete (0.5s defined in CSS)
+                setTimeout(() => {
+
+                    // 3. Perform removal and update state
+                    rowToRemove.remove();
+
+                    // Remove from array as well
+                    const indexToRemove = reservations.findIndex(r => r.id === activeReservationId);
+                    if (indexToRemove > -1) {
+                        reservations.splice(indexToRemove, 1);
+                    }
+                    activeReservationId = null;
+
+                }, 500);
             }
-            // Optional: Remove from array as well
-            const indexToRemove = reservations.findIndex(r => r.id === activeReservationId);
-            if (indexToRemove > -1) {
-                reservations.splice(indexToRemove, 1);
-            }
-            activeReservationId = null;
-            closeModal(checkInModal);
         }
+
+
     });
 
     // --- FOOTER EVENT LISTENERS ---
@@ -235,9 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const activity = shuffledActivities[i % shuffledActivities.length];
             scheduleHtml += `<li><strong>${dayDateFormatted}:</strong> ${activity}</li>`;
         }
-        scheduleHtml += `<li><strong>${checkOutDateFormatted} (Check-out):</strong> Enjoy breakfast, prepare for departure.</li>`;
-        scheduleHtml += '</ul>';
-
+        scheduleHtml += `<li><strong>${checkOutDateFormatted} (Check-out):</strong> Enjoy breakfast, prepare for departure.</li></ul>`;
 
         plannerContent.innerHTML = `
             <h2>${reservation.guestName}'s Stay Planner</h2>

@@ -1,7 +1,7 @@
 # Project Context: Ocean Vista Hotel Front Desk App
 
 ## Overview
-This project is a single-page web application designed to function as a simplified hotel front desk application. It is intended to be a "child's toy," meaning simplicity and immediate functionality are prioritized over deep, complex enterprise features.
+This project is a single-page web application designed to function as a simplified hotel front desk application. It is intended to be a "child's toy," meaning simplicity, fun, and immediate functionality are prioritized over complex features or even data consistency.
 
 ## Functionality
 The primary function of the app is to manage the guest check-in process for the hotel.
@@ -14,3 +14,6 @@ The primary function of the app is to manage the guest check-in process for the 
 - Keep complexity minimal. Avoid implementing advanced features unless explicitly requested.
 - Prioritize usability for a straightforward check-in workflow.
 - Maintain the simple, "toy-like" nature of the application in all modifications.
+
+DO NOT ENTER PLAN MODE.
+Use UNIX line endings (LF), not Windows (CRLF).

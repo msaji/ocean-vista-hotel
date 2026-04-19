@@ -153,7 +153,137 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FOOTER EVENT LISTENERS ---
     availableRoomsBtn.addEventListener('click', () => openModal(roomsModal));
-    upgradeRoomBtn.addEventListener('click', () => openModal(upgradeModal));
+        // --- UPGRADE MODAL LOGIC ---
+    let upgradeState = {
+        step: 'selection', // 'selection', 'confirmation', 'details'
+        selectedRoom: null,
+        selectedReservationId: null,
+        detailsText: ''
+    };
+
+    const upgradeRoomSelector = document.getElementById('upgrade-room-selector');
+    const upgradeConfirmationText = document.getElementById('upgrade-confirmation-text');
+    const upgradeDetailsTextarea = document.getElementById('upgrade-details-textarea');
+    const upgradeConfirmBtn = document.getElementById('upgrade-confirm-btn');
+    const upgradeNextBtn = document.getElementById('upgrade-next-btn');
+
+    function initializeUpgradeModal(reservationId) {
+        upgradeState.selectedReservationId = reservationId;
+        upgradeState.step = 'selection';
+        upgradeState.selectedRoom = null;
+        upgradeState.detailsText = '';
+
+        // Clear modal content
+        upgradeModal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Upgrade Room</h3>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Select the room type you wish to upgrade to for this reservation.</p>
+                    <div class="room-options" id="room-options-container">
+                        <button class="room-option" data-room="Standard">Standard</button>
+                        <button class="room-option" data-room="Suite">Suite</button>
+                        <button class="room-option" data-room="Deluxe">Deluxe</button>
+                    </div>
+                    <div id="upgrade-step-content" style="display: none;">
+                        <p id="upgrade-confirmation-text"></p>
+                        <textarea id="upgrade-details-textarea" placeholder="Enter special requests..."></textarea>
+                        <div class="modal-actions">
+                            <button id="upgrade-next-btn" class="primary-btn">Next</button>
+                            <button id="upgrade-confirm-btn" class="primary-btn" style="display: none;">Confirm Upgrade</button>
+                            <button class="secondary-btn">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('upgrade-modal').querySelector('.close-btn').addEventListener('click', () => closeModal(upgradeModal));
+
+        // Attach listeners for the new structure
+        document.querySelectorAll('.room-option').forEach(button => {
+            button.addEventListener('click', handleRoomSelection);
+        });
+
+        upgradeNextBtn.addEventListener('click', handleNextStep);
+        upgradeConfirmBtn.addEventListener('click', handleFinalConfirmation);
+        document.querySelector('#upgrade-modal .secondary-btn').addEventListener('click', () => closeModal(upgradeModal));
+
+        // Initial state render
+        renderUpgradeStep();
+    }
+
+    function handleRoomSelection(e) {
+        const room = e.target.dataset.room;
+        upgradeState.selectedRoom = room;
+        upgradeState.step = 'confirmation';
+        renderUpgradeStep();
+    }
+
+    function handleNextStep() {
+        if (upgradeState.step === 'confirmation') {
+            upgradeState.step = 'details';
+            renderUpgradeStep();
+        }
+    }
+
+    function handleFinalConfirmation() {
+        upgradeState.step = 'complete';
+
+        const finalDetails = upgradeState.detailsText;
+        const finalRoom = upgradeState.selectedRoom;
+
+        console.log(`Upgrade Confirmed: Reservation ID ${upgradeState.selectedReservationId}, New Room: ${finalRoom}, Details: ${finalDetails}`);
+
+        // TODO: Implement API call or state update here to actually change the room type in the backend/state.
+        alert(`SUCCESS! Upgrade to ${finalRoom} confirmed for reservation. Details: ${finalDetails || 'None provided'}`);
+
+        closeModal(upgradeModal);
+        // Rerender reservations to reflect the change (TODO: Update mock data)
+        renderReservations();
+    }
+
+    function renderUpgradeStep() {
+        const stepContent = document.getElementById('upgrade-step-content');
+        const roomOptions = document.getElementById('room-options-container');
+        upgradeConfirmationText.textContent = '';
+        upgradeDetailsTextarea.value = '';
+        upgradeConfirmBtn.style.display = 'none';
+        upgradeNextBtn.style.display = 'none';
+
+        roomOptions.style.display = 'block';
+        stepContent.style.display = 'none';
+
+        switch (upgradeState.step) {
+            case 'selection':
+                // Render room options (already in HTML setup)
+                break;
+            case 'confirmation':
+                roomOptions.style.display = 'none';
+                stepContent.style.display = 'block';
+                upgradeConfirmationText.textContent = `Are you sure you want to upgrade to ${upgradeState.selectedRoom}?`;
+                upgradeNextBtn.style.display = 'block';
+                break;
+            case 'details':
+                upgradeConfirmationText.style.display = 'none';
+                upgradeDetailsTextarea.style.display = 'block';
+                upgradeNextBtn.style.display = 'none';
+                upgradeConfirmBtn.style.display = 'block';
+                break;
+        }
+    }
+
+    // Attach this handler to the upgrade button
+    upgradeRoomBtn.addEventListener('click', () => {
+        if (activeReservationId) {
+            initializeUpgradeModal(activeReservationId);
+            openModal(upgradeModal);
+        } else {
+            alert("Please check in a reservation before attempting an upgrade.");
+        }
+    });
 
     digitalKeyLink.addEventListener('click', (e) => {
         e.preventDefault();

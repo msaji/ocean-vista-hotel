@@ -277,11 +277,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Attach this handler to the upgrade button
     upgradeRoomBtn.addEventListener('click', () => {
-        if (activeReservationId) {
-            initializeUpgradeModal(activeReservationId);
+        const code = prompt("Please enter the confirmation code for the reservation you wish to upgrade:");
+        if (!code) return; // User cancelled
+
+        const formattedCode = code.startsWith('#') ? code : `#${code}`;
+
+        const reservation = reservations.find(res => res.confirmationCode === formattedCode);
+
+        if (reservation) {
+            activeReservationId = reservation.id;
+            initializeUpgradeModal(reservation.id);
             openModal(upgradeModal);
         } else {
-            alert("Please check in a reservation before attempting an upgrade.");
+            alert("Error: No reservation found with that confirmation code.");
         }
     });
 

@@ -234,15 +234,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const finalDetails = upgradeState.detailsText;
         const finalRoom = upgradeState.selectedRoom;
+        const reservationId = upgradeState.selectedReservationId;
 
-        console.log(`Upgrade Confirmed: Reservation ID ${upgradeState.selectedReservationId}, New Room: ${finalRoom}, Details: ${finalDetails}`);
+        const reservationIndex = reservations.findIndex(r => r.id === reservationId);
 
-        // TODO: Implement API call or state update here to actually change the room type in the backend/state.
-        alert(`SUCCESS! Upgrade to ${finalRoom} confirmed for reservation. Details: ${finalDetails || 'None provided'}`);
+        if (reservationIndex !== -1) {
+            // 1. Update room type
+            reservations[reservationIndex].roomType = finalRoom;
+            // 2. Increase number of nights
+            reservations[reservationIndex].nights += 1;
 
-        closeModal(upgradeModal);
-        // Rerender reservations to reflect the change (TODO: Update mock data)
-        renderReservations();
+            // 3. Set new color (using purple as a placeholder for the requested color)
+            reservations[reservationIndex].rowColor = 'var(--color-upgrade-success)'; // Assuming we define a CSS variable for upgrade success
+
+            // 4. Display confirmation message
+            confirmationMsg.textContent = `SUCCESS! Room upgraded to ${finalRoom}. Stay extended by 1 night.`;
+            confirmationMsg.classList.add('show');
+
+            // 5. Hide confirmation message after 2 seconds
+            setTimeout(() => {
+                confirmationMsg.classList.remove('show');
+                closeModal(upgradeModal);
+                // Rerender reservations to reflect the change
+                renderReservations();
+            }, 2000);
+        } else {
+            alert("Error: Could not find reservation to update.");
+            closeModal(upgradeModal);
+        }
     }
 
     function renderUpgradeStep() {

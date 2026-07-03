@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 15, guestName: 'Fox Mulder', confirmationCode: '#T890U', roomType: 'Standard Queen', nights: 2, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-pastafarianism' },
         { id: 16, guestName: 'Gung Gung and Poh Poh', confirmationCode: '#GGPP1', roomType: 'Deluxe King', nights: 50, guestCount: 2, rowColor: 'var(--color-row1)', icon: 'fa-users' },
 		{ id: 17, guestName: 'Evelyn Holman', confirmationCode: '#148E', roomType: 'Junior Suite', nights: 21, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-book' }
-	]
+	];
     // --- ELEMENTS ---
     const dateTimeElement = document.getElementById('datetime');
     const checkInListElement = document.getElementById('check-in-list');

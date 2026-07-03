@@ -16,9 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 13, guestName: 'Sherlock Holmes', confirmationCode: '#P234Q', roomType: 'Study', nights: 4, guestCount: 2, rowColor: 'var(--color-row3)', icon: 'fa-search' },
         { id: 14, guestName: 'Dana Scully', confirmationCode: '#R567S', roomType: 'Standard Queen', nights: 2, guestCount: 1, rowColor: 'var(--color-row4)', icon: 'fa-satellite' },
         { id: 15, guestName: 'Fox Mulder', confirmationCode: '#T890U', roomType: 'Standard Queen', nights: 2, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-pastafarianism' },
-        { id: 16, guestName: 'Gung Gung and Poh Poh', confirmationCode: '#GGPP1', roomType: 'Deluxe King', nights: 50, guestCount: 2, rowColor: 'var(--color-row1)', icon: 'fa-users' }
-		{ id: 17, guestName: 'Evelyn Holman', confirmationCode: '#148E', roomType: 'Junior Suite', nights: 21, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-book' },
-
+        { id: 16, guestName: 'Gung Gung and Poh Poh', confirmationCode: '#GGPP1', roomType: 'Deluxe King', nights: 50, guestCount: 2, rowColor: 'var(--color-row1)', icon: 'fa-users' },
+		{ id: 17, guestName: 'Evelyn Holman', confirmationCode: '#148E', roomType: 'Junior Suite', nights: 21, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-book' }
+	]
     // --- ELEMENTS ---
     const dateTimeElement = document.getElementById('datetime');
     const checkInListElement = document.getElementById('check-in-list');

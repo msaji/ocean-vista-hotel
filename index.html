@@ -6,12 +6,11 @@
     <title>Ocean Vista Hotel Check-In</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    </div>
     <div class="container">
         <header>
             <p id="datetime"></p>
@@ -34,74 +33,65 @@
                 <a href="#" id="mobile-access-link"><i class="fas fa-mobile-alt"></i> MOBILE ACCESS</a>
             </div>
         </footer>
-    </div>
 
-    <!-- Modals -->
-    <div id="check-in-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <p id="check-in-modal-text"></p>
-            <button id="confirm-check-in-btn">Confirm Check-In</button>
-            <div id="confirmation-message" class="confirmation-message"></div>
-        </div>
-    </div>
-
-    <div id="rooms-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h3>Available Rooms</h3>
-            <ul>
-                <li>Standard: 10</li>
-                <li>Suites: 5</li>
-                <li>Deluxe: 17</li>
-            </ul>
-        </div>
-    </div>
-
-    <div id="upgrade-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h3>Upgrade Offer</h3>
-            <p>Upgrade to an Ocean View Suite for $50/night?</p>
-            <button>Yes, Upgrade!</button>
-        </div>
-    </div>
-
-    <!-- Barcode Modal -->
-    <div id="barcode-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h3>Your Digital Key</h3>
-            <svg id="barcode"></svg>
-            <p>Scan at your door to unlock.</p>
-        </div>
-    </div>
-
-    <!-- Mobile Access Input Modal -->
-    <div id="mobile-access-input-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h3>Mobile Access Planner</h3>
-            <p>Please enter the name on the reservation to view your stay planner.</p>
-            <form id="find-reservation-form">
-                <input type="text" id="reservation-name-input" placeholder="e.g., Michael Saji" required>
-                <button type="submit">Find My Stay</button>
-            </form>
-            <p id="reservation-error" class="error-text" style="display: none; color: red;"></p>
-        </div>
-    </div>
-
-    <!-- Mobile Planner Modal -->
-    <div id="mobile-planner-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <div id="planner-content">
-                <!-- Planner details will be injected here by JS -->
+        <!-- Modals -->
+        <div id="check-in-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <p id="check-in-modal-text"></p>
+                <button id="confirm-check-in-btn">Confirm Check-In</button>
+                <div id="confirmation-message" class="confirmation-message"></div>
             </div>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+        <div id="rooms-modal" class="modal">
+            <div class="modal-content">
+                <h3>Available Rooms</h3>
+                <ul>
+                    <li>Standard: 10</li>
+                    <li>Suites: 5</li>
+                    <li>Deluxe: 17</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="upgrade-modal" class="modal">
+            <div class="modal-content">
+                <h3>Upgrade Offer</h3>
+                <p>Upgrade to an Ocean View Suite for $50/night?</p>
+                <button>Yes, Upgrade!</button>
+            </div>
+        </div>
+
+        <!-- Barcode Modal -->
+        <div id="barcode-modal" class="modal">
+            <div class="modal-content">
+                <h3>Your Digital Key</h3>
+                <svg id="qrcode"></svg>
+                <p>Scan at your door to unlock.</p>
+            </div>
+        </div>
+
+        <!-- Mobile Access Input Modal -->
+        <div id="mobile-access-input-modal" class="modal">
+            <div class="modal-content">
+                <h3>Mobile Access Planner</h3>
+                <form id="find-reservation-form">
+                    <input type="text" id="reservation-name-input" placeholder="e.g., Michael Saji" required>
+                    <button type="submit">Find My Stay</button>
+                </form>
+                <p id="reservation-error" class="error-text" style="display: none; color: red;"></p>
+            </div>
+        </div>
+
+        <!-- Mobile Planner Modal -->
+        <div id="mobile-planner-modal" class="modal">
+            <div class="modal-content">
+                <div id="planner-content">
+                </div>
+            </div>
+        </div>
+
     <script src="script.js"></script>
 </body>
 </html>

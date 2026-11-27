@@ -18,8 +18,29 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 15, guestName: 'Fox Mulder', confirmationCode: '#T890U', roomNumber: 119, roomType: 'Standard Queen', nights: 2, guestCount: 1, phone: '555-0115', email: 'fox.mulder@example.com', rowColor: 'var(--color-row5)', icon: 'fa-pastafarianism' },
         { id: 16, guestName: 'Gung Gung and Poh Poh', confirmationCode: '#GGPP1', roomNumber: 310, roomType: 'Deluxe King', nights: 50, guestCount: 2, phone: '555-0116', email: 'gung.gung.and.poh.poh@example.com', rowColor: 'var(--color-row1)', icon: 'fa-users' },
 		{ id: 17, guestName: 'Evelyn Holman', confirmationCode: '#148EH', roomNumber: 408, roomType: 'Junior Suite', nights: 21, guestCount: 1, phone: '555-0117', email: 'evelyn.holman@example.com', rowColor: 'var(--color-row5)', icon: 'fa-book' },
-        { id: 18, guestName: 'Kai-Mah', confirmationCode: '#KM18A', roomNumber: 312, roomType: 'Deluxe Queen', nights: 3, guestCount: 1, phone: '555-0118', email: 'kai.mah@example.com', rowColor: 'var(--color-row3)', icon: 'fa-star' }
+        { id: 18, guestName: 'Kai-Mah', confirmationCode: '#KM18A', roomNumber: 312, roomType: 'Deluxe Queen', nights: 3, guestCount: 1, phone: '555-0118', email: 'kai.mah@example.com', rowColor: 'var(--color-row3)', icon: 'fa-star' },
+        { id: 19, guestName: 'Alexander and Eliza Hamilton', confirmationCode: '#AEH10', roomNumber: 410, roomType: 'Junior Suite', nights: 3, guestCount: 2, phone: '555-0119', email: 'alexander.eliza.hamilton@example.com', rowColor: 'var(--color-row4)', icon: 'fa-feather' },
+        { id: 20, guestName: 'Charlie Brown and Snoopy', confirmationCode: '#CBSNP', roomNumber: 106, roomType: 'Standard Queen', nights: 4, guestCount: 2, phone: '555-0120', email: 'charlie.brown.snoopy@example.com', rowColor: 'var(--color-row5)', icon: 'fa-dog' },
+        { id: 21, guestName: 'Lucy Saji', confirmationCode: '#LUCY5', roomNumber: 109, roomType: 'Single', nights: 2, guestCount: 1, phone: '555-0121', email: 'lucy.saji@example.com', rowColor: 'var(--color-row1)', icon: 'fa-football' }
 	];
+
+    // --- THE HOTEL BUILDING ---
+    // Each floor has a number, a fun name and how many rooms it has.
+    // A room's floor is the first digit of its room number: room 221 is on floor 2.
+    const hotelFloors = [
+        { floor: 1, name: 'Beach Floor', roomCount: 24 },
+        { floor: 2, name: 'Library Floor', roomCount: 24 },
+        { floor: 3, name: 'Coral Floor', roomCount: 20 },
+        { floor: 4, name: 'Starfish Floor', roomCount: 16 },
+        { floor: 5, name: 'Seagull Floor', roomCount: 12 },
+        { floor: 6, name: 'Cloud Floor', roomCount: 12 },
+        { floor: 7, name: 'Treetop Floor', roomCount: 8 },
+        { floor: 8, name: 'Penthouse', roomCount: 4 }
+    ];
+
+    function floorOf(roomNumber) {
+        return Math.floor(roomNumber / 100);
+    }
 
     // A copy of the full guest list. Checking in removes a guest from the
     // list on screen, but they still need their key and their planner.
@@ -31,6 +52,51 @@ document.addEventListener('DOMContentLoaded', () => {
         return allGuests.find(g => g.guestName.toLowerCase() === searchName)
             || allGuests.find(g => g.guestName.toLowerCase().includes(searchName));
     }
+
+    // Say "1 GUEST" but "2 GUESTS": add an S only when there's more than one
+    function plural(count, word) {
+        return `${count} ${word}${count === 1 ? '' : 'S'}`;
+    }
+
+    // --- SOUNDS ---
+    // A two-note "ping-pong" made by the browser itself (no sound files needed).
+    let audioContext = null;
+
+    function playNote(frequency, startTime, length) {
+        const oscillator = audioContext.createOscillator();
+        const volume = audioContext.createGain();
+        oscillator.type = 'sine';
+        oscillator.frequency.value = frequency;
+        // Start loud, then fade out quickly, like a bell
+        volume.gain.setValueAtTime(0.3, startTime);
+        volume.gain.exponentialRampToValueAtTime(0.001, startTime + length);
+        oscillator.connect(volume);
+        volume.connect(audioContext.destination);
+        oscillator.start(startTime);
+        oscillator.stop(startTime + length);
+    }
+
+    function playPingPong(firstNote, secondNote) {
+        try {
+            if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioContext.state === 'suspended') audioContext.resume();
+            const now = audioContext.currentTime;
+            playNote(firstNote, now, 0.25);          // ping
+            playNote(secondNote, now + 0.15, 0.35);  // pong
+        } catch (err) {
+            // No sound available: the app still works, just quietly
+        }
+    }
+
+    // Each kind of event has its own little tune
+    const sounds = {
+        arrival: () => playPingPong(988, 784),      // ding-dong, like a doorbell
+        newRequest: () => playPingPong(1047, 880),  // ping-pong, high
+        done: () => playPingPong(660, 990),         // pong-PING, going up: well done!
+        checkIn: () => playPingPong(784, 1175),     // happy rising chime
+        newBooking: () => playPingPong(880, 1047),  // bright ping-pong
+        chat: () => playPingPong(1319, 1047)        // quick high ping for a chat message
+    };
 
     // --- ELEMENTS ---
     const dateTimeElement = document.getElementById('datetime');
@@ -44,8 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkedInModal = document.getElementById('checked-in-modal');
     const serviceRequestsModal = document.getElementById('service-requests-modal');
     const restaurantModal = document.getElementById('restaurant-modal');
+    const hotelMapModal = document.getElementById('hotel-map-modal');
     const newReservationModal = document.getElementById('new-reservation-modal');
-    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, mobileAccessInputModal, mobilePlannerModal, checkedInModal, newReservationModal, serviceRequestsModal, restaurantModal];
+    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, mobileAccessInputModal, mobilePlannerModal, checkedInModal, newReservationModal, serviceRequestsModal, restaurantModal, hotelMapModal];
     const checkInModalText = document.getElementById('check-in-modal-text');
     const confirmCheckInBtn = document.getElementById('confirm-check-in-btn');
     const contactInfoBtn = document.getElementById('contact-info-btn');
@@ -57,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkedInList = document.getElementById('checked-in-list');
     const serviceRequestsBtn = document.getElementById('service-requests-btn');
     const serviceRequestsList = document.getElementById('service-requests-list');
+    const serviceScore = document.getElementById('service-score');
     const digitalKeyLink = document.getElementById('digital-key-link');
     const mobileAccessLink = document.getElementById('mobile-access-link');
     const findReservationForm = document.getElementById('find-reservation-form');
@@ -88,11 +156,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 row.innerHTML = `
                     <div class="guest-info">
-                        <p class="guest-name">${res.guestName}</p>
-                        <p class="conf-code">CONFIRMATION: ${res.confirmationCode}, ${res.guestCount} GUESTS</p>
+                        <p class="guest-name">${res.guestName}${arrivalQueue.includes(res) ? ' <span class="arrived-badge">HERE NOW</span>' : ''}</p>
+                        <p class="conf-code">CONFIRMATION: ${res.confirmationCode}, ${plural(res.guestCount, 'GUEST')}</p>
                     </div>
                     <div class="room-info">
-                        <p class="details">ROOM ${res.roomNumber} &middot; ${res.roomType}, ${res.nights} NIGHTS</p>
+                        <p class="details">ROOM ${res.roomNumber} &middot; ${res.roomType}, ${plural(res.nights, 'NIGHT')}</p>
                     </div>
                     <div class="icon">
                         <i class="fas ${res.icon}"></i>
@@ -156,6 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     confirmCheckInBtn.addEventListener('click', () => {
         // 4. Display confirmation message
+        sounds.checkIn();
         confirmationMsg.textContent = 'Check-in Successful!';
         confirmationMsg.classList.add('show');
 
@@ -180,6 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (indexToRemove > -1) {
                             const guest = reservations[indexToRemove];
                             reservations.splice(indexToRemove, 1);
+                            removeFromArrivalQueue(guest);
                             makeServiceRequests(guest);
                         }
                         updateCheckedInCount();
@@ -223,10 +293,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Find the first free room on a floor, e.g. 101, 102, 103...
+    // Find the first free room on a floor, e.g. 101, 102, 103...
+    // If that floor is full, try the next floor up.
     function findFreeRoom(floor) {
-        let room = floor * 100 + 1;
-        while (allGuests.some(g => g.roomNumber === room)) room++;
-        return room;
+        for (const f of hotelFloors.filter(h => h.floor >= floor)) {
+            for (let n = 1; n <= f.roomCount; n++) {
+                const room = f.floor * 100 + n;
+                if (!allGuests.some(g => g.roomNumber === room)) return room;
+            }
+        }
+        return floor * 100 + 99; // the whole hotel is full!
     }
 
     addReservationBtn.addEventListener('click', () => {
@@ -260,6 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         closeModal(newReservationModal);
         renderReservations();
+        sounds.newBooking();
 
         // Scroll to the new booking and make it glow
         const newRow = document.getElementById(`res-${newId}`);
@@ -290,11 +367,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const ideas = shuffleArray([...requestIdeas]).slice(0, howMany);
         ideas.forEach(text => serviceRequests.push({ guest, text, done: false }));
         updateServiceRequestCount();
+        wiggleServiceButton();
     }
+
+    let requestsCompleted = 0; // the game score
 
     function updateServiceRequestCount() {
         const waiting = serviceRequests.filter(r => !r.done).length;
         serviceRequestsBtn.textContent = `SERVICE REQUESTS: ${waiting}`;
+        serviceScore.innerHTML = `<i class="fas fa-star"></i> Requests done: ${requestsCompleted}`;
+    }
+
+    // Make the button wiggle so you notice a new request
+    function wiggleServiceButton() {
+        serviceRequestsBtn.classList.remove('wiggle');
+        void serviceRequestsBtn.offsetWidth; // restart the animation
+        serviceRequestsBtn.classList.add('wiggle');
     }
 
     function showServiceRequests() {
@@ -303,7 +391,10 @@ document.addEventListener('DOMContentLoaded', () => {
             serviceRequestsList.innerHTML = '<li>No service requests yet. Check in a guest!</li>';
             return;
         }
-        serviceRequests.forEach(request => {
+        // Waiting requests first, then the 5 most recently finished ones
+        const waiting = serviceRequests.filter(r => !r.done);
+        const finished = serviceRequests.filter(r => r.done).slice(-5).reverse();
+        [...waiting, ...finished].forEach(request => {
             const item = document.createElement('li');
             if (request.done) item.classList.add('done');
             item.innerHTML = `
@@ -314,6 +405,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (doneBtn) {
                 doneBtn.addEventListener('click', () => {
                     request.done = true;
+                    requestsCompleted++;
+                    sounds.done();
+                    reportDelivery(request);
                     updateServiceRequestCount();
                     showServiceRequests();
                 });
@@ -325,6 +419,110 @@ document.addEventListener('DOMContentLoaded', () => {
     serviceRequestsBtn.addEventListener('click', () => {
         showServiceRequests();
         openModal(serviceRequestsModal);
+    });
+
+    // The game: every 8 to 15 seconds, a checked-in guest asks for something new
+    const MAX_WAITING_REQUESTS = 10;
+
+    function newRequestFromRandomGuest() {
+        if (!gameMode) return;
+        const checkedIn = getCheckedInGuests();
+        const waiting = serviceRequests.filter(r => !r.done).length;
+
+        if (checkedIn.length > 0 && waiting < MAX_WAITING_REQUESTS) {
+            serviceRequests.push({ guest: pickRandom(checkedIn), text: pickRandom(requestIdeas), done: false });
+            updateServiceRequestCount();
+            wiggleServiceButton();
+            sounds.newRequest();
+            // If the list is open, show the new request right away
+            if (serviceRequestsModal.style.display === 'flex') showServiceRequests();
+        }
+        scheduleNextRequest();
+    }
+
+    function scheduleNextRequest() {
+        if (!gameMode) return;
+        const seconds = 8 + Math.floor(Math.random() * 8); // 8 to 15
+        requestTimer = setTimeout(newRequestFromRandomGuest, seconds * 1000);
+    }
+
+    // --- ARRIVALS AND THE LINE (Game Mode) ---
+    // Every 12 to 20 seconds, a guest with a booking arrives at the desk
+    // and joins the end of the line.
+    const arrivalQueue = [];
+    const arrivalQueueBox = document.getElementById('arrival-queue');
+    const arrivalQueueList = document.getElementById('arrival-queue-list');
+
+    function newArrival() {
+        if (!gameMode) return;
+        const notArrivedYet = reservations.filter(r => !arrivalQueue.includes(r));
+        if (notArrivedYet.length > 0) {
+            const guest = pickRandom(notArrivedYet);
+            arrivalQueue.push(guest);
+            showToast(`<i class="fas fa-bell-concierge"></i> ${guest.guestName} has arrived at the front desk!`);
+            sounds.arrival();
+            renderArrivalQueue();
+            renderReservations();
+        }
+        scheduleNextArrival();
+    }
+
+    function scheduleNextArrival() {
+        if (!gameMode) return;
+        const seconds = 12 + Math.floor(Math.random() * 9); // 12 to 20
+        arrivalTimer = setTimeout(newArrival, seconds * 1000);
+    }
+
+    function renderArrivalQueue() {
+        arrivalQueueList.innerHTML = '';
+        arrivalQueue.forEach(guest => {
+            const item = document.createElement('li');
+            item.innerHTML = `<strong>${guest.guestName}</strong> &middot; Room ${guest.roomNumber}`;
+            item.addEventListener('click', () => openCheckInModal(guest.id));
+            arrivalQueueList.appendChild(item);
+        });
+        arrivalQueueBox.style.display = arrivalQueue.length > 0 ? 'block' : 'none';
+    }
+
+    function removeFromArrivalQueue(guest) {
+        const index = arrivalQueue.indexOf(guest);
+        if (index > -1) {
+            arrivalQueue.splice(index, 1);
+            renderArrivalQueue();
+        }
+    }
+
+    // --- POP-UP MESSAGE ---
+    const toast = document.getElementById('toast');
+    let toastTimer = null;
+
+    function showToast(html) {
+        toast.innerHTML = html;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    // --- GAME MODE SWITCH ---
+    // Anything that runs on a timer only happens while Game Mode is on.
+    let gameMode = false;
+    let requestTimer = null;
+    let arrivalTimer = null;
+    const gameModeToggle = document.getElementById('game-mode-toggle');
+
+    gameModeToggle.addEventListener('change', () => {
+        gameMode = gameModeToggle.checked;
+        clearTimeout(requestTimer);
+        clearTimeout(arrivalTimer);
+        clearTimeout(chatTimer);
+        if (gameMode) {
+            scheduleNextChat();
+            showToast('<i class="fas fa-gamepad"></i> Game Mode ON! Guests will arrive and ask for things.');
+            scheduleNextArrival();
+            scheduleNextRequest();
+        } else {
+            showToast('<i class="fas fa-gamepad"></i> Game Mode off. The hotel is quiet.');
+        }
     });
 
     // --- CHECKED-IN GUESTS ---
@@ -347,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             guests.forEach(g => {
                 const item = document.createElement('li');
-                item.innerHTML = `<i class="fas ${g.icon}"></i> <strong>${g.guestName}</strong> &middot; Room ${g.roomNumber}, ${g.roomType}, ${g.nights} NIGHTS`;
+                item.innerHTML = `<i class="fas ${g.icon}"></i> <strong>${g.guestName}</strong> &middot; Room ${g.roomNumber}, ${g.roomType}, ${plural(g.nights, 'NIGHT')}`;
                 checkedInList.appendChild(item);
             });
         }
@@ -551,15 +749,112 @@ document.addEventListener('DOMContentLoaded', () => {
         keyResult.style.display = 'block';
     });
 
+    // --- HOTEL MAP ---
+    const hotelMapLink = document.getElementById('hotel-map-link');
+    const floorSelect = document.getElementById('floor-select');
+    const floorSummary = document.getElementById('floor-summary');
+    const floorGrid = document.getElementById('floor-grid');
+    const roomInfo = document.getElementById('room-info');
+
+    // Fill the dropdown with every floor, top floor first like a real building
+    [...hotelFloors].reverse().forEach(f => {
+        const option = document.createElement('option');
+        option.value = f.floor;
+        option.textContent = `Floor ${f.floor}: ${f.name}`;
+        floorSelect.appendChild(option);
+    });
+    floorSelect.value = 1;
+
+    function drawFloor() {
+        const floor = hotelFloors.find(f => f.floor === Number(floorSelect.value));
+        floorGrid.innerHTML = '';
+        let taken = 0;
+
+        // Like a real hotel: odd rooms on the left, even rooms on the right,
+        // with a hallway down the middle and the elevator and stairs at the end.
+        const rows = Math.ceil(floor.roomCount / 2);
+
+        const lobby = document.createElement('div');
+        lobby.className = 'map-elevator';
+        lobby.innerHTML = '<i class="fas fa-stairs"></i> Stairs &nbsp; <i class="fas fa-elevator"></i> Elevator';
+        floorGrid.appendChild(lobby);
+
+        const hallway = document.createElement('div');
+        hallway.className = 'map-hallway';
+        hallway.style.gridRow = `2 / ${rows + 2}`;
+        hallway.innerHTML = '<span>HALLWAY</span>';
+        floorGrid.appendChild(hallway);
+
+        for (let n = 1; n <= floor.roomCount; n++) {
+            const roomNumber = floor.floor * 100 + n;
+            const guest = allGuests.find(g => g.roomNumber === roomNumber);
+            const checkedIn = guest && !reservations.includes(guest);
+            if (guest) taken++;
+
+            const cell = document.createElement('button');
+            cell.className = 'room-cell ' + (guest ? (checkedIn ? 'checked-in' : 'booked') : 'empty');
+            cell.style.gridColumn = n % 2 === 1 ? '1' : '3';   // odd left, even right
+            cell.style.gridRow = String(Math.ceil(n / 2) + 1);  // row 1 is the elevator
+            cell.innerHTML = `<span>${roomNumber}</span>${guest ? `<i class="fas ${guest.icon}"></i>` : ''}`;
+            cell.addEventListener('click', () => {
+                roomInfo.textContent = guest
+                    ? `Room ${roomNumber}: ${guest.guestName} \u00b7 ${guest.roomType} \u00b7 ${checkedIn ? 'Checked in' : 'Booked today'}`
+                    : `Room ${roomNumber} is empty.`;
+            });
+            floorGrid.appendChild(cell);
+        }
+        floorSummary.textContent = `${taken} of ${floor.roomCount} rooms taken`;
+        roomInfo.textContent = 'Click a room to see who is staying there.';
+    }
+
+    floorSelect.addEventListener('change', drawFloor);
+
+    hotelMapLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        drawFloor();
+        openModal(hotelMapModal);
+    });
+
     // --- RESTAURANT RESERVATIONS ---
     const restaurantLink = document.getElementById('restaurant-link');
     const restaurantForm = document.getElementById('restaurant-form');
     const restaurantNameInput = document.getElementById('restaurant-name-input');
     const restaurantResult = document.getElementById('restaurant-result');
 
+    const restaurantChoices = document.getElementById('restaurant-choices');
+
+    // The hotel's restaurants. Each booking uses up one table.
+    // When tablesLeft reaches 0, the restaurant is FULL.
+    const restaurants = [
+        { name: 'The Coral Grill', icon: 'fa-fish', about: 'seafood by the sea', tablesLeft: 4 },
+        { name: 'Dragon Pearl Dim Sum', icon: 'fa-bowl-rice', about: 'dumplings and buns on spinning tables', tablesLeft: 3 },
+        { name: 'Seashell Tea Lounge', icon: 'fa-mug-hot', about: 'tea and little cakes, pinkies up', tablesLeft: 2 },
+        { name: 'Submarine Sushi Bar', icon: 'fa-water', about: 'sushi with fish tank windows all around', tablesLeft: 2 },
+        { name: 'Gelato Whirlpool', icon: 'fa-ice-cream', about: 'ice cream swirled round and round with sprinkles', tablesLeft: 5 },
+        { name: 'Mermaid Lagoon Pizza', icon: 'fa-pizza-slice', about: 'pizza by the pool, mermaid tails optional', tablesLeft: 0 },
+        { name: 'Midnight Moon Café', icon: 'fa-moon', about: 'dinner under the stars on the roof', tablesLeft: 1 }
+    ];
+
+    function renderRestaurantChoices() {
+        restaurantChoices.innerHTML = '';
+        restaurants.forEach((r, i) => {
+            const full = r.tablesLeft === 0;
+            const label = document.createElement('label');
+            if (full) label.classList.add('full');
+            label.innerHTML = `
+                <input type="radio" name="restaurant" value="${i}" ${full ? 'disabled' : ''} required>
+                <i class="fas ${r.icon}"></i> ${r.name}
+                <em class="tables-left">${full ? 'FULL' : (r.tablesLeft === 1 ? '1 table left' : r.tablesLeft + ' tables left')}</em>
+                <span>${r.about}</span>
+            `;
+            restaurantChoices.appendChild(label);
+        });
+    }
+
     restaurantLink.addEventListener('click', (e) => {
         e.preventDefault();
         restaurantForm.reset();
+        renderRestaurantChoices();
         restaurantForm.style.display = 'block';
         restaurantResult.style.display = 'none';
         openModal(restaurantModal);
@@ -567,7 +862,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     restaurantForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const restaurant = restaurantForm.querySelector('input[name="restaurant"]:checked').value;
+        const chosen = restaurants[Number(restaurantForm.querySelector('input[name="restaurant"]:checked').value)];
+        if (chosen.tablesLeft === 0) return; // full: can't book
+        chosen.tablesLeft--;
+        const restaurant = chosen.name;
+        sounds.newBooking();
         const name = restaurantNameInput.value.trim();
 
         // If the name belongs to a hotel guest, mention their room too
@@ -685,6 +984,105 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         openModal(mobilePlannerModal);
     }
+
+    // --- HOUSEKEEPING CHAT ---
+    // Housekeeping uses this chat to tell the front desk what they've done.
+    const chatPanel = document.getElementById('chat-panel');
+    const chatBubble = document.getElementById('chat-bubble');
+    const chatClose = document.getElementById('chat-close');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const chatUnread = document.getElementById('chat-unread');
+    let unreadCount = 0;
+    let chatTimer = null;
+
+    function chatIsOpen() {
+        return chatPanel.style.display !== 'none';
+    }
+
+    function addChatMessage(text, from) {
+        const message = document.createElement('div');
+        message.className = `chat-message ${from}`;
+        message.textContent = text;
+        chatMessages.appendChild(message);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        if (from === 'housekeeping') {
+            sounds.chat();
+            if (!chatIsOpen()) {
+                unreadCount++;
+                chatUnread.textContent = unreadCount;
+                chatUnread.style.display = 'inline-block';
+            }
+        }
+    }
+
+    // When a service request is done, Housekeeping says what they delivered
+    function reportDelivery(request) {
+        const who = `Room ${request.guest.roomNumber} for ${request.guest.guestName}`;
+        const text = request.text.toLowerCase().includes('towel')
+            ? `Towels delivered to ${who}! Fluffy and folded.`
+            : `All done: "${request.text}" for ${who}.`;
+        setTimeout(() => addChatMessage(text, 'housekeeping'), 800);
+    }
+
+    // Housekeeping answers when you write to them
+    const housekeepingReplies = [
+        'On it!',
+        'Got it, thanks!',
+        "We'll send someone right away.",
+        'Sure thing, Front Desk!',
+        'No problem. Our mops are ready!'
+    ];
+
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        addChatMessage(chatInput.value.trim(), 'front-desk');
+        chatInput.value = '';
+        setTimeout(() => addChatMessage(pickRandom(housekeepingReplies), 'housekeeping'), 1500);
+    });
+
+    // In Game Mode, Housekeeping sends funny updates now and then
+    const housekeepingNews = [
+        'Room 304 is clean and sparkly!',
+        'We ran out of tiny soaps on floor 3. Sending more!',
+        'Found a rubber duck in Room 108. Does anyone want it back?',
+        'Snoopy is sleeping on the roof again.',
+        'The elevator smells like popcorn. Investigating!',
+        'Fresh sheets on the Seagull Floor are done.',
+        'Someone built a pillow fort on the Treetop Floor. It is very good.',
+        'We folded the towels into swans today!'
+    ];
+
+    function scheduleNextChat() {
+        if (!gameMode) return;
+        const seconds = 25 + Math.floor(Math.random() * 16); // 25 to 40
+        chatTimer = setTimeout(() => {
+            if (!gameMode) return;
+            addChatMessage(pickRandom(housekeepingNews), 'housekeeping');
+            scheduleNextChat();
+        }, seconds * 1000);
+    }
+
+    chatBubble.addEventListener('click', () => {
+        chatPanel.style.display = 'flex';
+        chatBubble.style.display = 'none';
+        unreadCount = 0;
+        chatUnread.style.display = 'none';
+        chatInput.focus();
+    });
+
+    chatClose.addEventListener('click', () => {
+        chatPanel.style.display = 'none';
+        chatBubble.style.display = 'flex';
+    });
+
+    // Housekeeping says hello when the page opens (quietly, no sound yet)
+    const hello = document.createElement('div');
+    hello.className = 'chat-message housekeeping';
+    hello.textContent = "Hi Front Desk! This is Housekeeping. We'll tell you here when we deliver things.";
+    chatMessages.appendChild(hello);
 
     // --- INITIALIZE ---
     renderReservations();

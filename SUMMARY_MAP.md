@@ -33,6 +33,19 @@ The core data is stored in the `reservations` array within `script.js`. Each obj
 *   **`rowColor` (String):** A reference to a specific CSS color variable used for styling.
 *   **`icon` (String):** A Font Awesome icon reference used for visual display.
 
+### Hotel Floors
+
+The `hotelFloors` list in `script.js` describes the building. Each floor has:
+*   **`floor` (Number):** The floor number. A room's floor is the first digit of its room number (room 221 is on floor 2).
+*   **`name` (String):** A fun name, e.g., 'Beach Floor' or 'Penthouse'.
+*   **`roomCount` (Number):** How many rooms the floor has (rooms are numbered x01, x02, ...).
+
+The Hotel Map uses this list to draw each floor, and new bookings only get rooms that exist on a floor.
+
+### Restaurants
+
+The `restaurants` list in `script.js` holds each restaurant's `name`, `icon`, `about` text and `tablesLeft`. A booking uses one table; at 0 the restaurant is FULL.
+
 ## 4. CSS Design & Theme
 
 The design prioritizes a simple, friendly, and functional interface, consistent with the "toy" aspect of the project.

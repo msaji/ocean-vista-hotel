@@ -14,10 +14,20 @@
     <div class="container">
         <header>
             <p id="datetime"></p>
+            <label class="game-switch">
+                <input type="checkbox" id="game-mode-toggle">
+                <span class="slider"></span>
+                <span class="game-switch-label"><i class="fas fa-gamepad"></i> GAME MODE</span>
+            </label>
         </header>
 
         <main>
             <h2>Scheduled Check-Ins Today <i class="fas fa-clock"></i></h2>
+            <!-- Guests who have arrived at the desk, in the order they arrived -->
+            <div id="arrival-queue" style="display: none;">
+                <h3><i class="fas fa-bell-concierge"></i> Waiting in Line</h3>
+                <ol id="arrival-queue-list"></ol>
+            </div>
             <div id="check-in-list">
                 <!-- Reservation rows will be injected here by JavaScript -->
             </div>
@@ -35,6 +45,7 @@
                 <a href="#" id="digital-key-link"><i class="fas fa-key"></i> DIGITAL ROOM KEY</a>
                 <a href="#" id="mobile-access-link"><i class="fas fa-mobile-alt"></i> MOBILE ACCESS</a>
                 <a href="#" id="restaurant-link"><i class="fas fa-utensils"></i> RESTAURANT</a>
+                <a href="#" id="hotel-map-link"><i class="fas fa-building"></i> HOTEL MAP</a>
             </div>
         </footer>
 
@@ -76,7 +87,25 @@
             <div class="modal-content">
                 <span class="close-btn">&times;</span>
                 <h3>Service Requests</h3>
+                <p id="service-score" class="service-score"><i class="fas fa-star"></i> Requests done: 0</p>
                 <ul id="service-requests-list"></ul>
+            </div>
+        </div>
+
+        <div id="hotel-map-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h3>Hotel Map</h3>
+                <select id="floor-select"></select>
+                <p id="floor-summary" class="floor-summary"></p>
+                <div id="floor-grid" class="floor-grid"></div>
+                <div class="map-legend">
+                    <span><i class="legend-box checked-in"></i> Checked in</span>
+                    <span><i class="legend-box booked"></i> Booked today</span>
+                    <span><i class="legend-box empty"></i> Empty</span>
+                    <span><i class="legend-box hallway"></i> Hallway</span>
+                </div>
+                <p id="room-info" class="room-info">Click a room to see who is staying there.</p>
             </div>
         </div>
 
@@ -86,10 +115,8 @@
                 <h3>Restaurant Reservation</h3>
                 <form id="restaurant-form">
                     <p>Which restaurant would you like?</p>
-                    <div class="restaurant-choices">
-                        <label><input type="radio" name="restaurant" value="The Coral Grill" required> <i class="fas fa-fish"></i> The Coral Grill <span>seafood by the sea</span></label>
-                        <label><input type="radio" name="restaurant" value="Dragon Pearl Dim Sum"> <i class="fas fa-bowl-rice"></i> Dragon Pearl Dim Sum <span>dumplings and buns</span></label>
-                        <label><input type="radio" name="restaurant" value="Seashell Tea Lounge"> <i class="fas fa-mug-hot"></i> Seashell Tea Lounge <span>tea and little cakes</span></label>
+                    <div class="restaurant-choices" id="restaurant-choices">
+                        <!-- Filled in by JavaScript from the restaurants list -->
                     </div>
                     <p>What is your name?</p>
                     <input type="text" id="restaurant-name-input" placeholder="e.g., Michael Saji" required>
@@ -153,6 +180,26 @@
                 </div>
             </div>
         </div>
+
+    <!-- Housekeeping chat, bottom right -->
+    <div id="chat-panel" class="chat-panel" style="display: none;">
+        <div class="chat-header">
+            <span><i class="fas fa-broom"></i> Housekeeping</span>
+            <button id="chat-close" class="chat-close" aria-label="Close chat">&times;</button>
+        </div>
+        <div id="chat-messages" class="chat-messages"></div>
+        <form id="chat-form" class="chat-form">
+            <input type="text" id="chat-input" placeholder="Message Housekeeping..." autocomplete="off" required>
+            <button type="submit" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
+        </form>
+    </div>
+    <button id="chat-bubble" class="chat-bubble" aria-label="Open Housekeeping chat">
+        <i class="fas fa-broom"></i> Housekeeping
+        <span id="chat-unread" class="chat-unread" style="display: none;">0</span>
+    </button>
+
+    <!-- Pop-up message for new arrivals and Game Mode -->
+    <div id="toast" class="toast"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
     <script src="script.js"></script>

@@ -64,6 +64,200 @@ header p {
     font-weight: 700;
 }
 
+/* Game Mode switch */
+.game-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.9em;
+}
+.game-switch input {
+    display: none;
+}
+.game-switch .slider {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.4);
+    transition: background-color 0.3s;
+}
+.game-switch .slider::before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: white;
+    transition: transform 0.3s;
+}
+.game-switch input:checked + .slider {
+    background-color: #28a745;
+}
+.game-switch input:checked + .slider::before {
+    transform: translateX(20px);
+}
+
+/* The line of guests waiting at the desk */
+#arrival-queue {
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    border: 3px solid gold;
+    border-radius: 15px;
+    background-color: #fffbe6;
+}
+#arrival-queue h3 {
+    margin: 5px 0;
+    color: var(--hotel-roof);
+}
+#arrival-queue-list li {
+    padding: 4px 0;
+    cursor: pointer;
+}
+#arrival-queue-list li:hover {
+    color: var(--accent-blue);
+}
+.arrived-badge {
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    background-color: gold;
+    color: var(--text-dark);
+    font-size: 0.6em;
+    vertical-align: middle;
+}
+
+/* Housekeeping chat, bottom right */
+.chat-bubble {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 900; /* below open windows (1000), so they cover it */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 30px;
+    background-color: #20a39e;
+    color: white;
+    font-family: var(--font-family);
+    font-size: 1em;
+    font-weight: 700;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    cursor: pointer;
+}
+.chat-unread {
+    min-width: 22px;
+    padding: 2px 6px;
+    border-radius: 11px;
+    background-color: var(--accent-red);
+    font-size: 0.8em;
+    text-align: center;
+}
+.chat-panel {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 900; /* below open windows (1000), so they cover it */
+    flex-direction: column;
+    width: min(320px, calc(100vw - 32px));
+    height: min(400px, calc(100vh - 32px));
+    border-radius: 16px;
+    background-color: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background-color: #20a39e;
+    color: white;
+    font-weight: 700;
+}
+.chat-close {
+    border: none;
+    background: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+.chat-messages {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    overflow-y: auto;
+    background-color: #f4fbfb;
+}
+.chat-message {
+    max-width: 80%;
+    padding: 8px 12px;
+    border-radius: 14px;
+    font-size: 0.9em;
+    line-height: 1.3;
+}
+.chat-message.housekeeping {
+    align-self: flex-start;
+    background-color: white;
+    border: 1px solid #d6eeee;
+}
+.chat-message.front-desk {
+    align-self: flex-end;
+    background-color: #20a39e;
+    color: white;
+}
+.chat-form {
+    display: flex;
+    gap: 6px;
+    padding: 8px;
+    border-top: 1px solid #eee;
+}
+.chat-form input {
+    flex-grow: 1;
+    min-width: 0;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 18px;
+    font-size: 0.9em;
+}
+.chat-form button {
+    padding: 0 14px;
+    border: none;
+    border-radius: 18px;
+    background-color: #20a39e;
+    color: white;
+    cursor: pointer;
+}
+
+/* Pop-up message at the top of the screen */
+.toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translate(-50%, -150%);
+    z-index: 2000;
+    max-width: calc(100% - 32px);
+    padding: 12px 20px;
+    border-radius: 12px;
+    background-color: var(--hotel-roof);
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    transition: transform 0.4s ease-out;
+}
+.toast.show {
+    transform: translate(-50%, 0);
+}
+
 main {
     padding: 20px;
     overflow-y: auto; /* Make the main content scrollable */
@@ -240,6 +434,26 @@ footer button {
     background-color: #733fa3;
 }
 
+/* The Service Requests button wiggles when a new request arrives */
+#service-requests-btn.wiggle {
+    animation: wiggle 0.6s ease-in-out;
+}
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0); }
+    20% { transform: rotate(-6deg) scale(1.08); }
+    40% { transform: rotate(6deg) scale(1.08); }
+    60% { transform: rotate(-4deg); }
+    80% { transform: rotate(4deg); }
+}
+
+.service-score {
+    font-weight: 700;
+    color: #8a4fbf;
+}
+.service-score i {
+    color: gold;
+}
+
 #service-requests-list {
     list-style: none;
     padding: 0;
@@ -270,6 +484,92 @@ footer button {
     color: #28a745;
 }
 
+/* Hotel Map */
+#floor-select {
+    padding: 8px 12px;
+    border: 2px solid var(--hotel-roof);
+    border-radius: 8px;
+    font-family: var(--font-family);
+    font-size: 1em;
+    font-weight: 700;
+}
+.floor-summary {
+    margin: 8px 0;
+    color: #777;
+}
+.floor-grid {
+    display: grid;
+    grid-template-columns: 1fr 70px 1fr; /* rooms | hallway | rooms */
+    gap: 6px 0;
+    max-height: 45vh;
+    overflow-y: auto;
+    padding: 4px;
+}
+.map-elevator {
+    grid-column: 1 / -1;
+    padding: 6px;
+    border-radius: 8px;
+    background-color: #c9d6e3;
+    font-weight: 700;
+    font-size: 0.85em;
+}
+.map-hallway {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 6px;
+    border-radius: 6px;
+    /* a striped carpet */
+    background: repeating-linear-gradient(0deg, #d8b4a0, #d8b4a0 12px, #e6c8b6 12px, #e6c8b6 24px);
+}
+.map-hallway span {
+    writing-mode: vertical-rl;
+    letter-spacing: 4px;
+    font-size: 0.75em;
+    font-weight: 900;
+    color: #7a5040;
+}
+.modal-content .room-cell {
+    margin: 0;
+    padding: 8px 4px;
+    border: 2px solid rgba(0,0,0,0.1);
+    border-radius: 8px;
+    color: var(--text-dark);
+    font-size: 0.9em;
+    font-weight: 700;
+    cursor: pointer;
+}
+.room-cell span {
+    display: block;
+}
+.room-cell.empty { background-color: #eeeeee; color: #999; }
+.room-cell.booked { background-color: #ffe48a; }
+.room-cell.checked-in { background-color: #8fdca0; }
+.map-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 10px;
+    font-size: 0.85em;
+}
+.legend-box {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    vertical-align: middle;
+}
+.legend-box.empty { background-color: #eeeeee; border: 1px solid #ccc; }
+.legend-box.booked { background-color: #ffe48a; }
+.legend-box.checked-in { background-color: #8fdca0; }
+.legend-box.hallway { background-color: #d8b4a0; }
+.room-info {
+    margin-top: 10px;
+    font-weight: 700;
+}
+
 /* Restaurant Reservation */
 .restaurant-choices {
     display: flex;
@@ -286,6 +586,24 @@ footer button {
 .restaurant-choices label:has(input:checked) {
     border-color: var(--accent-blue);
     background-color: #f0f8ff;
+}
+.restaurant-choices .tables-left {
+    float: right;
+    font-size: 0.8em;
+    font-style: normal;
+    color: #28a745;
+}
+.restaurant-choices label.full {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.restaurant-choices label.full .tables-left {
+    color: var(--accent-red);
+    font-weight: 900;
+}
+.restaurant-choices {
+    max-height: 45vh;
+    overflow-y: auto;
 }
 .restaurant-choices span {
     display: block;

@@ -18,7 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 15, guestName: 'Fox Mulder', confirmationCode: '#T890U', roomNumber: 119, roomType: 'Standard Queen', nights: 2, guestCount: 1, phone: '555-0115', email: 'fox.mulder@example.com', rowColor: 'var(--color-row5)', icon: 'fa-pastafarianism' },
         { id: 16, guestName: 'Gung Gung and Poh Poh', confirmationCode: '#GGPP1', roomNumber: 310, roomType: 'Deluxe King', nights: 50, guestCount: 2, phone: '555-0116', email: 'gung.gung.and.poh.poh@example.com', rowColor: 'var(--color-row1)', icon: 'fa-users' },
 		{ id: 17, guestName: 'Evelyn Holman', confirmationCode: '#148EH', roomNumber: 408, roomType: 'Junior Suite', nights: 21, guestCount: 1, phone: '555-0117', email: 'evelyn.holman@example.com', rowColor: 'var(--color-row5)', icon: 'fa-book' },
-        { id: 18, guestName: 'Kai-Mah', confirmationCode: '#KM18A', roomNumber: 312, roomType: 'Deluxe Queen', nights: 3, guestCount: 1, phone: '555-0118', email: 'kai.mah@example.com', rowColor: 'var(--color-row3)', icon: 'fa-star' }
+        { id: 18, guestName: 'Kai-Mah', confirmationCode: '#KM18A', roomNumber: 312, roomType: 'Deluxe Queen', nights: 3, guestCount: 1, phone: '555-0118', email: 'kai.mah@example.com', rowColor: 'var(--color-row3)', icon: 'fa-star' },
+        { id: 19, guestName: 'Alexander and Eliza Hamilton', confirmationCode: '#AEH10', roomNumber: 410, roomType: 'Junior Suite', nights: 3, guestCount: 2, phone: '555-0119', email: 'alexander.eliza.hamilton@example.com', rowColor: 'var(--color-row4)', icon: 'fa-feather' },
+        { id: 20, guestName: 'Charlie Brown and Snoopy', confirmationCode: '#CBSNP', roomNumber: 106, roomType: 'Standard Queen', nights: 4, guestCount: 2, phone: '555-0120', email: 'charlie.brown.snoopy@example.com', rowColor: 'var(--color-row5)', icon: 'fa-dog' },
+        { id: 21, guestName: 'Lucy Saji', confirmationCode: '#LUCY5', roomNumber: 109, roomType: 'Single', nights: 2, guestCount: 1, phone: '555-0121', email: 'lucy.saji@example.com', rowColor: 'var(--color-row1)', icon: 'fa-football' }
 	];
 
     // A copy of the full guest list. Checking in removes a guest from the
@@ -723,9 +726,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const restaurantNameInput = document.getElementById('restaurant-name-input');
     const restaurantResult = document.getElementById('restaurant-result');
 
+    const restaurantChoices = document.getElementById('restaurant-choices');
+
+    // The hotel's restaurants. Each booking uses up one table.
+    // When tablesLeft reaches 0, the restaurant is FULL.
+    const restaurants = [
+        { name: 'The Coral Grill', icon: 'fa-fish', about: 'seafood by the sea', tablesLeft: 4 },
+        { name: 'Dragon Pearl Dim Sum', icon: 'fa-bowl-rice', about: 'dumplings and buns on spinning tables', tablesLeft: 3 },
+        { name: 'Seashell Tea Lounge', icon: 'fa-mug-hot', about: 'tea and little cakes, pinkies up', tablesLeft: 2 },
+        { name: "Captain Crunchy's Pirate Ship", icon: 'fa-skull-crossbones', about: 'eat on a real ship; say "Arrr!" to order', tablesLeft: 4 },
+        { name: 'The Upside-Down Pancake House', icon: 'fa-egg', about: 'breakfast for dinner, syrup for everyone', tablesLeft: 3 },
+        { name: 'Submarine Sushi Bar', icon: 'fa-water', about: 'sushi with fish tank windows all around', tablesLeft: 2 },
+        { name: 'Gelato Volcano', icon: 'fa-ice-cream', about: 'ice cream that erupts with sprinkles', tablesLeft: 5 },
+        { name: 'Mermaid Lagoon Pizza', icon: 'fa-pizza-slice', about: 'pizza by the pool, mermaid tails optional', tablesLeft: 0 },
+        { name: 'Midnight Moon Café', icon: 'fa-moon', about: 'dinner under the stars on the roof', tablesLeft: 1 }
+    ];
+
+    function renderRestaurantChoices() {
+        restaurantChoices.innerHTML = '';
+        restaurants.forEach((r, i) => {
+            const full = r.tablesLeft === 0;
+            const label = document.createElement('label');
+            if (full) label.classList.add('full');
+            label.innerHTML = `
+                <input type="radio" name="restaurant" value="${i}" ${full ? 'disabled' : ''} required>
+                <i class="fas ${r.icon}"></i> ${r.name}
+                <em class="tables-left">${full ? 'FULL' : (r.tablesLeft === 1 ? '1 table left' : r.tablesLeft + ' tables left')}</em>
+                <span>${r.about}</span>
+            `;
+            restaurantChoices.appendChild(label);
+        });
+    }
+
     restaurantLink.addEventListener('click', (e) => {
         e.preventDefault();
         restaurantForm.reset();
+        renderRestaurantChoices();
         restaurantForm.style.display = 'block';
         restaurantResult.style.display = 'none';
         openModal(restaurantModal);
@@ -733,7 +769,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     restaurantForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const restaurant = restaurantForm.querySelector('input[name="restaurant"]:checked').value;
+        const chosen = restaurants[Number(restaurantForm.querySelector('input[name="restaurant"]:checked').value)];
+        if (chosen.tablesLeft === 0) return; // full: can't book
+        chosen.tablesLeft--;
+        const restaurant = chosen.name;
+        sounds.newBooking();
         const name = restaurantNameInput.value.trim();
 
         // If the name belongs to a hotel guest, mention their room too

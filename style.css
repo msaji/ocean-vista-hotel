@@ -395,6 +395,24 @@ footer button {
     border-color: var(--accent-blue);
     background-color: #f0f8ff;
 }
+.restaurant-choices .tables-left {
+    float: right;
+    font-size: 0.8em;
+    font-style: normal;
+    color: #28a745;
+}
+.restaurant-choices label.full {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.restaurant-choices label.full .tables-left {
+    color: var(--accent-red);
+    font-weight: 900;
+}
+.restaurant-choices {
+    max-height: 45vh;
+    overflow-y: auto;
+}
 .restaurant-choices span {
     display: block;
     margin-left: 24px;

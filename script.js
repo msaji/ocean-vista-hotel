@@ -43,8 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobilePlannerModal = document.getElementById('mobile-planner-modal');
     const checkedInModal = document.getElementById('checked-in-modal');
     const serviceRequestsModal = document.getElementById('service-requests-modal');
+    const restaurantModal = document.getElementById('restaurant-modal');
     const newReservationModal = document.getElementById('new-reservation-modal');
-    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, mobileAccessInputModal, mobilePlannerModal, checkedInModal, newReservationModal, serviceRequestsModal];
+    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, mobileAccessInputModal, mobilePlannerModal, checkedInModal, newReservationModal, serviceRequestsModal, restaurantModal];
     const checkInModalText = document.getElementById('check-in-modal-text');
     const confirmCheckInBtn = document.getElementById('confirm-check-in-btn');
     const contactInfoBtn = document.getElementById('contact-info-btn');
@@ -548,6 +549,41 @@ document.addEventListener('DOMContentLoaded', () => {
         keyNameForm.style.display = 'none';
         keyError.style.display = 'none';
         keyResult.style.display = 'block';
+    });
+
+    // --- RESTAURANT RESERVATIONS ---
+    const restaurantLink = document.getElementById('restaurant-link');
+    const restaurantForm = document.getElementById('restaurant-form');
+    const restaurantNameInput = document.getElementById('restaurant-name-input');
+    const restaurantResult = document.getElementById('restaurant-result');
+
+    restaurantLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        restaurantForm.reset();
+        restaurantForm.style.display = 'block';
+        restaurantResult.style.display = 'none';
+        openModal(restaurantModal);
+    });
+
+    restaurantForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const restaurant = restaurantForm.querySelector('input[name="restaurant"]:checked').value;
+        const name = restaurantNameInput.value.trim();
+
+        // If the name belongs to a hotel guest, mention their room too
+        const guest = findGuest(name);
+        const roomNote = guest && guest.guestName.toLowerCase() === name.toLowerCase()
+            ? ` We'll find you in Room ${guest.roomNumber} if we need you.`
+            : '';
+
+        restaurantResult.innerHTML = `
+            <p><i class="fas fa-check-circle"></i> <strong>Table booked!</strong></p>
+            <p></p>
+        `;
+        // textContent shows the name exactly as typed
+        restaurantResult.querySelectorAll('p')[1].textContent = `${restaurant} is ready for ${name}.${roomNote}`;
+        restaurantForm.style.display = 'none';
+        restaurantResult.style.display = 'block';
     });
 
     mobileAccessLink.addEventListener('click', (e) => {

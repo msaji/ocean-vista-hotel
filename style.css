@@ -270,27 +270,54 @@ footer button {
     color: #28a745;
 }
 
-/* On small screens, let the whole page scroll so the guest list has room,
-   and make the footer buttons smaller so they all fit */
-@media (max-width: 600px) {
-    .container {
-        max-height: none;
-    }
-    main {
-        overflow-y: visible;
-    }
-    .footer-buttons {
-        gap: 8px;
-        margin-bottom: 10px;
-    }
-    footer button {
-        padding: 10px 12px;
-        font-size: 0.8em;
-    }
+/* Restaurant Reservation */
+.restaurant-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+}
+.restaurant-choices label {
+    padding: 10px 12px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.restaurant-choices label:has(input:checked) {
+    border-color: var(--accent-blue);
+    background-color: #f0f8ff;
+}
+.restaurant-choices span {
+    display: block;
+    margin-left: 24px;
+    font-size: 0.85em;
+    color: #777;
+}
+#restaurant-name-input {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+    text-align: center;
+}
+#restaurant-form button {
+    display: block;
+    margin: 15px auto 0;
+}
+.restaurant-result {
+    margin-top: 10px;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #e8f7ec;
+}
+.restaurant-result i {
+    color: #28a745;
 }
 
 .footer-links {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     gap: 30px;
 }
@@ -479,4 +506,26 @@ footer button {
 
 #planner-schedule li strong {
     color: var(--hotel-roof);
+}
+
+/* On small screens, let the whole page scroll so the guest list has room,
+   and make the footer buttons smaller so they all fit */
+@media (max-width: 600px) {
+    .container {
+        max-height: none;
+    }
+    main {
+        overflow-y: visible;
+    }
+    .footer-buttons {
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+    footer button {
+        padding: 10px 12px;
+        font-size: 0.8em;
+    }
+    .footer-links {
+        gap: 10px 20px;
+    }
 }

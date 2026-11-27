@@ -159,11 +159,13 @@ document.addEventListener('DOMContentLoaded', () => {
         detailsText: ''
     };
 
-    const upgradeRoomSelector = document.getElementById('upgrade-room-selector');
-    const upgradeConfirmationText = document.getElementById('upgrade-confirmation-text');
-    const upgradeDetailsTextarea = document.getElementById('upgrade-details-textarea');
-    const upgradeConfirmBtn = document.getElementById('upgrade-confirm-btn');
-    const upgradeNextBtn = document.getElementById('upgrade-next-btn');
+    // These parts only exist after initializeUpgradeModal() builds the window,
+    // so we look them up there instead of when the page first loads.
+    let upgradeConfirmationText = null;
+    let upgradeDetailsTextarea = null;
+    let upgradeConfirmBtn = null;
+    let upgradeNextBtn = null;
+    let upgradeMessage = null;
 
     function initializeUpgradeModal(reservationId) {
         upgradeState.selectedReservationId = reservationId;
@@ -171,51 +173,50 @@ document.addEventListener('DOMContentLoaded', () => {
         upgradeState.selectedRoom = null;
         upgradeState.detailsText = '';
 
-        // Clear modal content
+        // Build the upgrade window
         upgradeModal.innerHTML = `
             <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Upgrade Room</h3>
-                    <button class="close-btn">&times;</button>
+                <span class="close-btn">&times;</span>
+                <h3>Upgrade Room</h3>
+                <div id="room-options-container">
+                    <p>Pick the room you'd like to upgrade to:</p>
+                    <button class="room-option" data-room="Standard">Standard</button>
+                    <button class="room-option" data-room="Suite">Suite</button>
+                    <button class="room-option" data-room="Deluxe">Deluxe</button>
                 </div>
-                <div class="modal-body">
-                    <p>Select the room type you wish to upgrade to for this reservation.</p>
-                    <div class="room-options" id="room-options-container">
-                        <button class="room-option" data-room="Standard">Standard</button>
-                        <button class="room-option" data-room="Suite">Suite</button>
-                        <button class="room-option" data-room="Deluxe">Deluxe</button>
-                    </div>
-                    <div id="upgrade-step-content" style="display: none;">
-                        <p id="upgrade-confirmation-text"></p>
-                        <textarea id="upgrade-details-textarea" placeholder="Enter special requests..."></textarea>
-                        <div class="modal-actions">
-                            <button id="upgrade-next-btn" class="primary-btn">Next</button>
-                            <button id="upgrade-confirm-btn" class="primary-btn" style="display: none;">Confirm Upgrade</button>
-                            <button class="secondary-btn">Cancel</button>
-                        </div>
+                <div id="upgrade-step-content" style="display: none;">
+                    <p id="upgrade-confirmation-text"></p>
+                    <textarea id="upgrade-details-textarea" placeholder="Enter special requests..."></textarea>
+                    <div class="modal-actions">
+                        <button id="upgrade-next-btn">Next</button>
+                        <button id="upgrade-confirm-btn" style="display: none;">Confirm Upgrade</button>
+                        <button class="secondary-btn">Cancel</button>
                     </div>
                 </div>
+                <div id="upgrade-message" class="confirmation-message"></div>
             </div>
         `;
 
-        document.getElementById('upgrade-modal').querySelector('.close-btn').addEventListener('click', () => closeModal(upgradeModal));
+        // Now that the window is built, find its parts
+        upgradeConfirmationText = document.getElementById('upgrade-confirmation-text');
+        upgradeDetailsTextarea = document.getElementById('upgrade-details-textarea');
+        upgradeConfirmBtn = document.getElementById('upgrade-confirm-btn');
+        upgradeNextBtn = document.getElementById('upgrade-next-btn');
+        upgradeMessage = document.getElementById('upgrade-message');
 
-        // Attach listeners for the new structure
-        document.querySelectorAll('.room-option').forEach(button => {
+        upgradeModal.querySelector('.close-btn').addEventListener('click', () => closeModal(upgradeModal));
+        upgradeModal.querySelectorAll('.room-option').forEach(button => {
             button.addEventListener('click', handleRoomSelection);
         });
-
         upgradeNextBtn.addEventListener('click', handleNextStep);
         upgradeConfirmBtn.addEventListener('click', handleFinalConfirmation);
-        document.querySelector('#upgrade-modal .secondary-btn').addEventListener('click', () => closeModal(upgradeModal));
+        upgradeModal.querySelector('.secondary-btn').addEventListener('click', () => closeModal(upgradeModal));
 
-        // Initial state render
         renderUpgradeStep();
     }
 
     function handleRoomSelection(e) {
-        const room = e.target.dataset.room;
-        upgradeState.selectedRoom = room;
+        upgradeState.selectedRoom = e.target.dataset.room;
         upgradeState.step = 'confirmation';
         renderUpgradeStep();
     }
@@ -229,31 +230,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleFinalConfirmation() {
         upgradeState.step = 'complete';
+        upgradeState.detailsText = upgradeDetailsTextarea.value;
 
-        const finalDetails = upgradeState.detailsText;
         const finalRoom = upgradeState.selectedRoom;
-        const reservationId = upgradeState.selectedReservationId;
+        const reservation = reservations.find(r => r.id === upgradeState.selectedReservationId);
 
-        const reservationIndex = reservations.findIndex(r => r.id === reservationId);
-
-        if (reservationIndex !== -1) {
+        if (reservation) {
             // 1. Update room type
-            reservations[reservationIndex].roomType = finalRoom;
-            // 2. Increase number of nights
-            reservations[reservationIndex].nights += 1;
+            reservation.roomType = finalRoom;
+            // 2. Add a bonus night
+            reservation.nights += 1;
+            // 3. Turn the row purple to show it was upgraded
+            reservation.rowColor = 'var(--color-upgrade-success)';
 
-            // 3. Set new color (using purple as a placeholder for the requested color)
-            reservations[reservationIndex].rowColor = 'var(--color-upgrade-success)'; // Assuming we define a CSS variable for upgrade success
+            // 4. Show a success message inside the upgrade window
+            document.getElementById('upgrade-step-content').style.display = 'none';
+            upgradeMessage.textContent = `SUCCESS! Room upgraded to ${finalRoom}. Stay extended by 1 night.`;
+            upgradeMessage.classList.add('show');
 
-            // 4. Display confirmation message
-            confirmationMsg.textContent = `SUCCESS! Room upgraded to ${finalRoom}. Stay extended by 1 night.`;
-            confirmationMsg.classList.add('show');
-
-            // 5. Hide confirmation message after 2 seconds
+            // 5. After 2 seconds, close the window and redraw the guest list
             setTimeout(() => {
-                confirmationMsg.classList.remove('show');
+                upgradeMessage.classList.remove('show');
                 closeModal(upgradeModal);
-                // Rerender reservations to reflect the change
                 renderReservations();
             }, 2000);
         } else {
@@ -265,29 +263,30 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderUpgradeStep() {
         const stepContent = document.getElementById('upgrade-step-content');
         const roomOptions = document.getElementById('room-options-container');
-        upgradeConfirmationText.textContent = '';
-        upgradeDetailsTextarea.value = '';
-        upgradeConfirmBtn.style.display = 'none';
-        upgradeNextBtn.style.display = 'none';
 
+        // Start with the room choices showing and everything else hidden
         roomOptions.style.display = 'block';
         stepContent.style.display = 'none';
+        upgradeConfirmationText.style.display = 'none';
+        upgradeDetailsTextarea.style.display = 'none';
+        upgradeNextBtn.style.display = 'none';
+        upgradeConfirmBtn.style.display = 'none';
 
         switch (upgradeState.step) {
             case 'selection':
-                // Render room options (already in HTML setup)
                 break;
             case 'confirmation':
                 roomOptions.style.display = 'none';
                 stepContent.style.display = 'block';
                 upgradeConfirmationText.textContent = `Are you sure you want to upgrade to ${upgradeState.selectedRoom}?`;
-                upgradeNextBtn.style.display = 'block';
+                upgradeConfirmationText.style.display = 'block';
+                upgradeNextBtn.style.display = 'inline-block';
                 break;
             case 'details':
-                upgradeConfirmationText.style.display = 'none';
+                roomOptions.style.display = 'none';
+                stepContent.style.display = 'block';
                 upgradeDetailsTextarea.style.display = 'block';
-                upgradeNextBtn.style.display = 'none';
-                upgradeConfirmBtn.style.display = 'block';
+                upgradeConfirmBtn.style.display = 'inline-block';
                 break;
         }
     }

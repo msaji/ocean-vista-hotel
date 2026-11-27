@@ -41,7 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileAccessInputModal = document.getElementById('mobile-access-input-modal');
     const mobilePlannerModal = document.getElementById('mobile-planner-modal');
     const checkedInModal = document.getElementById('checked-in-modal');
-    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, mobileAccessInputModal, mobilePlannerModal, checkedInModal];
+    const newReservationModal = document.getElementById('new-reservation-modal');
+    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, mobileAccessInputModal, mobilePlannerModal, checkedInModal, newReservationModal];
     const checkInModalText = document.getElementById('check-in-modal-text');
     const confirmCheckInBtn = document.getElementById('confirm-check-in-btn');
     const plannerContent = document.getElementById('planner-content');
@@ -166,6 +167,78 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FOOTER EVENT LISTENERS ---
     availableRoomsBtn.addEventListener('click', () => openModal(roomsModal));
+
+    // --- ADD A NEW RESERVATION ---
+    const addReservationBtn = document.getElementById('add-reservation-btn');
+    const newReservationForm = document.getElementById('new-reservation-form');
+    const newGuestNameInput = document.getElementById('new-guest-name-input');
+
+    // The new booking gets a surprise room. The first digit of the room is its floor.
+    const newRoomChoices = [
+        { roomType: 'Standard King', floor: 1 },
+        { roomType: 'Standard Queen', floor: 1 },
+        { roomType: 'Deluxe King', floor: 3 },
+        { roomType: 'Junior Suite', floor: 4 }
+    ];
+    const newIcons = ['fa-umbrella-beach', 'fa-fish', 'fa-anchor', 'fa-sun', 'fa-star', 'fa-heart'];
+
+    function pickRandom(list) {
+        return list[Math.floor(Math.random() * list.length)];
+    }
+
+    // Make a code like "#K7Q2M" that no other guest has
+    function makeConfirmationCode() {
+        const letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let code;
+        do {
+            code = '#';
+            for (let i = 0; i < 5; i++) code += pickRandom(letters.split(''));
+        } while (allGuests.some(g => g.confirmationCode === code));
+        return code;
+    }
+
+    // Find the first free room on a floor, e.g. 101, 102, 103...
+    function findFreeRoom(floor) {
+        let room = floor * 100 + 1;
+        while (allGuests.some(g => g.roomNumber === room)) room++;
+        return room;
+    }
+
+    addReservationBtn.addEventListener('click', () => {
+        newGuestNameInput.value = '';
+        openModal(newReservationModal);
+        newGuestNameInput.focus();
+    });
+
+    newReservationForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const choice = pickRandom(newRoomChoices);
+        const newId = Math.max(0, ...allGuests.map(g => g.id)) + 1;
+
+        const newReservation = {
+            id: newId,
+            guestName: newGuestNameInput.value.trim(),
+            confirmationCode: makeConfirmationCode(),
+            roomNumber: findFreeRoom(choice.floor),
+            roomType: choice.roomType,
+            nights: 1 + Math.floor(Math.random() * 5), // 1 to 5 nights
+            guestCount: 1,
+            rowColor: `var(--color-row${(newId % 5) + 1})`,
+            icon: pickRandom(newIcons)
+        };
+
+        // Add it to both lists: the one on screen and the full guest book
+        reservations.push(newReservation);
+        allGuests.push(newReservation);
+
+        closeModal(newReservationModal);
+        renderReservations();
+
+        // Scroll to the new booking and make it glow
+        const newRow = document.getElementById(`res-${newId}`);
+        newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        newRow.classList.add('new-row');
+    });
 
     // --- CHECKED-IN GUESTS ---
     // A guest has checked in if they are in the full guest list

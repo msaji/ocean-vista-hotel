@@ -311,15 +311,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     digitalKeyLink.addEventListener('click', (e) => {
         e.preventDefault();
-        // Use the first reservation's conf code as an example
-        const sampleCode = reservations.length > 0 ? reservations[0].confirmationCode : "A1B2C3D4";
-        JsBarcode("#barcode", sampleCode.replace('#', ''), {
-            format: "CODE128",
-            lineColor: "#000",
-            width: 2,
-            height: 100,
-            displayValue: true
-        });
+        // Use the first guest on the list as an example
+        const guest = reservations.length > 0 ? reservations[0] : { guestName: 'Guest', confirmationCode: '#A1B2C3' };
+
+        // Make a QR code holding a short message about the key
+        const qr = qrcode(0, 'M');
+        qr.addData(`Ocean Vista Hotel room key for ${guest.guestName}, confirmation ${guest.confirmationCode}`);
+        qr.make();
+        document.getElementById('qrcode').innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2, scalable: true });
+        document.getElementById('qrcode-label').textContent = `${guest.guestName} · ${guest.confirmationCode}`;
         openModal(barcodeModal);
     });
 

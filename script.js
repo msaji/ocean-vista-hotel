@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 14, guestName: 'Dana Scully', confirmationCode: '#R567S', roomNumber: 118, roomType: 'Standard Queen', nights: 2, guestCount: 1, rowColor: 'var(--color-row4)', icon: 'fa-satellite' },
         { id: 15, guestName: 'Fox Mulder', confirmationCode: '#T890U', roomNumber: 119, roomType: 'Standard Queen', nights: 2, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-pastafarianism' },
         { id: 16, guestName: 'Gung Gung and Poh Poh', confirmationCode: '#GGPP1', roomNumber: 310, roomType: 'Deluxe King', nights: 50, guestCount: 2, rowColor: 'var(--color-row1)', icon: 'fa-users' },
-		{ id: 17, guestName: 'Evelyn Holman', confirmationCode: '#148EH', roomNumber: 408, roomType: 'Junior Suite', nights: 21, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-book' }
+		{ id: 17, guestName: 'Evelyn Holman', confirmationCode: '#148EH', roomNumber: 408, roomType: 'Junior Suite', nights: 21, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-book' },
+        { id: 18, guestName: 'Kai-Mah', confirmationCode: '#KM18A', roomNumber: 312, roomType: 'Deluxe Queen', nights: 3, guestCount: 1, rowColor: 'var(--color-row3)', icon: 'fa-star' }
 	];
 
     // A copy of the full guest list. Checking in removes a guest from the

@@ -1,23 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- DATA ---
     const reservations = [
-        { id: 1, guestName: 'Michael Saji', confirmationCode: '#A735B', roomType: 'Suite King', nights: 1, guestCount: 4, rowColor: 'var(--color-row1)', icon: 'fa-sun' },
-        { id: 2, guestName: 'David Lee & Sarah Brown', confirmationCode: '#A70B', roomType: 'Deluxe Queen', nights: 1, guestCount: 9, rowColor: 'var(--color-row2)', icon: 'fa-ship' },
-        { id: 3, guestName: 'David Lee', confirmationCode: '#700B', roomType: 'Premier Suite', nights: 3, guestCount: 5, rowColor: 'var(--color-row3)', icon: 'fa-cloud' },
-        { id: 4, guestName: 'James Wilson', confirmationCode: '#EXETUBLE', roomType: 'Standard King', nights: 4, guestCount: 1, rowColor: 'var(--color-row4)', icon: 'fa-palm-tree' },
-        { id: 5, guestName: 'Jenjamin Green', confirmationCode: '#A728IE', roomType: 'Junior Suite', nights: 3, guestCount: 3, rowColor: 'var(--color-row5)', icon: 'fa-treasure-chest' },
-        { id: 6, guestName: 'Emily Clark', confirmationCode: '#C123D', roomType: 'Standard Queen', nights: 2, guestCount: 1, rowColor: 'var(--color-row1)', icon: 'fa-star' },
-        { id: 7, guestName: 'Michael Scott', confirmationCode: '#D456E', roomType: 'Presidential Suite', nights: 1, guestCount: 2, rowColor: 'var(--color-row2)', icon: 'fa-crown' },
-        { id: 8, guestName: 'Jessica Day', confirmationCode: '#F789G', roomType: 'Loft', nights: 5, guestCount: 1, rowColor: 'var(--color-row3)', icon: 'fa-couch' },
-        { id: 9, guestName: 'Walter White', confirmationCode: '#H012I', roomType: 'Standard King', nights: 3, guestCount: 2, rowColor: 'var(--color-row4)', icon: 'fa-flask' },
-        { id: 10, guestName: 'Liz Lemon', confirmationCode: '#J345K', roomType: 'Deluxe King', nights: 2, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-pencil-alt' },
-        { id: 11, guestName: 'Ron Swanson', confirmationCode: '#L678M', roomType: 'Cabin', nights: 7, guestCount: 1, rowColor: 'var(--color-row1)', icon: 'fa-tree' },
-        { id: 12, guestName: 'Arya Stark', confirmationCode: '#N901O', roomType: 'Single', nights: 1, guestCount: 1, rowColor: 'var(--color-row2)', icon: 'fa-user-ninja' },
-        { id: 13, guestName: 'Sherlock Holmes', confirmationCode: '#P234Q', roomType: 'Study', nights: 4, guestCount: 2, rowColor: 'var(--color-row3)', icon: 'fa-search' },
-        { id: 14, guestName: 'Dana Scully', confirmationCode: '#R567S', roomType: 'Standard Queen', nights: 2, guestCount: 1, rowColor: 'var(--color-row4)', icon: 'fa-satellite' },
-        { id: 15, guestName: 'Fox Mulder', confirmationCode: '#T890U', roomType: 'Standard Queen', nights: 2, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-pastafarianism' },
-        { id: 16, guestName: 'Gung Gung and Poh Poh', confirmationCode: '#GGPP1', roomType: 'Deluxe King', nights: 50, guestCount: 2, rowColor: 'var(--color-row1)', icon: 'fa-users' },
-		{ id: 17, guestName: 'Evelyn Holman', confirmationCode: '#148EH', roomType: 'Junior Suite', nights: 21, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-book' }
+        { id: 1, guestName: 'Michael Saji', confirmationCode: '#A735B', roomNumber: 501, roomType: 'Suite King', nights: 1, guestCount: 4, rowColor: 'var(--color-row1)', icon: 'fa-sun' },
+        { id: 2, guestName: 'David Lee & Sarah Brown', confirmationCode: '#A70B', roomNumber: 304, roomType: 'Deluxe Queen', nights: 1, guestCount: 9, rowColor: 'var(--color-row2)', icon: 'fa-ship' },
+        { id: 3, guestName: 'David Lee', confirmationCode: '#700B', roomNumber: 502, roomType: 'Premier Suite', nights: 3, guestCount: 5, rowColor: 'var(--color-row3)', icon: 'fa-cloud' },
+        { id: 4, guestName: 'James Wilson', confirmationCode: '#EXETUBLE', roomNumber: 112, roomType: 'Standard King', nights: 4, guestCount: 1, rowColor: 'var(--color-row4)', icon: 'fa-palm-tree' },
+        { id: 5, guestName: 'Jenjamin Green', confirmationCode: '#A728IE', roomNumber: 405, roomType: 'Junior Suite', nights: 3, guestCount: 3, rowColor: 'var(--color-row5)', icon: 'fa-treasure-chest' },
+        { id: 6, guestName: 'Emily Clark', confirmationCode: '#C123D', roomNumber: 108, roomType: 'Standard Queen', nights: 2, guestCount: 1, rowColor: 'var(--color-row1)', icon: 'fa-star' },
+        { id: 7, guestName: 'Michael Scott', confirmationCode: '#D456E', roomNumber: 801, roomType: 'Presidential Suite', nights: 1, guestCount: 2, rowColor: 'var(--color-row2)', icon: 'fa-crown' },
+        { id: 8, guestName: 'Jessica Day', confirmationCode: '#F789G', roomNumber: 610, roomType: 'Loft', nights: 5, guestCount: 1, rowColor: 'var(--color-row3)', icon: 'fa-couch' },
+        { id: 9, guestName: 'Walter White', confirmationCode: '#H012I', roomNumber: 115, roomType: 'Standard King', nights: 3, guestCount: 2, rowColor: 'var(--color-row4)', icon: 'fa-flask' },
+        { id: 10, guestName: 'Liz Lemon', confirmationCode: '#J345K', roomNumber: 307, roomType: 'Deluxe King', nights: 2, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-pencil-alt' },
+        { id: 11, guestName: 'Ron Swanson', confirmationCode: '#L678M', roomNumber: 701, roomType: 'Cabin', nights: 7, guestCount: 1, rowColor: 'var(--color-row1)', icon: 'fa-tree' },
+        { id: 12, guestName: 'Arya Stark', confirmationCode: '#N901O', roomNumber: 104, roomType: 'Single', nights: 1, guestCount: 1, rowColor: 'var(--color-row2)', icon: 'fa-user-ninja' },
+        { id: 13, guestName: 'Sherlock Holmes', confirmationCode: '#P234Q', roomNumber: 221, roomType: 'Study', nights: 4, guestCount: 2, rowColor: 'var(--color-row3)', icon: 'fa-search' },
+        { id: 14, guestName: 'Dana Scully', confirmationCode: '#R567S', roomNumber: 118, roomType: 'Standard Queen', nights: 2, guestCount: 1, rowColor: 'var(--color-row4)', icon: 'fa-satellite' },
+        { id: 15, guestName: 'Fox Mulder', confirmationCode: '#T890U', roomNumber: 119, roomType: 'Standard Queen', nights: 2, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-pastafarianism' },
+        { id: 16, guestName: 'Gung Gung and Poh Poh', confirmationCode: '#GGPP1', roomNumber: 310, roomType: 'Deluxe King', nights: 50, guestCount: 2, rowColor: 'var(--color-row1)', icon: 'fa-users' },
+		{ id: 17, guestName: 'Evelyn Holman', confirmationCode: '#148EH', roomNumber: 408, roomType: 'Junior Suite', nights: 21, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-book' }
 	];
 
     // A copy of the full guest list. Checking in removes a guest from the
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p class="conf-code">CONFIRMATION: ${res.confirmationCode}, ${res.guestCount} GUESTS</p>
                     </div>
                     <div class="room-info">
-                        <p class="details">${res.roomType}, ${res.nights} NIGHTS</p>
+                        <p class="details">ROOM ${res.roomNumber} &middot; ${res.roomType}, ${res.nights} NIGHTS</p>
                     </div>
                     <div class="icon">
                         <i class="fas ${res.icon}"></i>
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const reservation = reservations.find(r => r.id === reservationId);
         if (reservation) {
             activeReservationId = reservationId;
-            checkInModalText.textContent = `Ready to check in ${reservation.guestName}? Room: ${reservation.roomType}`;
+            checkInModalText.textContent = `Ready to check in ${reservation.guestName}? Room ${reservation.roomNumber} (${reservation.roomType})`;
             openModal(checkInModal);
         }
     }
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             guests.forEach(g => {
                 const item = document.createElement('li');
-                item.innerHTML = `<i class="fas ${g.icon}"></i> <strong>${g.guestName}</strong> &middot; ${g.roomType}, ${g.nights} NIGHTS`;
+                item.innerHTML = `<i class="fas ${g.icon}"></i> <strong>${g.guestName}</strong> &middot; Room ${g.roomNumber}, ${g.roomType}, ${g.nights} NIGHTS`;
                 checkedInList.appendChild(item);
             });
         }
@@ -381,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Each guest's message is different, so each QR code is different
         const qr = qrcode(0, 'M');
-        qr.addData(`Ocean Vista Hotel room key for ${guest.guestName}, room ${guest.roomType}, confirmation ${guest.confirmationCode}`);
+        qr.addData(`Ocean Vista Hotel room key for ${guest.guestName}, room ${guest.roomNumber} (${guest.roomType}), confirmation ${guest.confirmationCode}`);
         qr.make();
         document.getElementById('qrcode').innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2, scalable: true });
         document.getElementById('qrcode-label').textContent = `${guest.guestName} \u00b7 ${guest.confirmationCode}`;
@@ -480,6 +480,7 @@ document.addEventListener('DOMContentLoaded', () => {
         plannerContent.innerHTML = `
             <h2>${reservation.guestName}'s Stay Planner</h2>
             <p><strong>Confirmation:</strong> ${reservation.confirmationCode}</p>
+            <p><strong>Room Number:</strong> ${reservation.roomNumber}</p>
             <p><strong>Room Type:</strong> ${reservation.roomType}</p>
             <p><strong>Guests:</strong> ${reservation.guestCount}</p>
             <p><strong>Nights:</strong> ${reservation.nights}</p>

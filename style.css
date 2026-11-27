@@ -158,6 +158,7 @@ footer {
 
 .footer-buttons {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     gap: 20px;
     margin-bottom: 20px;
@@ -187,6 +188,22 @@ footer button {
 }
 #upgrade-room-btn:hover {
     background-color: #e0553c;
+}
+#checked-in-btn {
+    background-color: #28a745;
+}
+#checked-in-btn:hover {
+    background-color: #218838;
+}
+
+#checked-in-list {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+}
+#checked-in-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
 }
 
 .footer-links {

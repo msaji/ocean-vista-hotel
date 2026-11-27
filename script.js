@@ -201,6 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const reservation = reservations.find(r => r.id === reservationId);
         if (reservation) {
             activeReservationId = reservationId;
+            confirmationMsg.classList.remove('show'); // clear the last guest's message
             checkInModalText.textContent = `Ready to check in ${reservation.guestName}? Room ${reservation.roomNumber} (${reservation.roomType})`;
 
             // Hide any contact info shown for the last guest
@@ -223,39 +224,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     confirmCheckInBtn.addEventListener('click', () => {
-        // 4. Display confirmation message
+        // 1. Remember exactly which guest we are checking in, right now.
+        //    The later steps use this guest, never the "active guest" note,
+        //    because that note changes as soon as another window is opened.
+        const guest = reservations.find(r => r.id === activeReservationId);
+        if (!guest) return; // already checked in (e.g. Confirm pressed twice)
+        activeReservationId = null;
+
+        // 2. Check them in straight away, so there is no moment where they are
+        //    half checked in. Only the message and the fade-out wait.
+        reservations.splice(reservations.indexOf(guest), 1);
+        removeFromArrivalQueue(guest);
+        makeServiceRequests(guest);
+        updateCheckedInCount();
+
+        // 3. Show the success message
         sounds.checkIn();
         confirmationMsg.textContent = 'Check-in Successful!';
         confirmationMsg.classList.add('show');
 
-        // 5. Hide confirmation message after 2 seconds
+        // 4. After 2 seconds, hide the message and fade out this guest's row
         setTimeout(() => {
             confirmationMsg.classList.remove('show');
-            closeModal(checkInModal);
+            // Close the window unless another guest's window was opened meanwhile
+            if (activeReservationId === null) closeModal(checkInModal);
 
-            if (activeReservationId) {
-                const rowToRemove = document.getElementById(`res-${activeReservationId}`);
-                if (rowToRemove) {
-                    // 1. Start fade-out animation
-                    rowToRemove.classList.add('fade-out');
-
-                    // 2. Wait for the animation to complete (0.5s defined in CSS)
-                    setTimeout(() => {
-                        // 3. Perform removal and update state
-                        rowToRemove.remove();
-
-                        // Remove from array as well
-                        const indexToRemove = reservations.findIndex(r => r.id === activeReservationId);
-                        if (indexToRemove > -1) {
-                            const guest = reservations[indexToRemove];
-                            reservations.splice(indexToRemove, 1);
-                            removeFromArrivalQueue(guest);
-                            makeServiceRequests(guest);
-                        }
-                        updateCheckedInCount();
-                        activeReservationId = null;
-                    }, 500);
-                }
+            // Look the row up now, in case the list was redrawn in the meantime
+            const row = document.getElementById(`res-${guest.id}`);
+            if (row) {
+                row.classList.add('fade-out');               // fade (0.5s, set in CSS)
+                setTimeout(() => row.remove(), 500);
             }
         }, 2000);
     });
@@ -702,7 +700,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const reservation = reservations.find(res => res.confirmationCode === formattedCode);
 
         if (reservation) {
-            activeReservationId = reservation.id;
             initializeUpgradeModal(reservation.id);
             openModal(upgradeModal);
         } else {

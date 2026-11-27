@@ -19,6 +19,18 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 16, guestName: 'Gung Gung and Poh Poh', confirmationCode: '#GGPP1', roomType: 'Deluxe King', nights: 50, guestCount: 2, rowColor: 'var(--color-row1)', icon: 'fa-users' },
 		{ id: 17, guestName: 'Evelyn Holman', confirmationCode: '#148EH', roomType: 'Junior Suite', nights: 21, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-book' }
 	];
+
+    // A copy of the full guest list. Checking in removes a guest from the
+    // list on screen, but they still need their key and their planner.
+    const allGuests = [...reservations];
+
+    // Find a guest by name: an exact name first, then part of a name
+    function findGuest(name) {
+        const searchName = name.trim().toLowerCase();
+        return allGuests.find(g => g.guestName.toLowerCase() === searchName)
+            || allGuests.find(g => g.guestName.toLowerCase().includes(searchName));
+    }
+
     // --- ELEMENTS ---
     const dateTimeElement = document.getElementById('datetime');
     const checkInListElement = document.getElementById('check-in-list');
@@ -309,10 +321,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // A copy of the full guest list, so guests who already checked in
-    // (and left the list on screen) can still get their key.
-    const allGuests = [...reservations];
-
     const keyNameForm = document.getElementById('key-name-form');
     const keyNameInput = document.getElementById('key-name-input');
     const keyError = document.getElementById('key-error');
@@ -332,11 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Step 2: find the guest and make their own QR code
     keyNameForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const searchName = keyNameInput.value.trim().toLowerCase();
-
-        // Look for an exact name first, then for part of a name
-        const guest = allGuests.find(g => g.guestName.toLowerCase() === searchName)
-            || allGuests.find(g => g.guestName.toLowerCase().includes(searchName));
+        const guest = findGuest(keyNameInput.value);
 
         if (!guest) {
             keyError.textContent = `No guest named "${keyNameInput.value}" found.`;
@@ -365,8 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     findReservationForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const searchName = reservationNameInput.value.trim().toLowerCase();
-        const foundReservation = reservations.find(res => res.guestName.toLowerCase().includes(searchName));
+        const foundReservation = findGuest(reservationNameInput.value);
 
         if (foundReservation) {
             closeModal(mobileAccessInputModal);

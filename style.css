@@ -805,6 +805,22 @@ footer button {
     margin: 5px 0;
 }
 
+#planner-restaurants {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+}
+#planner-restaurants li {
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    background-color: #fff4e0;
+}
+#planner-restaurants i {
+    margin-right: 6px;
+    color: var(--accent-red);
+}
+
 #planner-schedule {
     list-style: none;
     padding: 0;

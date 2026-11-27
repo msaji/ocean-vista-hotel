@@ -820,6 +820,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const restaurantChoices = document.getElementById('restaurant-choices');
 
+    // Every table booked so far: which restaurant, the name given, and the
+    // hotel guest it belongs to (or null for visitors who aren't staying here)
+    const restaurantBookings = [];
+
     // The hotel's restaurants. Each booking uses up one table.
     // When tablesLeft reaches 0, the restaurant is FULL.
     const restaurants = [
@@ -867,10 +871,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = restaurantNameInput.value.trim();
 
         // If the name belongs to a hotel guest, mention their room too
-        const guest = findGuest(name);
-        const roomNote = guest && guest.guestName.toLowerCase() === name.toLowerCase()
-            ? ` We'll find you in Room ${guest.roomNumber} if we need you.`
-            : '';
+        const found = findGuest(name);
+        const guest = found && found.guestName.toLowerCase() === name.toLowerCase() ? found : null;
+        const roomNote = guest ? ` We'll find you in Room ${guest.roomNumber} if we need you.` : '';
+
+        // Remember the booking, so the guest's planner can show it
+        restaurantBookings.push({ restaurant: chosen, name, guest });
 
         restaurantResult.innerHTML = `
             <p><i class="fas fa-check-circle"></i> <strong>Table booked!</strong></p>
@@ -978,7 +984,22 @@ document.addEventListener('DOMContentLoaded', () => {
             <p><strong>Check-in:</strong> ${checkInDateFormatted}</p>
             <p><strong>Check-out:</strong> ${checkOutDateFormatted}</p>
             ${scheduleHtml}
+            <h4>Your Restaurant Reservations:</h4>
+            <ul id="planner-restaurants"></ul>
         `;
+
+        // Show every table this guest has booked
+        const plannerRestaurants = document.getElementById('planner-restaurants');
+        const myBookings = restaurantBookings.filter(b => b.guest === reservation);
+        if (myBookings.length === 0) {
+            plannerRestaurants.innerHTML = '<li>None yet. Book a table with the RESTAURANT link!</li>';
+        } else {
+            myBookings.forEach(b => {
+                const item = document.createElement('li');
+                item.innerHTML = `<i class="fas ${b.restaurant.icon}"></i> <strong>${b.restaurant.name}</strong> &middot; table booked`;
+                plannerRestaurants.appendChild(item);
+            });
+        }
         openModal(mobilePlannerModal);
     }
 

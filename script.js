@@ -32,6 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
             || allGuests.find(g => g.guestName.toLowerCase().includes(searchName));
     }
 
+    // Say "1 GUEST" but "2 GUESTS": add an S only when there's more than one
+    function plural(count, word) {
+        return `${count} ${word}${count === 1 ? '' : 'S'}`;
+    }
+
     // --- ELEMENTS ---
     const dateTimeElement = document.getElementById('datetime');
     const checkInListElement = document.getElementById('check-in-list');
@@ -89,10 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.innerHTML = `
                     <div class="guest-info">
                         <p class="guest-name">${res.guestName}</p>
-                        <p class="conf-code">CONFIRMATION: ${res.confirmationCode}, ${res.guestCount} GUESTS</p>
+                        <p class="conf-code">CONFIRMATION: ${res.confirmationCode}, ${plural(res.guestCount, 'GUEST')}</p>
                     </div>
                     <div class="room-info">
-                        <p class="details">ROOM ${res.roomNumber} &middot; ${res.roomType}, ${res.nights} NIGHTS</p>
+                        <p class="details">ROOM ${res.roomNumber} &middot; ${res.roomType}, ${plural(res.nights, 'NIGHT')}</p>
                     </div>
                     <div class="icon">
                         <i class="fas ${res.icon}"></i>
@@ -347,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             guests.forEach(g => {
                 const item = document.createElement('li');
-                item.innerHTML = `<i class="fas ${g.icon}"></i> <strong>${g.guestName}</strong> &middot; Room ${g.roomNumber}, ${g.roomType}, ${g.nights} NIGHTS`;
+                item.innerHTML = `<i class="fas ${g.icon}"></i> <strong>${g.guestName}</strong> &middot; Room ${g.roomNumber}, ${g.roomType}, ${plural(g.nights, 'NIGHT')}`;
                 checkedInList.appendChild(item);
             });
         }

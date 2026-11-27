@@ -24,6 +24,24 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 21, guestName: 'Lucy Saji', confirmationCode: '#LUCY5', roomNumber: 109, roomType: 'Single', nights: 2, guestCount: 1, phone: '555-0121', email: 'lucy.saji@example.com', rowColor: 'var(--color-row1)', icon: 'fa-football' }
 	];
 
+    // --- THE HOTEL BUILDING ---
+    // Each floor has a number, a fun name and how many rooms it has.
+    // A room's floor is the first digit of its room number: room 221 is on floor 2.
+    const hotelFloors = [
+        { floor: 1, name: 'Beach Floor', roomCount: 24 },
+        { floor: 2, name: 'Library Floor', roomCount: 24 },
+        { floor: 3, name: 'Coral Floor', roomCount: 20 },
+        { floor: 4, name: 'Starfish Floor', roomCount: 16 },
+        { floor: 5, name: 'Seagull Floor', roomCount: 12 },
+        { floor: 6, name: 'Cloud Floor', roomCount: 12 },
+        { floor: 7, name: 'Treetop Floor', roomCount: 8 },
+        { floor: 8, name: 'Penthouse', roomCount: 4 }
+    ];
+
+    function floorOf(roomNumber) {
+        return Math.floor(roomNumber / 100);
+    }
+
     // A copy of the full guest list. Checking in removes a guest from the
     // list on screen, but they still need their key and their planner.
     const allGuests = [...reservations];
@@ -91,8 +109,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkedInModal = document.getElementById('checked-in-modal');
     const serviceRequestsModal = document.getElementById('service-requests-modal');
     const restaurantModal = document.getElementById('restaurant-modal');
+    const hotelMapModal = document.getElementById('hotel-map-modal');
     const newReservationModal = document.getElementById('new-reservation-modal');
-    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, mobileAccessInputModal, mobilePlannerModal, checkedInModal, newReservationModal, serviceRequestsModal, restaurantModal];
+    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, mobileAccessInputModal, mobilePlannerModal, checkedInModal, newReservationModal, serviceRequestsModal, restaurantModal, hotelMapModal];
     const checkInModalText = document.getElementById('check-in-modal-text');
     const confirmCheckInBtn = document.getElementById('confirm-check-in-btn');
     const contactInfoBtn = document.getElementById('contact-info-btn');
@@ -273,10 +292,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Find the first free room on a floor, e.g. 101, 102, 103...
+    // Find the first free room on a floor, e.g. 101, 102, 103...
+    // If that floor is full, try the next floor up.
     function findFreeRoom(floor) {
-        let room = floor * 100 + 1;
-        while (allGuests.some(g => g.roomNumber === room)) room++;
-        return room;
+        for (const f of hotelFloors.filter(h => h.floor >= floor)) {
+            for (let n = 1; n <= f.roomCount; n++) {
+                const room = f.floor * 100 + n;
+                if (!allGuests.some(g => g.roomNumber === room)) return room;
+            }
+        }
+        return floor * 100 + 99; // the whole hotel is full!
     }
 
     addReservationBtn.addEventListener('click', () => {
@@ -718,6 +743,55 @@ document.addEventListener('DOMContentLoaded', () => {
         keyNameForm.style.display = 'none';
         keyError.style.display = 'none';
         keyResult.style.display = 'block';
+    });
+
+    // --- HOTEL MAP ---
+    const hotelMapLink = document.getElementById('hotel-map-link');
+    const floorSelect = document.getElementById('floor-select');
+    const floorSummary = document.getElementById('floor-summary');
+    const floorGrid = document.getElementById('floor-grid');
+    const roomInfo = document.getElementById('room-info');
+
+    // Fill the dropdown with every floor, top floor first like a real building
+    [...hotelFloors].reverse().forEach(f => {
+        const option = document.createElement('option');
+        option.value = f.floor;
+        option.textContent = `Floor ${f.floor}: ${f.name}`;
+        floorSelect.appendChild(option);
+    });
+    floorSelect.value = 1;
+
+    function drawFloor() {
+        const floor = hotelFloors.find(f => f.floor === Number(floorSelect.value));
+        floorGrid.innerHTML = '';
+        let taken = 0;
+
+        for (let n = 1; n <= floor.roomCount; n++) {
+            const roomNumber = floor.floor * 100 + n;
+            const guest = allGuests.find(g => g.roomNumber === roomNumber);
+            const checkedIn = guest && !reservations.includes(guest);
+            if (guest) taken++;
+
+            const cell = document.createElement('button');
+            cell.className = 'room-cell ' + (guest ? (checkedIn ? 'checked-in' : 'booked') : 'empty');
+            cell.innerHTML = `<span>${roomNumber}</span>${guest ? `<i class="fas ${guest.icon}"></i>` : ''}`;
+            cell.addEventListener('click', () => {
+                roomInfo.textContent = guest
+                    ? `Room ${roomNumber}: ${guest.guestName} \u00b7 ${guest.roomType} \u00b7 ${checkedIn ? 'Checked in' : 'Booked today'}`
+                    : `Room ${roomNumber} is empty.`;
+            });
+            floorGrid.appendChild(cell);
+        }
+        floorSummary.textContent = `${taken} of ${floor.roomCount} rooms taken`;
+        roomInfo.textContent = 'Click a room to see who is staying there.';
+    }
+
+    floorSelect.addEventListener('change', drawFloor);
+
+    hotelMapLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        drawFloor();
+        openModal(hotelMapModal);
     });
 
     // --- RESTAURANT RESERVATIONS ---

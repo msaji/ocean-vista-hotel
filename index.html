@@ -45,6 +45,7 @@
                 <a href="#" id="digital-key-link"><i class="fas fa-key"></i> DIGITAL ROOM KEY</a>
                 <a href="#" id="mobile-access-link"><i class="fas fa-mobile-alt"></i> MOBILE ACCESS</a>
                 <a href="#" id="restaurant-link"><i class="fas fa-utensils"></i> RESTAURANT</a>
+                <a href="#" id="hotel-map-link"><i class="fas fa-building"></i> HOTEL MAP</a>
             </div>
         </footer>
 
@@ -88,6 +89,22 @@
                 <h3>Service Requests</h3>
                 <p id="service-score" class="service-score"><i class="fas fa-star"></i> Requests done: 0</p>
                 <ul id="service-requests-list"></ul>
+            </div>
+        </div>
+
+        <div id="hotel-map-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h3>Hotel Map</h3>
+                <select id="floor-select"></select>
+                <p id="floor-summary" class="floor-summary"></p>
+                <div id="floor-grid" class="floor-grid"></div>
+                <div class="map-legend">
+                    <span><i class="legend-box checked-in"></i> Checked in</span>
+                    <span><i class="legend-box booked"></i> Booked today</span>
+                    <span><i class="legend-box empty"></i> Empty</span>
+                </div>
+                <p id="room-info" class="room-info">Click a room to see who is staying there.</p>
             </div>
         </div>
 

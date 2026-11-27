@@ -829,10 +829,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'The Coral Grill', icon: 'fa-fish', about: 'seafood by the sea', tablesLeft: 4 },
         { name: 'Dragon Pearl Dim Sum', icon: 'fa-bowl-rice', about: 'dumplings and buns on spinning tables', tablesLeft: 3 },
         { name: 'Seashell Tea Lounge', icon: 'fa-mug-hot', about: 'tea and little cakes, pinkies up', tablesLeft: 2 },
-        { name: "Captain Crunchy's Pirate Ship", icon: 'fa-skull-crossbones', about: 'eat on a real ship; say "Arrr!" to order', tablesLeft: 4 },
-        { name: 'The Upside-Down Pancake House', icon: 'fa-egg', about: 'breakfast for dinner, syrup for everyone', tablesLeft: 3 },
         { name: 'Submarine Sushi Bar', icon: 'fa-water', about: 'sushi with fish tank windows all around', tablesLeft: 2 },
-        { name: 'Gelato Volcano', icon: 'fa-ice-cream', about: 'ice cream that erupts with sprinkles', tablesLeft: 5 },
+        { name: 'Gelato Whirlpool', icon: 'fa-ice-cream', about: 'ice cream swirled round and round with sprinkles', tablesLeft: 5 },
         { name: 'Mermaid Lagoon Pizza', icon: 'fa-pizza-slice', about: 'pizza by the pool, mermaid tails optional', tablesLeft: 0 },
         { name: 'Midnight Moon Café', icon: 'fa-moon', about: 'dinner under the stars on the roof', tablesLeft: 1 }
     ];

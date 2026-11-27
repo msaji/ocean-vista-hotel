@@ -770,6 +770,21 @@ document.addEventListener('DOMContentLoaded', () => {
         floorGrid.innerHTML = '';
         let taken = 0;
 
+        // Like a real hotel: odd rooms on the left, even rooms on the right,
+        // with a hallway down the middle and the elevator and stairs at the end.
+        const rows = Math.ceil(floor.roomCount / 2);
+
+        const lobby = document.createElement('div');
+        lobby.className = 'map-elevator';
+        lobby.innerHTML = '<i class="fas fa-stairs"></i> Stairs &nbsp; <i class="fas fa-elevator"></i> Elevator';
+        floorGrid.appendChild(lobby);
+
+        const hallway = document.createElement('div');
+        hallway.className = 'map-hallway';
+        hallway.style.gridRow = `2 / ${rows + 2}`;
+        hallway.innerHTML = '<span>HALLWAY</span>';
+        floorGrid.appendChild(hallway);
+
         for (let n = 1; n <= floor.roomCount; n++) {
             const roomNumber = floor.floor * 100 + n;
             const guest = allGuests.find(g => g.roomNumber === roomNumber);
@@ -778,6 +793,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const cell = document.createElement('button');
             cell.className = 'room-cell ' + (guest ? (checkedIn ? 'checked-in' : 'booked') : 'empty');
+            cell.style.gridColumn = n % 2 === 1 ? '1' : '3';   // odd left, even right
+            cell.style.gridRow = String(Math.ceil(n / 2) + 1);  // row 1 is the elevator
             cell.innerHTML = `<span>${roomNumber}</span>${guest ? `<i class="fas ${guest.icon}"></i>` : ''}`;
             cell.addEventListener('click', () => {
                 roomInfo.textContent = guest

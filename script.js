@@ -309,18 +309,51 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // A copy of the full guest list, so guests who already checked in
+    // (and left the list on screen) can still get their key.
+    const allGuests = [...reservations];
+
+    const keyNameForm = document.getElementById('key-name-form');
+    const keyNameInput = document.getElementById('key-name-input');
+    const keyError = document.getElementById('key-error');
+    const keyResult = document.getElementById('key-result');
+
+    // Step 1: open the key window and ask for a name
     digitalKeyLink.addEventListener('click', (e) => {
         e.preventDefault();
-        // Use the first guest on the list as an example
-        const guest = reservations.length > 0 ? reservations[0] : { guestName: 'Guest', confirmationCode: '#A1B2C3' };
+        keyNameForm.style.display = 'flex';
+        keyResult.style.display = 'none';
+        keyError.style.display = 'none';
+        keyNameInput.value = '';
+        openModal(barcodeModal);
+        keyNameInput.focus();
+    });
 
-        // Make a QR code holding a short message about the key
+    // Step 2: find the guest and make their own QR code
+    keyNameForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const searchName = keyNameInput.value.trim().toLowerCase();
+
+        // Look for an exact name first, then for part of a name
+        const guest = allGuests.find(g => g.guestName.toLowerCase() === searchName)
+            || allGuests.find(g => g.guestName.toLowerCase().includes(searchName));
+
+        if (!guest) {
+            keyError.textContent = `No guest named "${keyNameInput.value}" found.`;
+            keyError.style.display = 'block';
+            return;
+        }
+
+        // Each guest's message is different, so each QR code is different
         const qr = qrcode(0, 'M');
-        qr.addData(`Ocean Vista Hotel room key for ${guest.guestName}, confirmation ${guest.confirmationCode}`);
+        qr.addData(`Ocean Vista Hotel room key for ${guest.guestName}, room ${guest.roomType}, confirmation ${guest.confirmationCode}`);
         qr.make();
         document.getElementById('qrcode').innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2, scalable: true });
-        document.getElementById('qrcode-label').textContent = `${guest.guestName} · ${guest.confirmationCode}`;
-        openModal(barcodeModal);
+        document.getElementById('qrcode-label').textContent = `${guest.guestName} \u00b7 ${guest.confirmationCode}`;
+
+        keyNameForm.style.display = 'none';
+        keyError.style.display = 'none';
+        keyResult.style.display = 'block';
     });
 
     mobileAccessLink.addEventListener('click', (e) => {

@@ -22,24 +22,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- ELEMENTS ---
     const dateTimeElement = document.getElementById('datetime');
     const checkInListElement = document.getElementById('check-in-list');
-    const checkInModal = document.getElementById('check-in_modal');
-    const roomsModal = document.getElementById('rooms_modal');
-    const upgradeModal = document.getElementById('upgrade_modal');
-    const barcodeModal = document.getElementById('barcode_modal');
-    const mobileAccessInputModal = document.getElementById('mobile_access_input_modal');
-    const mobilePlannerModal = document.getElementById('mobile_planner_modal');
+    const checkInModal = document.getElementById('check-in-modal');
+    const roomsModal = document.getElementById('rooms-modal');
+    const upgradeModal = document.getElementById('upgrade-modal');
+    const barcodeModal = document.getElementById('barcode-modal');
+    const mobileAccessInputModal = document.getElementById('mobile-access-input-modal');
+    const mobilePlannerModal = document.getElementById('mobile-planner-modal');
     const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, mobileAccessInputModal, mobilePlannerModal];
-    const checkInModalText = document.getElementById('check-in_modal_text');
-    const confirmCheckInBtn = document.getElementById('confirm_check_in_btn');
+    const checkInModalText = document.getElementById('check-in-modal-text');
+    const confirmCheckInBtn = document.getElementById('confirm-check-in-btn');
     const plannerContent = document.getElementById('planner-content');
     const availableRoomsBtn = document.getElementById('available-rooms-btn');
     const upgradeRoomBtn = document.getElementById('upgrade-room-btn');
-    const digitalKeyLink = document.getElementById('digital_key_link');
-    const mobileAccessLink = document.getElementById('mobile_access_link');
-    const findReservationForm = document.getElementById('find-reservation_form');
-    const reservationNameInput = document.getElementById('reservation_name_input');
-    const reservationError = document.getElementById('reservation_error');
-    const confirmationMsg = document.getElementById('confirmation_message'); // New element
+    const digitalKeyLink = document.getElementById('digital-key-link');
+    const mobileAccessLink = document.getElementById('mobile-access-link');
+    const findReservationForm = document.getElementById('find-reservation-form');
+    const reservationNameInput = document.getElementById('reservation-name-input');
+    const reservationError = document.getElementById('reservation-error');
+    const confirmationMsg = document.getElementById('confirmation-message'); // New element
 
     let activeReservationId = null;
 
@@ -76,6 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
                 checkInListElement.appendChild(row);
+                row.addEventListener('click', () => openCheckInModal(res.id));
             }
         });
     }
@@ -91,7 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     modals.forEach(modal => {
         const closeBtn = modal.querySelector('.close-btn');
-        closeBtn.addEventListener('click', () => closeModal(modal));
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => closeModal(modal));
+        }
     });
 
     window.addEventListener('click', (event) => {
@@ -195,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        document.getElementById('upgrade_modal').querySelector('.close-btn').addEventListener('click', () => closeModal(upgradeModal));
+        document.getElementById('upgrade-modal').querySelector('.close-btn').addEventListener('click', () => closeModal(upgradeModal));
 
         // Attach listeners for the new structure
         document.querySelectorAll('.room-option').forEach(button => {
@@ -204,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         upgradeNextBtn.addEventListener('click', handleNextStep);
         upgradeConfirmBtn.addEventListener('click', handleFinalConfirmation);
-        document.querySelector('#upgrade_modal .secondary-btn').addEventListener('click', () => closeModal(upgradeModal));
+        document.querySelector('#upgrade-modal .secondary-btn').addEventListener('click', () => closeModal(upgradeModal));
 
         // Initial state render
         renderUpgradeStep();

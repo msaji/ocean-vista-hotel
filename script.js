@@ -40,12 +40,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const barcodeModal = document.getElementById('barcode-modal');
     const mobileAccessInputModal = document.getElementById('mobile-access-input-modal');
     const mobilePlannerModal = document.getElementById('mobile-planner-modal');
-    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, mobileAccessInputModal, mobilePlannerModal];
+    const checkedInModal = document.getElementById('checked-in-modal');
+    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, mobileAccessInputModal, mobilePlannerModal, checkedInModal];
     const checkInModalText = document.getElementById('check-in-modal-text');
     const confirmCheckInBtn = document.getElementById('confirm-check-in-btn');
     const plannerContent = document.getElementById('planner-content');
     const availableRoomsBtn = document.getElementById('available-rooms-btn');
     const upgradeRoomBtn = document.getElementById('upgrade-room-btn');
+    const checkedInBtn = document.getElementById('checked-in-btn');
+    const checkedInList = document.getElementById('checked-in-list');
     const digitalKeyLink = document.getElementById('digital-key-link');
     const mobileAccessLink = document.getElementById('mobile-access-link');
     const findReservationForm = document.getElementById('find-reservation-form');
@@ -153,6 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (indexToRemove > -1) {
                             reservations.splice(indexToRemove, 1);
                         }
+                        updateCheckedInCount();
                         activeReservationId = null;
                     }, 500);
                 }
@@ -162,6 +166,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FOOTER EVENT LISTENERS ---
     availableRoomsBtn.addEventListener('click', () => openModal(roomsModal));
+
+    // --- CHECKED-IN GUESTS ---
+    // A guest has checked in if they are in the full guest list
+    // but no longer in the list on screen.
+    function getCheckedInGuests() {
+        return allGuests.filter(g => !reservations.includes(g));
+    }
+
+    function updateCheckedInCount() {
+        checkedInBtn.textContent = `CHECKED-IN GUESTS: ${getCheckedInGuests().length}`;
+    }
+
+    checkedInBtn.addEventListener('click', () => {
+        const guests = getCheckedInGuests();
+        checkedInList.innerHTML = '';
+
+        if (guests.length === 0) {
+            checkedInList.innerHTML = '<li>No guests have checked in yet.</li>';
+        } else {
+            guests.forEach(g => {
+                const item = document.createElement('li');
+                item.innerHTML = `<i class="fas ${g.icon}"></i> <strong>${g.guestName}</strong> &middot; ${g.roomType}, ${g.nights} NIGHTS`;
+                checkedInList.appendChild(item);
+            });
+        }
+        openModal(checkedInModal);
+    });
 
     // --- UPGRADE MODAL LOGIC ---
     let upgradeState = {

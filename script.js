@@ -316,21 +316,21 @@ document.addEventListener('DOMContentLoaded', () => {
         newGuestNameInput.focus();
     });
 
-    newReservationForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+    // Make a new booking with a surprise room for this name, and show it
+    function createReservation(name) {
         const choice = pickRandom(newRoomChoices);
         const newId = Math.max(0, ...allGuests.map(g => g.id)) + 1;
 
         const newReservation = {
             id: newId,
-            guestName: newGuestNameInput.value.trim(),
+            guestName: name,
             confirmationCode: makeConfirmationCode(),
             roomNumber: findFreeRoom(choice.floor),
             roomType: choice.roomType,
             nights: 1 + Math.floor(Math.random() * 5), // 1 to 5 nights
             guestCount: 1,
             phone: `555-01${String(newId % 100).padStart(2, '0')}`,
-            email: (newGuestNameInput.value.toLowerCase().match(/[a-z]+/g) || ['guest']).join('.') + '@example.com',
+            email: (name.toLowerCase().match(/[a-z]+/g) || ['guest']).join('.') + '@example.com',
             rowColor: `var(--color-row${(newId % 5) + 1})`,
             icon: pickRandom(newIcons)
         };
@@ -339,15 +339,43 @@ document.addEventListener('DOMContentLoaded', () => {
         reservations.push(newReservation);
         allGuests.push(newReservation);
 
-        closeModal(newReservationModal);
         renderReservations();
         sounds.newBooking();
 
-        // Scroll to the new booking and make it glow
-        const newRow = document.getElementById(`res-${newId}`);
-        newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        newRow.classList.add('new-row');
+        // Make the new booking glow
+        document.getElementById(`res-${newId}`).classList.add('new-row');
+        return newReservation;
+    }
+
+    newReservationForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        closeModal(newReservationModal);
+        const newReservation = createReservation(newGuestNameInput.value.trim());
+        // Scroll to the new booking
+        document.getElementById(`res-${newReservation.id}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
+
+    // In Game Mode, a new guest books a room every hour
+    const ONE_HOUR = 60 * 60 * 1000;
+    let bookingTimer = null;
+    const newGuestNames = [
+        'Maya Torres', 'Oliver Chen', 'Priya Patel', 'Noah Kim', 'Zoe Martin',
+        'Leo Rossi', 'Ava Johnson', 'Sam Okafor', 'Mia Nguyen', 'Ethan Brooks',
+        'Luna Garcia', 'Finn Murphy', 'Isla Novak', 'Kai Tanaka', 'Rosa Silva'
+    ];
+
+    function scheduleNextBooking() {
+        if (!gameMode) return;
+        bookingTimer = setTimeout(() => {
+            if (!gameMode) return;
+            // Pick a name that isn't already staying here
+            const unused = newGuestNames.filter(n => !allGuests.some(g => g.guestName === n));
+            const name = unused.length > 0 ? pickRandom(unused) : `Guest ${allGuests.length + 1}`;
+            const booking = createReservation(name);
+            showToast(`<i class="fas fa-calendar-plus"></i> New reservation: ${booking.guestName}, Room ${booking.roomNumber}!`);
+            scheduleNextBooking();
+        }, ONE_HOUR);
+    }
 
     // --- SERVICE REQUESTS ---
     // When a guest checks in, they ask for one or two things.
@@ -520,8 +548,10 @@ document.addEventListener('DOMContentLoaded', () => {
         clearTimeout(requestTimer);
         clearTimeout(arrivalTimer);
         clearTimeout(chatTimer);
+        clearTimeout(bookingTimer);
         if (gameMode) {
             scheduleNextChat();
+            scheduleNextBooking();
             showToast('<i class="fas fa-gamepad"></i> Game Mode ON! Guests will arrive and ask for things.');
             scheduleNextArrival();
             scheduleNextRequest();

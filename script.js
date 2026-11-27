@@ -98,6 +98,13 @@ document.addEventListener('DOMContentLoaded', () => {
         chat: () => playPingPong(1319, 1047)        // quick high ping for a chat message
     };
 
+    // A date as "2026-11-27", so two dates can be compared easily
+    function dateKey(date) {
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${date.getFullYear()}-${month}-${day}`;
+    }
+
     // --- ELEMENTS ---
     const dateTimeElement = document.getElementById('datetime');
     const checkInListElement = document.getElementById('check-in-list');
@@ -820,9 +827,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const restaurantChoices = document.getElementById('restaurant-choices');
 
-    // Every table booked so far: which restaurant, the name given, and the
-    // hotel guest it belongs to (or null for visitors who aren't staying here)
+    // Every table booked so far: which restaurant, the name given, the hotel
+    // guest it belongs to (or null for visitors), and the day and meal time
     const restaurantBookings = [];
+
+    // Meal times you can pick, in order through the day
+    const mealTimes = [
+        { meal: 'Breakfast', time: '8:00 AM' },
+        { meal: 'Lunch', time: '12:00 PM' },
+        { meal: 'Tea time', time: '3:00 PM' },
+        { meal: 'Dinner', time: '6:00 PM' },
+        { meal: 'Late dinner', time: '8:00 PM' }
+    ];
+
+    const restaurantDay = document.getElementById('restaurant-day');
+    const restaurantTime = document.getElementById('restaurant-time');
+
+    // Fill the day dropdown with today and the next 6 days
+    function fillRestaurantDays() {
+        restaurantDay.innerHTML = '<option value="">Pick a day</option>';
+        for (let i = 0; i < 7; i++) {
+            const day = new Date();
+            day.setDate(day.getDate() + i);
+            const label = day.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            const option = document.createElement('option');
+            option.value = dateKey(day);
+            option.textContent = i === 0 ? `Today (${label})` : i === 1 ? `Tomorrow (${label})` : label;
+            restaurantDay.appendChild(option);
+        }
+    }
 
     // The hotel's restaurants. Each booking uses up one table.
     // When tablesLeft reaches 0, the restaurant is FULL.
@@ -856,6 +889,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         restaurantForm.reset();
         renderRestaurantChoices();
+        fillRestaurantDays();
         restaurantForm.style.display = 'block';
         restaurantResult.style.display = 'none';
         openModal(restaurantModal);
@@ -876,14 +910,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const roomNote = guest ? ` We'll find you in Room ${guest.roomNumber} if we need you.` : '';
 
         // Remember the booking, so the guest's planner can show it
-        restaurantBookings.push({ restaurant: chosen, name, guest });
+        const day = restaurantDay.value;
+        const mealTime = Number(restaurantTime.value);
+        restaurantBookings.push({ restaurant: chosen, name, guest, day, mealTime });
+        const when = `${restaurantDay.options[restaurantDay.selectedIndex].textContent} at ${mealTimes[mealTime].time}`;
 
         restaurantResult.innerHTML = `
             <p><i class="fas fa-check-circle"></i> <strong>Table booked!</strong></p>
             <p></p>
         `;
         // textContent shows the name exactly as typed
-        restaurantResult.querySelectorAll('p')[1].textContent = `${restaurant} is ready for ${name}.${roomNote}`;
+        restaurantResult.querySelectorAll('p')[1].textContent = `${restaurant} is ready for ${name}, ${when}.${roomNote}`;
         restaurantForm.style.display = 'none';
         restaurantResult.style.display = 'block';
     });
@@ -925,6 +962,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         const checkInDateFormatted = checkInDate.toLocaleDateString('en-US', options);
         const checkOutDateFormatted = checkOutDate.toLocaleDateString('en-US', options);
+
+        // This guest's restaurant bookings, earliest first
+        const myBookings = restaurantBookings
+            .filter(b => b.guest === reservation)
+            .sort((a, b) => a.day.localeCompare(b.day) || a.mealTime - b.mealTime);
+
+        // The bookings on one day, as extra lines for that day of the itinerary
+        function mealsOn(date) {
+            return myBookings
+                .filter(b => b.day === dateKey(date))
+                .map(b => `<span class="planner-meal"><i class="fas fa-utensils"></i> ${mealTimes[b.mealTime].meal} at ${b.restaurant.name}, ${mealTimes[b.mealTime].time}</span>`)
+                .join('');
+        }
 
         let scheduleHtml = '<h4>Your Itinerary:</h4><ul id="planner-schedule">';
         const baseDailyActivities = [
@@ -970,9 +1020,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const dayDateFormatted = dayDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
             // Use modulo operator to cycle through shuffled activities if nights > activities count
             const activity = shuffledActivities[i % shuffledActivities.length];
-            scheduleHtml += `<li><strong>${dayDateFormatted}:</strong> ${activity}</li>`;
+            scheduleHtml += `<li><strong>${dayDateFormatted}:</strong> ${activity}${mealsOn(dayDate)}</li>`;
         }
-        scheduleHtml += `<li><strong>${checkOutDateFormatted} (Check-out):</strong> Enjoy breakfast, prepare for departure.</li></ul>`;
+        scheduleHtml += `<li><strong>${checkOutDateFormatted} (Check-out):</strong> Enjoy breakfast, prepare for departure.${mealsOn(checkOutDate)}</li></ul>`;
 
         plannerContent.innerHTML = `
             <h2>${reservation.guestName}'s Stay Planner</h2>
@@ -990,13 +1040,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Show every table this guest has booked
         const plannerRestaurants = document.getElementById('planner-restaurants');
-        const myBookings = restaurantBookings.filter(b => b.guest === reservation);
         if (myBookings.length === 0) {
             plannerRestaurants.innerHTML = '<li>None yet. Book a table with the RESTAURANT link!</li>';
         } else {
             myBookings.forEach(b => {
                 const item = document.createElement('li');
-                item.innerHTML = `<i class="fas ${b.restaurant.icon}"></i> <strong>${b.restaurant.name}</strong> &middot; table booked`;
+                const dayLabel = new Date(b.day + 'T12:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                item.innerHTML = `<i class="fas ${b.restaurant.icon}"></i> <strong>${b.restaurant.name}</strong> &middot; ${dayLabel}, ${mealTimes[b.mealTime].time}`;
                 plannerRestaurants.appendChild(item);
             });
         }

@@ -2,6 +2,8 @@
 
 This document summarizes the architecture, file structure, and operational workflow of the Ocean Vista Hotel Check-In web application, based on the provided files.
 
+**Live site:** https://msaji.github.io/ocean-vista-hotel/
+
 ## 1. Project Context (from CLAUDE.md)
 
 **Goal:** To create a simplified, "child's toy" prototype for managing guest check-in process in a hotel front desk setting.

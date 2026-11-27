@@ -67,9 +67,18 @@
         <div id="barcode-modal" class="modal">
             <div class="modal-content">
                 <h3>Your Digital Key</h3>
-                <div id="qrcode"></div>
-                <p id="qrcode-label"></p>
-                <p>Scan at your door to unlock.</p>
+                <!-- Step 1: ask for the guest's name -->
+                <form id="key-name-form">
+                    <input type="text" id="key-name-input" placeholder="Guest name, e.g., Michael Saji" required>
+                    <button type="submit">Get My Key</button>
+                </form>
+                <p id="key-error" class="error-text" style="display: none; color: red;"></p>
+                <!-- Step 2: show that guest's QR code -->
+                <div id="key-result" style="display: none;">
+                    <div id="qrcode"></div>
+                    <p id="qrcode-label"></p>
+                    <p>Scan at your door to unlock.</p>
+                </div>
             </div>
         </div>
 

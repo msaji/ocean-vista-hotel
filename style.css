@@ -289,7 +289,8 @@ footer button {
 }
 
 /* Mobile Access Input Modal Styles */
-#find-reservation-form {
+#find-reservation-form,
+#key-name-form {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -297,7 +298,8 @@ footer button {
     margin-top: 20px;
 }
 
-#find-reservation-form input[type="text"] {
+#find-reservation-form input[type="text"],
+#key-name-form input[type="text"] {
     width: 80%;
     padding: 10px;
     border: 1px solid #ccc;
@@ -306,7 +308,8 @@ footer button {
     text-align: center;
 }
 
-#find-reservation-form button {
+#find-reservation-form button,
+#key-name-form button {
     background-color: var(--accent-blue);
     color: white;
     padding: 10px 20px;
@@ -317,7 +320,8 @@ footer button {
     transition: background-color 0.3s;
 }
 
-#find-reservation-form button:hover {
+#find-reservation-form button:hover,
+#key-name-form button:hover {
     background-color: #3558be;
 }
 

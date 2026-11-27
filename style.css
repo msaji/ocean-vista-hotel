@@ -64,6 +64,94 @@ header p {
     font-weight: 700;
 }
 
+/* Game Mode switch */
+.game-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.9em;
+}
+.game-switch input {
+    display: none;
+}
+.game-switch .slider {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.4);
+    transition: background-color 0.3s;
+}
+.game-switch .slider::before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: white;
+    transition: transform 0.3s;
+}
+.game-switch input:checked + .slider {
+    background-color: #28a745;
+}
+.game-switch input:checked + .slider::before {
+    transform: translateX(20px);
+}
+
+/* The line of guests waiting at the desk */
+#arrival-queue {
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    border: 3px solid gold;
+    border-radius: 15px;
+    background-color: #fffbe6;
+}
+#arrival-queue h3 {
+    margin: 5px 0;
+    color: var(--hotel-roof);
+}
+#arrival-queue-list li {
+    padding: 4px 0;
+    cursor: pointer;
+}
+#arrival-queue-list li:hover {
+    color: var(--accent-blue);
+}
+.arrived-badge {
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    background-color: gold;
+    color: var(--text-dark);
+    font-size: 0.6em;
+    vertical-align: middle;
+}
+
+/* Pop-up message at the top of the screen */
+.toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translate(-50%, -150%);
+    z-index: 2000;
+    max-width: calc(100% - 32px);
+    padding: 12px 20px;
+    border-radius: 12px;
+    background-color: var(--hotel-roof);
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    transition: transform 0.4s ease-out;
+}
+.toast.show {
+    transform: translate(-50%, 0);
+}
+
 main {
     padding: 20px;
     overflow-y: auto; /* Make the main content scrollable */
@@ -238,6 +326,26 @@ footer button {
 }
 #service-requests-btn:hover {
     background-color: #733fa3;
+}
+
+/* The Service Requests button wiggles when a new request arrives */
+#service-requests-btn.wiggle {
+    animation: wiggle 0.6s ease-in-out;
+}
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0); }
+    20% { transform: rotate(-6deg) scale(1.08); }
+    40% { transform: rotate(6deg) scale(1.08); }
+    60% { transform: rotate(-4deg); }
+    80% { transform: rotate(4deg); }
+}
+
+.service-score {
+    font-weight: 700;
+    color: #8a4fbf;
+}
+.service-score i {
+    color: gold;
 }
 
 #service-requests-list {

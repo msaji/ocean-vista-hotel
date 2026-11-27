@@ -14,10 +14,20 @@
     <div class="container">
         <header>
             <p id="datetime"></p>
+            <label class="game-switch">
+                <input type="checkbox" id="game-mode-toggle">
+                <span class="slider"></span>
+                <span class="game-switch-label"><i class="fas fa-gamepad"></i> GAME MODE</span>
+            </label>
         </header>
 
         <main>
             <h2>Scheduled Check-Ins Today <i class="fas fa-clock"></i></h2>
+            <!-- Guests who have arrived at the desk, in the order they arrived -->
+            <div id="arrival-queue" style="display: none;">
+                <h3><i class="fas fa-bell-concierge"></i> Waiting in Line</h3>
+                <ol id="arrival-queue-list"></ol>
+            </div>
             <div id="check-in-list">
                 <!-- Reservation rows will be injected here by JavaScript -->
             </div>
@@ -76,6 +86,7 @@
             <div class="modal-content">
                 <span class="close-btn">&times;</span>
                 <h3>Service Requests</h3>
+                <p id="service-score" class="service-score"><i class="fas fa-star"></i> Requests done: 0</p>
                 <ul id="service-requests-list"></ul>
             </div>
         </div>
@@ -153,6 +164,9 @@
                 </div>
             </div>
         </div>
+
+    <!-- Pop-up message for new arrivals and Game Mode -->
+    <div id="toast" class="toast"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
     <script src="script.js"></script>

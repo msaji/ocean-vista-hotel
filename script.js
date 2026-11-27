@@ -37,6 +37,45 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${count} ${word}${count === 1 ? '' : 'S'}`;
     }
 
+    // --- SOUNDS ---
+    // A two-note "ping-pong" made by the browser itself (no sound files needed).
+    let audioContext = null;
+
+    function playNote(frequency, startTime, length) {
+        const oscillator = audioContext.createOscillator();
+        const volume = audioContext.createGain();
+        oscillator.type = 'sine';
+        oscillator.frequency.value = frequency;
+        // Start loud, then fade out quickly, like a bell
+        volume.gain.setValueAtTime(0.3, startTime);
+        volume.gain.exponentialRampToValueAtTime(0.001, startTime + length);
+        oscillator.connect(volume);
+        volume.connect(audioContext.destination);
+        oscillator.start(startTime);
+        oscillator.stop(startTime + length);
+    }
+
+    function playPingPong(firstNote, secondNote) {
+        try {
+            if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioContext.state === 'suspended') audioContext.resume();
+            const now = audioContext.currentTime;
+            playNote(firstNote, now, 0.25);          // ping
+            playNote(secondNote, now + 0.15, 0.35);  // pong
+        } catch (err) {
+            // No sound available: the app still works, just quietly
+        }
+    }
+
+    // Each kind of event has its own little tune
+    const sounds = {
+        arrival: () => playPingPong(988, 784),      // ding-dong, like a doorbell
+        newRequest: () => playPingPong(1047, 880),  // ping-pong, high
+        done: () => playPingPong(660, 990),         // pong-PING, going up: well done!
+        checkIn: () => playPingPong(784, 1175),     // happy rising chime
+        newBooking: () => playPingPong(880, 1047)   // bright ping-pong
+    };
+
     // --- ELEMENTS ---
     const dateTimeElement = document.getElementById('datetime');
     const checkInListElement = document.getElementById('check-in-list');
@@ -62,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkedInList = document.getElementById('checked-in-list');
     const serviceRequestsBtn = document.getElementById('service-requests-btn');
     const serviceRequestsList = document.getElementById('service-requests-list');
+    const serviceScore = document.getElementById('service-score');
     const digitalKeyLink = document.getElementById('digital-key-link');
     const mobileAccessLink = document.getElementById('mobile-access-link');
     const findReservationForm = document.getElementById('find-reservation-form');
@@ -93,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 row.innerHTML = `
                     <div class="guest-info">
-                        <p class="guest-name">${res.guestName}</p>
+                        <p class="guest-name">${res.guestName}${arrivalQueue.includes(res) ? ' <span class="arrived-badge">HERE NOW</span>' : ''}</p>
                         <p class="conf-code">CONFIRMATION: ${res.confirmationCode}, ${plural(res.guestCount, 'GUEST')}</p>
                     </div>
                     <div class="room-info">
@@ -161,6 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     confirmCheckInBtn.addEventListener('click', () => {
         // 4. Display confirmation message
+        sounds.checkIn();
         confirmationMsg.textContent = 'Check-in Successful!';
         confirmationMsg.classList.add('show');
 
@@ -185,6 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (indexToRemove > -1) {
                             const guest = reservations[indexToRemove];
                             reservations.splice(indexToRemove, 1);
+                            removeFromArrivalQueue(guest);
                             makeServiceRequests(guest);
                         }
                         updateCheckedInCount();
@@ -265,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         closeModal(newReservationModal);
         renderReservations();
+        sounds.newBooking();
 
         // Scroll to the new booking and make it glow
         const newRow = document.getElementById(`res-${newId}`);
@@ -295,11 +338,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const ideas = shuffleArray([...requestIdeas]).slice(0, howMany);
         ideas.forEach(text => serviceRequests.push({ guest, text, done: false }));
         updateServiceRequestCount();
+        wiggleServiceButton();
     }
+
+    let requestsCompleted = 0; // the game score
 
     function updateServiceRequestCount() {
         const waiting = serviceRequests.filter(r => !r.done).length;
         serviceRequestsBtn.textContent = `SERVICE REQUESTS: ${waiting}`;
+        serviceScore.innerHTML = `<i class="fas fa-star"></i> Requests done: ${requestsCompleted}`;
+    }
+
+    // Make the button wiggle so you notice a new request
+    function wiggleServiceButton() {
+        serviceRequestsBtn.classList.remove('wiggle');
+        void serviceRequestsBtn.offsetWidth; // restart the animation
+        serviceRequestsBtn.classList.add('wiggle');
     }
 
     function showServiceRequests() {
@@ -308,7 +362,10 @@ document.addEventListener('DOMContentLoaded', () => {
             serviceRequestsList.innerHTML = '<li>No service requests yet. Check in a guest!</li>';
             return;
         }
-        serviceRequests.forEach(request => {
+        // Waiting requests first, then the 5 most recently finished ones
+        const waiting = serviceRequests.filter(r => !r.done);
+        const finished = serviceRequests.filter(r => r.done).slice(-5).reverse();
+        [...waiting, ...finished].forEach(request => {
             const item = document.createElement('li');
             if (request.done) item.classList.add('done');
             item.innerHTML = `
@@ -319,6 +376,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (doneBtn) {
                 doneBtn.addEventListener('click', () => {
                     request.done = true;
+                    requestsCompleted++;
+                    sounds.done();
                     updateServiceRequestCount();
                     showServiceRequests();
                 });
@@ -330,6 +389,108 @@ document.addEventListener('DOMContentLoaded', () => {
     serviceRequestsBtn.addEventListener('click', () => {
         showServiceRequests();
         openModal(serviceRequestsModal);
+    });
+
+    // The game: every 8 to 15 seconds, a checked-in guest asks for something new
+    const MAX_WAITING_REQUESTS = 10;
+
+    function newRequestFromRandomGuest() {
+        if (!gameMode) return;
+        const checkedIn = getCheckedInGuests();
+        const waiting = serviceRequests.filter(r => !r.done).length;
+
+        if (checkedIn.length > 0 && waiting < MAX_WAITING_REQUESTS) {
+            serviceRequests.push({ guest: pickRandom(checkedIn), text: pickRandom(requestIdeas), done: false });
+            updateServiceRequestCount();
+            wiggleServiceButton();
+            sounds.newRequest();
+            // If the list is open, show the new request right away
+            if (serviceRequestsModal.style.display === 'flex') showServiceRequests();
+        }
+        scheduleNextRequest();
+    }
+
+    function scheduleNextRequest() {
+        if (!gameMode) return;
+        const seconds = 8 + Math.floor(Math.random() * 8); // 8 to 15
+        requestTimer = setTimeout(newRequestFromRandomGuest, seconds * 1000);
+    }
+
+    // --- ARRIVALS AND THE LINE (Game Mode) ---
+    // Every 12 to 20 seconds, a guest with a booking arrives at the desk
+    // and joins the end of the line.
+    const arrivalQueue = [];
+    const arrivalQueueBox = document.getElementById('arrival-queue');
+    const arrivalQueueList = document.getElementById('arrival-queue-list');
+
+    function newArrival() {
+        if (!gameMode) return;
+        const notArrivedYet = reservations.filter(r => !arrivalQueue.includes(r));
+        if (notArrivedYet.length > 0) {
+            const guest = pickRandom(notArrivedYet);
+            arrivalQueue.push(guest);
+            showToast(`<i class="fas fa-bell-concierge"></i> ${guest.guestName} has arrived at the front desk!`);
+            sounds.arrival();
+            renderArrivalQueue();
+            renderReservations();
+        }
+        scheduleNextArrival();
+    }
+
+    function scheduleNextArrival() {
+        if (!gameMode) return;
+        const seconds = 12 + Math.floor(Math.random() * 9); // 12 to 20
+        arrivalTimer = setTimeout(newArrival, seconds * 1000);
+    }
+
+    function renderArrivalQueue() {
+        arrivalQueueList.innerHTML = '';
+        arrivalQueue.forEach(guest => {
+            const item = document.createElement('li');
+            item.innerHTML = `<strong>${guest.guestName}</strong> &middot; Room ${guest.roomNumber}`;
+            item.addEventListener('click', () => openCheckInModal(guest.id));
+            arrivalQueueList.appendChild(item);
+        });
+        arrivalQueueBox.style.display = arrivalQueue.length > 0 ? 'block' : 'none';
+    }
+
+    function removeFromArrivalQueue(guest) {
+        const index = arrivalQueue.indexOf(guest);
+        if (index > -1) {
+            arrivalQueue.splice(index, 1);
+            renderArrivalQueue();
+        }
+    }
+
+    // --- POP-UP MESSAGE ---
+    const toast = document.getElementById('toast');
+    let toastTimer = null;
+
+    function showToast(html) {
+        toast.innerHTML = html;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    // --- GAME MODE SWITCH ---
+    // Anything that runs on a timer only happens while Game Mode is on.
+    let gameMode = false;
+    let requestTimer = null;
+    let arrivalTimer = null;
+    const gameModeToggle = document.getElementById('game-mode-toggle');
+
+    gameModeToggle.addEventListener('change', () => {
+        gameMode = gameModeToggle.checked;
+        clearTimeout(requestTimer);
+        clearTimeout(arrivalTimer);
+        if (gameMode) {
+            showToast('<i class="fas fa-gamepad"></i> Game Mode ON! Guests will arrive and ask for things.');
+            scheduleNextArrival();
+            scheduleNextRequest();
+        } else {
+            showToast('<i class="fas fa-gamepad"></i> Game Mode off. The hotel is quiet.');
+        }
     });
 
     // --- CHECKED-IN GUESTS ---

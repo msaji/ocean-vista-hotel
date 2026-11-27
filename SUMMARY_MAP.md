@@ -24,6 +24,7 @@ The core data is stored in the `reservations` array within `script.js`. Each obj
 *   **`id` (Number):** Unique identifier for the reservation.
 *   **`guestName` (String):** The name of the guest.
 *   **`confirmationCode` (String):** A unique code string used for interaction and display (e.g., for upgrades).
+*   **`roomNumber` (Number):** The guest's room number (e.g., 501). Fancier rooms are on higher floors.
 *   **`roomType` (String):** The type of room (e.g., 'Suite King', 'Deluxe Queen').
 *   **`nights` (Number):** The duration of the stay in nights.
 *   **`guestCount` (Number):** The number of guests in the reservation.

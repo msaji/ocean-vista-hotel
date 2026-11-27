@@ -96,6 +96,33 @@ main h2 {
     border: 2px solid rgba(0,0,0,0.1);
 }
 
+#add-reservation-btn {
+    display: block;
+    width: 100%;
+    margin-top: 15px;
+    padding: 15px;
+    border: 3px dashed var(--hotel-roof);
+    border-radius: 15px;
+    background-color: transparent;
+    color: var(--hotel-roof);
+    font-family: var(--font-family);
+    font-size: 1.1em;
+    font-weight: 700;
+    cursor: pointer;
+}
+#add-reservation-btn:hover {
+    background-color: rgba(70, 130, 180, 0.1);
+}
+
+/* A new booking glows for a moment */
+.reservation-row.new-row {
+    animation: new-row-glow 1.5s ease-in-out 2;
+}
+@keyframes new-row-glow {
+    0%, 100% { box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    50% { box-shadow: 0 0 0 6px gold; }
+}
+
 .reservation-row.fade-out {
     opacity: 0;
     transform: translateX(20px);
@@ -307,6 +334,7 @@ footer button {
 
 /* Mobile Access Input Modal Styles */
 #find-reservation-form,
+#new-reservation-form,
 #key-name-form {
     display: flex;
     flex-direction: column;
@@ -316,6 +344,7 @@ footer button {
 }
 
 #find-reservation-form input[type="text"],
+#new-reservation-form input[type="text"],
 #key-name-form input[type="text"] {
     width: 80%;
     padding: 10px;
@@ -326,6 +355,7 @@ footer button {
 }
 
 #find-reservation-form button,
+#new-reservation-form button,
 #key-name-form button {
     background-color: var(--accent-blue);
     color: white;
@@ -338,6 +368,7 @@ footer button {
 }
 
 #find-reservation-form button:hover,
+#new-reservation-form button:hover,
 #key-name-form button:hover {
     background-color: #3558be;
 }

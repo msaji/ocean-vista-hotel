@@ -94,7 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
         newRequest: () => playPingPong(1047, 880),  // ping-pong, high
         done: () => playPingPong(660, 990),         // pong-PING, going up: well done!
         checkIn: () => playPingPong(784, 1175),     // happy rising chime
-        newBooking: () => playPingPong(880, 1047)   // bright ping-pong
+        newBooking: () => playPingPong(880, 1047),  // bright ping-pong
+        chat: () => playPingPong(1319, 1047)        // quick high ping for a chat message
     };
 
     // --- ELEMENTS ---
@@ -406,6 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     request.done = true;
                     requestsCompleted++;
                     sounds.done();
+                    reportDelivery(request);
                     updateServiceRequestCount();
                     showServiceRequests();
                 });
@@ -512,7 +514,9 @@ document.addEventListener('DOMContentLoaded', () => {
         gameMode = gameModeToggle.checked;
         clearTimeout(requestTimer);
         clearTimeout(arrivalTimer);
+        clearTimeout(chatTimer);
         if (gameMode) {
+            scheduleNextChat();
             showToast('<i class="fas fa-gamepad"></i> Game Mode ON! Guests will arrive and ask for things.');
             scheduleNextArrival();
             scheduleNextRequest();
@@ -965,6 +969,105 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         openModal(mobilePlannerModal);
     }
+
+    // --- HOUSEKEEPING CHAT ---
+    // Housekeeping uses this chat to tell the front desk what they've done.
+    const chatPanel = document.getElementById('chat-panel');
+    const chatBubble = document.getElementById('chat-bubble');
+    const chatClose = document.getElementById('chat-close');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const chatUnread = document.getElementById('chat-unread');
+    let unreadCount = 0;
+    let chatTimer = null;
+
+    function chatIsOpen() {
+        return chatPanel.style.display !== 'none';
+    }
+
+    function addChatMessage(text, from) {
+        const message = document.createElement('div');
+        message.className = `chat-message ${from}`;
+        message.textContent = text;
+        chatMessages.appendChild(message);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        if (from === 'housekeeping') {
+            sounds.chat();
+            if (!chatIsOpen()) {
+                unreadCount++;
+                chatUnread.textContent = unreadCount;
+                chatUnread.style.display = 'inline-block';
+            }
+        }
+    }
+
+    // When a service request is done, Housekeeping says what they delivered
+    function reportDelivery(request) {
+        const who = `Room ${request.guest.roomNumber} for ${request.guest.guestName}`;
+        const text = request.text.toLowerCase().includes('towel')
+            ? `Towels delivered to ${who}! Fluffy and folded.`
+            : `All done: "${request.text}" for ${who}.`;
+        setTimeout(() => addChatMessage(text, 'housekeeping'), 800);
+    }
+
+    // Housekeeping answers when you write to them
+    const housekeepingReplies = [
+        'On it!',
+        'Got it, thanks!',
+        "We'll send someone right away.",
+        'Sure thing, Front Desk!',
+        'No problem. Our mops are ready!'
+    ];
+
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        addChatMessage(chatInput.value.trim(), 'front-desk');
+        chatInput.value = '';
+        setTimeout(() => addChatMessage(pickRandom(housekeepingReplies), 'housekeeping'), 1500);
+    });
+
+    // In Game Mode, Housekeeping sends funny updates now and then
+    const housekeepingNews = [
+        'Room 304 is clean and sparkly!',
+        'We ran out of tiny soaps on floor 3. Sending more!',
+        'Found a rubber duck in Room 108. Does anyone want it back?',
+        'Snoopy is sleeping on the roof again.',
+        'The elevator smells like popcorn. Investigating!',
+        'Fresh sheets on the Seagull Floor are done.',
+        'Someone built a pillow fort on the Treetop Floor. It is very good.',
+        'We folded the towels into swans today!'
+    ];
+
+    function scheduleNextChat() {
+        if (!gameMode) return;
+        const seconds = 25 + Math.floor(Math.random() * 16); // 25 to 40
+        chatTimer = setTimeout(() => {
+            if (!gameMode) return;
+            addChatMessage(pickRandom(housekeepingNews), 'housekeeping');
+            scheduleNextChat();
+        }, seconds * 1000);
+    }
+
+    chatBubble.addEventListener('click', () => {
+        chatPanel.style.display = 'flex';
+        chatBubble.style.display = 'none';
+        unreadCount = 0;
+        chatUnread.style.display = 'none';
+        chatInput.focus();
+    });
+
+    chatClose.addEventListener('click', () => {
+        chatPanel.style.display = 'none';
+        chatBubble.style.display = 'flex';
+    });
+
+    // Housekeeping says hello when the page opens (quietly, no sound yet)
+    const hello = document.createElement('div');
+    hello.className = 'chat-message housekeeping';
+    hello.textContent = "Hi Front Desk! This is Housekeeping. We'll tell you here when we deliver things.";
+    chatMessages.appendChild(hello);
 
     // --- INITIALIZE ---
     renderReservations();

@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 18, guestName: 'Kai-Mah', confirmationCode: '#KM18A', roomNumber: 312, roomType: 'Deluxe Queen', nights: 3, guestCount: 1, phone: '555-0118', email: 'kai.mah@example.com', rowColor: 'var(--color-row3)', icon: 'fa-star' },
         { id: 19, guestName: 'Alexander and Eliza Hamilton', confirmationCode: '#AEH10', roomNumber: 410, roomType: 'Junior Suite', nights: 3, guestCount: 2, phone: '555-0119', email: 'alexander.eliza.hamilton@example.com', rowColor: 'var(--color-row4)', icon: 'fa-feather' },
         { id: 20, guestName: 'Charlie Brown and Snoopy', confirmationCode: '#CBSNP', roomNumber: 106, roomType: 'Standard Queen', nights: 4, guestCount: 2, phone: '555-0120', email: 'charlie.brown.snoopy@example.com', rowColor: 'var(--color-row5)', icon: 'fa-dog' },
-        { id: 21, guestName: 'Lucy Saji', confirmationCode: '#LUCY5', roomNumber: 109, roomType: 'Single', nights: 2, guestCount: 1, phone: '555-0121', email: 'lucy.saji@example.com', rowColor: 'var(--color-row1)', icon: 'fa-football' }
+        { id: 21, guestName: 'Lucy Saji', confirmationCode: '#LUCY5', roomNumber: 109, roomType: 'Single', nights: 2, guestCount: 1, phone: '555-0121', email: 'lucy.saji@example.com', rowColor: 'var(--color-row1)', icon: 'fa-heart' }
 	];
 
     // --- THE HOTEL BUILDING ---

@@ -42,8 +42,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileAccessInputModal = document.getElementById('mobile-access-input-modal');
     const mobilePlannerModal = document.getElementById('mobile-planner-modal');
     const checkedInModal = document.getElementById('checked-in-modal');
+    const serviceRequestsModal = document.getElementById('service-requests-modal');
     const newReservationModal = document.getElementById('new-reservation-modal');
-    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, mobileAccessInputModal, mobilePlannerModal, checkedInModal, newReservationModal];
+    const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, mobileAccessInputModal, mobilePlannerModal, checkedInModal, newReservationModal, serviceRequestsModal];
     const checkInModalText = document.getElementById('check-in-modal-text');
     const confirmCheckInBtn = document.getElementById('confirm-check-in-btn');
     const contactInfoBtn = document.getElementById('contact-info-btn');
@@ -53,6 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const upgradeRoomBtn = document.getElementById('upgrade-room-btn');
     const checkedInBtn = document.getElementById('checked-in-btn');
     const checkedInList = document.getElementById('checked-in-list');
+    const serviceRequestsBtn = document.getElementById('service-requests-btn');
+    const serviceRequestsList = document.getElementById('service-requests-list');
     const digitalKeyLink = document.getElementById('digital-key-link');
     const mobileAccessLink = document.getElementById('mobile-access-link');
     const findReservationForm = document.getElementById('find-reservation-form');
@@ -174,7 +177,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Remove from array as well
                         const indexToRemove = reservations.findIndex(r => r.id === activeReservationId);
                         if (indexToRemove > -1) {
+                            const guest = reservations[indexToRemove];
                             reservations.splice(indexToRemove, 1);
+                            makeServiceRequests(guest);
                         }
                         updateCheckedInCount();
                         activeReservationId = null;
@@ -259,6 +264,66 @@ document.addEventListener('DOMContentLoaded', () => {
         const newRow = document.getElementById(`res-${newId}`);
         newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
         newRow.classList.add('new-row');
+    });
+
+    // --- SERVICE REQUESTS ---
+    // When a guest checks in, they ask for one or two things.
+    const serviceRequests = [];
+    const requestIdeas = [
+        'Extra pillows',
+        'More towels',
+        'An extra blanket',
+        'Room service: a cheese pizza',
+        'Wake-up call at 7 AM',
+        'Fresh flowers for the room',
+        'A beach umbrella',
+        'Sand toys for the kids',
+        'Fix the TV remote',
+        'A bucket of ice',
+        'Spicy hot Cheetos',
+        'Late check-out, please'
+    ];
+
+    function makeServiceRequests(guest) {
+        const howMany = 1 + Math.floor(Math.random() * 2); // 1 or 2
+        const ideas = shuffleArray([...requestIdeas]).slice(0, howMany);
+        ideas.forEach(text => serviceRequests.push({ guest, text, done: false }));
+        updateServiceRequestCount();
+    }
+
+    function updateServiceRequestCount() {
+        const waiting = serviceRequests.filter(r => !r.done).length;
+        serviceRequestsBtn.textContent = `SERVICE REQUESTS: ${waiting}`;
+    }
+
+    function showServiceRequests() {
+        serviceRequestsList.innerHTML = '';
+        if (serviceRequests.length === 0) {
+            serviceRequestsList.innerHTML = '<li>No service requests yet. Check in a guest!</li>';
+            return;
+        }
+        serviceRequests.forEach(request => {
+            const item = document.createElement('li');
+            if (request.done) item.classList.add('done');
+            item.innerHTML = `
+                <span><strong>${request.guest.guestName}</strong> &middot; Room ${request.guest.roomNumber}: ${request.text}</span>
+                ${request.done ? '<span class="done-mark"><i class="fas fa-check"></i> Done</span>' : '<button class="done-btn">Done</button>'}
+            `;
+            const doneBtn = item.querySelector('.done-btn');
+            if (doneBtn) {
+                doneBtn.addEventListener('click', () => {
+                    request.done = true;
+                    updateServiceRequestCount();
+                    showServiceRequests();
+                });
+            }
+            serviceRequestsList.appendChild(item);
+        });
+    }
+
+    serviceRequestsBtn.addEventListener('click', () => {
+        showServiceRequests();
+        openModal(serviceRequestsModal);
     });
 
     // --- CHECKED-IN GUESTS ---

@@ -29,6 +29,7 @@
                 <button id="available-rooms-btn">AVAILABLE ROOMS: 32</button>
                 <button id="upgrade-room-btn">UPGRADE MY ROOM</button>
                 <button id="checked-in-btn">CHECKED-IN GUESTS: 0</button>
+                <button id="service-requests-btn">SERVICE REQUESTS: 0</button>
             </div>
             <div class="footer-links">
                 <a href="#" id="digital-key-link"><i class="fas fa-key"></i> DIGITAL ROOM KEY</a>
@@ -67,6 +68,14 @@
                     <input type="text" id="new-guest-name-input" placeholder="Guest name, e.g., Jane Doe" required>
                     <button type="submit">Add Booking</button>
                 </form>
+            </div>
+        </div>
+
+        <div id="service-requests-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h3>Service Requests</h3>
+                <ul id="service-requests-list"></ul>
             </div>
         </div>
 

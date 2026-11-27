@@ -27,6 +27,8 @@ The core data is stored in the `reservations` array within `script.js`. Each obj
 *   **`roomNumber` (Number):** The guest's room number (e.g., 501). Fancier rooms are on higher floors.
 *   **`roomType` (String):** The type of room (e.g., 'Suite King', 'Deluxe Queen').
 *   **`nights` (Number):** The duration of the stay in nights.
+*   **`phone` (String):** A made-up phone number (555-01xx), shown under Contact Information.
+*   **`email` (String):** A made-up email address (@example.com), shown under Contact Information.
 *   **`guestCount` (Number):** The number of guests in the reservation.
 *   **`rowColor` (String):** A reference to a specific CSS color variable used for styling.
 *   **`icon` (String):** A Font Awesome icon reference used for visual display.

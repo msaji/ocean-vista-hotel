@@ -1,24 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- DATA ---
     const reservations = [
-        { id: 1, guestName: 'Michael Saji', confirmationCode: '#A735B', roomNumber: 501, roomType: 'Suite King', nights: 1, guestCount: 4, rowColor: 'var(--color-row1)', icon: 'fa-sun' },
-        { id: 2, guestName: 'David Lee & Sarah Brown', confirmationCode: '#A70B', roomNumber: 304, roomType: 'Deluxe Queen', nights: 1, guestCount: 9, rowColor: 'var(--color-row2)', icon: 'fa-ship' },
-        { id: 3, guestName: 'David Lee', confirmationCode: '#700B', roomNumber: 502, roomType: 'Premier Suite', nights: 3, guestCount: 5, rowColor: 'var(--color-row3)', icon: 'fa-cloud' },
-        { id: 4, guestName: 'James Wilson', confirmationCode: '#EXETUBLE', roomNumber: 112, roomType: 'Standard King', nights: 4, guestCount: 1, rowColor: 'var(--color-row4)', icon: 'fa-palm-tree' },
-        { id: 5, guestName: 'Jenjamin Green', confirmationCode: '#A728IE', roomNumber: 405, roomType: 'Junior Suite', nights: 3, guestCount: 3, rowColor: 'var(--color-row5)', icon: 'fa-treasure-chest' },
-        { id: 6, guestName: 'Emily Clark', confirmationCode: '#C123D', roomNumber: 108, roomType: 'Standard Queen', nights: 2, guestCount: 1, rowColor: 'var(--color-row1)', icon: 'fa-star' },
-        { id: 7, guestName: 'Michael Scott', confirmationCode: '#D456E', roomNumber: 801, roomType: 'Presidential Suite', nights: 1, guestCount: 2, rowColor: 'var(--color-row2)', icon: 'fa-crown' },
-        { id: 8, guestName: 'Jessica Day', confirmationCode: '#F789G', roomNumber: 610, roomType: 'Loft', nights: 5, guestCount: 1, rowColor: 'var(--color-row3)', icon: 'fa-couch' },
-        { id: 9, guestName: 'Walter White', confirmationCode: '#H012I', roomNumber: 115, roomType: 'Standard King', nights: 3, guestCount: 2, rowColor: 'var(--color-row4)', icon: 'fa-flask' },
-        { id: 10, guestName: 'Liz Lemon', confirmationCode: '#J345K', roomNumber: 307, roomType: 'Deluxe King', nights: 2, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-pencil-alt' },
-        { id: 11, guestName: 'Ron Swanson', confirmationCode: '#L678M', roomNumber: 701, roomType: 'Cabin', nights: 7, guestCount: 1, rowColor: 'var(--color-row1)', icon: 'fa-tree' },
-        { id: 12, guestName: 'Arya Stark', confirmationCode: '#N901O', roomNumber: 104, roomType: 'Single', nights: 1, guestCount: 1, rowColor: 'var(--color-row2)', icon: 'fa-user-ninja' },
-        { id: 13, guestName: 'Sherlock Holmes', confirmationCode: '#P234Q', roomNumber: 221, roomType: 'Study', nights: 4, guestCount: 2, rowColor: 'var(--color-row3)', icon: 'fa-search' },
-        { id: 14, guestName: 'Dana Scully', confirmationCode: '#R567S', roomNumber: 118, roomType: 'Standard Queen', nights: 2, guestCount: 1, rowColor: 'var(--color-row4)', icon: 'fa-satellite' },
-        { id: 15, guestName: 'Fox Mulder', confirmationCode: '#T890U', roomNumber: 119, roomType: 'Standard Queen', nights: 2, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-pastafarianism' },
-        { id: 16, guestName: 'Gung Gung and Poh Poh', confirmationCode: '#GGPP1', roomNumber: 310, roomType: 'Deluxe King', nights: 50, guestCount: 2, rowColor: 'var(--color-row1)', icon: 'fa-users' },
-		{ id: 17, guestName: 'Evelyn Holman', confirmationCode: '#148EH', roomNumber: 408, roomType: 'Junior Suite', nights: 21, guestCount: 1, rowColor: 'var(--color-row5)', icon: 'fa-book' },
-        { id: 18, guestName: 'Kai-Mah', confirmationCode: '#KM18A', roomNumber: 312, roomType: 'Deluxe Queen', nights: 3, guestCount: 1, rowColor: 'var(--color-row3)', icon: 'fa-star' }
+        { id: 1, guestName: 'Michael Saji', confirmationCode: '#A735B', roomNumber: 501, roomType: 'Suite King', nights: 1, guestCount: 4, phone: '555-0101', email: 'michael.saji@example.com', rowColor: 'var(--color-row1)', icon: 'fa-sun' },
+        { id: 2, guestName: 'David Lee & Sarah Brown', confirmationCode: '#A70B', roomNumber: 304, roomType: 'Deluxe Queen', nights: 1, guestCount: 9, phone: '555-0102', email: 'david.lee.sarah.brown@example.com', rowColor: 'var(--color-row2)', icon: 'fa-ship' },
+        { id: 3, guestName: 'David Lee', confirmationCode: '#700B', roomNumber: 502, roomType: 'Premier Suite', nights: 3, guestCount: 5, phone: '555-0103', email: 'david.lee@example.com', rowColor: 'var(--color-row3)', icon: 'fa-cloud' },
+        { id: 4, guestName: 'James Wilson', confirmationCode: '#EXETUBLE', roomNumber: 112, roomType: 'Standard King', nights: 4, guestCount: 1, phone: '555-0104', email: 'james.wilson@example.com', rowColor: 'var(--color-row4)', icon: 'fa-palm-tree' },
+        { id: 5, guestName: 'Jenjamin Green', confirmationCode: '#A728IE', roomNumber: 405, roomType: 'Junior Suite', nights: 3, guestCount: 3, phone: '555-0105', email: 'jenjamin.green@example.com', rowColor: 'var(--color-row5)', icon: 'fa-treasure-chest' },
+        { id: 6, guestName: 'Emily Clark', confirmationCode: '#C123D', roomNumber: 108, roomType: 'Standard Queen', nights: 2, guestCount: 1, phone: '555-0106', email: 'emily.clark@example.com', rowColor: 'var(--color-row1)', icon: 'fa-star' },
+        { id: 7, guestName: 'Michael Scott', confirmationCode: '#D456E', roomNumber: 801, roomType: 'Presidential Suite', nights: 1, guestCount: 2, phone: '555-0107', email: 'michael.scott@example.com', rowColor: 'var(--color-row2)', icon: 'fa-crown' },
+        { id: 8, guestName: 'Jessica Day', confirmationCode: '#F789G', roomNumber: 610, roomType: 'Loft', nights: 5, guestCount: 1, phone: '555-0108', email: 'jessica.day@example.com', rowColor: 'var(--color-row3)', icon: 'fa-couch' },
+        { id: 9, guestName: 'Walter White', confirmationCode: '#H012I', roomNumber: 115, roomType: 'Standard King', nights: 3, guestCount: 2, phone: '555-0109', email: 'walter.white@example.com', rowColor: 'var(--color-row4)', icon: 'fa-flask' },
+        { id: 10, guestName: 'Liz Lemon', confirmationCode: '#J345K', roomNumber: 307, roomType: 'Deluxe King', nights: 2, guestCount: 1, phone: '555-0110', email: 'liz.lemon@example.com', rowColor: 'var(--color-row5)', icon: 'fa-pencil-alt' },
+        { id: 11, guestName: 'Ron Swanson', confirmationCode: '#L678M', roomNumber: 701, roomType: 'Cabin', nights: 7, guestCount: 1, phone: '555-0111', email: 'ron.swanson@example.com', rowColor: 'var(--color-row1)', icon: 'fa-tree' },
+        { id: 12, guestName: 'Arya Stark', confirmationCode: '#N901O', roomNumber: 104, roomType: 'Single', nights: 1, guestCount: 1, phone: '555-0112', email: 'arya.stark@example.com', rowColor: 'var(--color-row2)', icon: 'fa-user-ninja' },
+        { id: 13, guestName: 'Sherlock Holmes', confirmationCode: '#P234Q', roomNumber: 221, roomType: 'Study', nights: 4, guestCount: 2, phone: '555-0113', email: 'sherlock.holmes@example.com', rowColor: 'var(--color-row3)', icon: 'fa-search' },
+        { id: 14, guestName: 'Dana Scully', confirmationCode: '#R567S', roomNumber: 118, roomType: 'Standard Queen', nights: 2, guestCount: 1, phone: '555-0114', email: 'dana.scully@example.com', rowColor: 'var(--color-row4)', icon: 'fa-satellite' },
+        { id: 15, guestName: 'Fox Mulder', confirmationCode: '#T890U', roomNumber: 119, roomType: 'Standard Queen', nights: 2, guestCount: 1, phone: '555-0115', email: 'fox.mulder@example.com', rowColor: 'var(--color-row5)', icon: 'fa-pastafarianism' },
+        { id: 16, guestName: 'Gung Gung and Poh Poh', confirmationCode: '#GGPP1', roomNumber: 310, roomType: 'Deluxe King', nights: 50, guestCount: 2, phone: '555-0116', email: 'gung.gung.and.poh.poh@example.com', rowColor: 'var(--color-row1)', icon: 'fa-users' },
+		{ id: 17, guestName: 'Evelyn Holman', confirmationCode: '#148EH', roomNumber: 408, roomType: 'Junior Suite', nights: 21, guestCount: 1, phone: '555-0117', email: 'evelyn.holman@example.com', rowColor: 'var(--color-row5)', icon: 'fa-book' },
+        { id: 18, guestName: 'Kai-Mah', confirmationCode: '#KM18A', roomNumber: 312, roomType: 'Deluxe Queen', nights: 3, guestCount: 1, phone: '555-0118', email: 'kai.mah@example.com', rowColor: 'var(--color-row3)', icon: 'fa-star' }
 	];
 
     // A copy of the full guest list. Checking in removes a guest from the
@@ -46,6 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const modals = [checkInModal, roomsModal, upgradeModal, barcodeModal, mobileAccessInputModal, mobilePlannerModal, checkedInModal, newReservationModal];
     const checkInModalText = document.getElementById('check-in-modal-text');
     const confirmCheckInBtn = document.getElementById('confirm-check-in-btn');
+    const contactInfoBtn = document.getElementById('contact-info-btn');
+    const contactInfo = document.getElementById('contact-info');
     const plannerContent = document.getElementById('planner-content');
     const availableRoomsBtn = document.getElementById('available-rooms-btn');
     const upgradeRoomBtn = document.getElementById('upgrade-room-btn');
@@ -128,9 +130,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (reservation) {
             activeReservationId = reservationId;
             checkInModalText.textContent = `Ready to check in ${reservation.guestName}? Room ${reservation.roomNumber} (${reservation.roomType})`;
+
+            // Hide any contact info shown for the last guest
+            contactInfo.style.display = 'none';
+            contactInfo.innerHTML = '';
             openModal(checkInModal);
         }
     }
+
+    // Show the guest's phone and email
+    contactInfoBtn.addEventListener('click', () => {
+        const guest = allGuests.find(g => g.id === activeReservationId);
+        if (!guest) return;
+        contactInfo.innerHTML = `
+            <p><i class="fas fa-phone"></i> <strong>Phone:</strong> ${guest.phone}</p>
+            <p><i class="fas fa-envelope"></i> <strong>Email:</strong> ${guest.email}</p>
+            <p><i class="fas fa-users"></i> <strong>Guests:</strong> ${guest.guestCount}</p>
+        `;
+        contactInfo.style.display = 'block';
+    });
 
     confirmCheckInBtn.addEventListener('click', () => {
         // 4. Display confirmation message
@@ -224,6 +242,8 @@ document.addEventListener('DOMContentLoaded', () => {
             roomType: choice.roomType,
             nights: 1 + Math.floor(Math.random() * 5), // 1 to 5 nights
             guestCount: 1,
+            phone: `555-01${String(newId % 100).padStart(2, '0')}`,
+            email: (newGuestNameInput.value.toLowerCase().match(/[a-z]+/g) || ['guest']).join('.') + '@example.com',
             rowColor: `var(--color-row${(newId % 5) + 1})`,
             icon: pickRandom(newIcons)
         };

@@ -317,6 +317,21 @@ footer button {
     background-color: #218838;
 }
 
+#contact-info-btn {
+    background-color: var(--accent-blue);
+}
+#contact-info-btn:hover {
+    background-color: #3558be;
+}
+
+#contact-info {
+    margin-top: 15px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    background-color: #f0f8ff;
+    text-align: left;
+}
+
 #qrcode {
     width: 200px;
     height: 200px;

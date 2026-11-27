@@ -29,10 +29,12 @@
                 <button id="available-rooms-btn">AVAILABLE ROOMS: 32</button>
                 <button id="upgrade-room-btn">UPGRADE MY ROOM</button>
                 <button id="checked-in-btn">CHECKED-IN GUESTS: 0</button>
+                <button id="service-requests-btn">SERVICE REQUESTS: 0</button>
             </div>
             <div class="footer-links">
                 <a href="#" id="digital-key-link"><i class="fas fa-key"></i> DIGITAL ROOM KEY</a>
                 <a href="#" id="mobile-access-link"><i class="fas fa-mobile-alt"></i> MOBILE ACCESS</a>
+                <a href="#" id="restaurant-link"><i class="fas fa-utensils"></i> RESTAURANT</a>
             </div>
         </footer>
 
@@ -42,6 +44,8 @@
                 <span class="close-btn">&times;</span>
                 <p id="check-in-modal-text"></p>
                 <button id="confirm-check-in-btn">Confirm Check-In</button>
+                <button id="contact-info-btn">Contact Information</button>
+                <div id="contact-info" style="display: none;"></div>
                 <div id="confirmation-message" class="confirmation-message"></div>
             </div>
         </div>
@@ -65,6 +69,33 @@
                     <input type="text" id="new-guest-name-input" placeholder="Guest name, e.g., Jane Doe" required>
                     <button type="submit">Add Booking</button>
                 </form>
+            </div>
+        </div>
+
+        <div id="service-requests-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h3>Service Requests</h3>
+                <ul id="service-requests-list"></ul>
+            </div>
+        </div>
+
+        <div id="restaurant-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h3>Restaurant Reservation</h3>
+                <form id="restaurant-form">
+                    <p>Which restaurant would you like?</p>
+                    <div class="restaurant-choices">
+                        <label><input type="radio" name="restaurant" value="The Coral Grill" required> <i class="fas fa-fish"></i> The Coral Grill <span>seafood by the sea</span></label>
+                        <label><input type="radio" name="restaurant" value="Dragon Pearl Dim Sum"> <i class="fas fa-bowl-rice"></i> Dragon Pearl Dim Sum <span>dumplings and buns</span></label>
+                        <label><input type="radio" name="restaurant" value="Seashell Tea Lounge"> <i class="fas fa-mug-hot"></i> Seashell Tea Lounge <span>tea and little cakes</span></label>
+                    </div>
+                    <p>What is your name?</p>
+                    <input type="text" id="restaurant-name-input" placeholder="e.g., Michael Saji" required>
+                    <button type="submit">Book My Table</button>
+                </form>
+                <div id="restaurant-result" class="restaurant-result" style="display: none;"></div>
             </div>
         </div>
 

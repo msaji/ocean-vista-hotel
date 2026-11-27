@@ -233,8 +233,91 @@ footer button {
     border-bottom: 1px solid #eee;
 }
 
+#service-requests-btn {
+    background-color: #8a4fbf;
+}
+#service-requests-btn:hover {
+    background-color: #733fa3;
+}
+
+#service-requests-list {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+}
+#service-requests-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+#service-requests-list li.done {
+    color: #999;
+}
+#service-requests-list li.done span:first-child {
+    text-decoration: line-through;
+}
+#service-requests-list .done-btn {
+    flex-shrink: 0;
+    margin: 0;
+    padding: 6px 14px;
+    background-color: #28a745;
+}
+#service-requests-list .done-mark {
+    flex-shrink: 0;
+    color: #28a745;
+}
+
+/* Restaurant Reservation */
+.restaurant-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+}
+.restaurant-choices label {
+    padding: 10px 12px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.restaurant-choices label:has(input:checked) {
+    border-color: var(--accent-blue);
+    background-color: #f0f8ff;
+}
+.restaurant-choices span {
+    display: block;
+    margin-left: 24px;
+    font-size: 0.85em;
+    color: #777;
+}
+#restaurant-name-input {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+    text-align: center;
+}
+#restaurant-form button {
+    display: block;
+    margin: 15px auto 0;
+}
+.restaurant-result {
+    margin-top: 10px;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #e8f7ec;
+}
+.restaurant-result i {
+    color: #28a745;
+}
+
 .footer-links {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     gap: 30px;
 }
@@ -315,6 +398,21 @@ footer button {
 }
 #confirm-check-in-btn:hover {
     background-color: #218838;
+}
+
+#contact-info-btn {
+    background-color: var(--accent-blue);
+}
+#contact-info-btn:hover {
+    background-color: #3558be;
+}
+
+#contact-info {
+    margin-top: 15px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    background-color: #f0f8ff;
+    text-align: left;
 }
 
 #qrcode {
@@ -408,4 +506,26 @@ footer button {
 
 #planner-schedule li strong {
     color: var(--hotel-roof);
+}
+
+/* On small screens, let the whole page scroll so the guest list has room,
+   and make the footer buttons smaller so they all fit */
+@media (max-width: 600px) {
+    .container {
+        max-height: none;
+    }
+    main {
+        overflow-y: visible;
+    }
+    .footer-buttons {
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+    footer button {
+        padding: 10px 12px;
+        font-size: 0.8em;
+    }
+    .footer-links {
+        gap: 10px 20px;
+    }
 }

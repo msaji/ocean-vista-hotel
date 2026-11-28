@@ -4,6 +4,8 @@ This document summarizes the architecture, file structure, and operational workf
 
 **Live site:** https://msaji.github.io/ocean-vista-hotel/
 
+The live site is rebuilt by GitHub Pages each time a change is merged into `main`. If a merge doesn't show up on the site, check the "pages build and deployment" runs in the repository's Actions tab; merging another change starts a new build.
+
 ## 1. Project Context (from CLAUDE.md)
 
 **Goal:** To create a simplified, "child's toy" prototype for managing guest check-in process in a hotel front desk setting.

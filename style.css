@@ -558,6 +558,53 @@ footer button {
     color: var(--hotel-roof);
     cursor: pointer;
 }
+/* The lobby: an open floor plan instead of a hallway */
+.floor-grid.lobby-map {
+    grid-template-columns: 1fr 1.3fr 1fr;
+    grid-template-rows: repeat(4, auto);
+    grid-template-areas:
+        "coral    elevator dimsum"
+        "tea      lounge   gelato"
+        "gift     desk     luggage"
+        "entrance entrance entrance";
+    gap: 8px;
+    padding: 10px;
+    max-height: none; /* the whole lobby always shows */
+    border-radius: 12px;
+    /* a checkered marble floor */
+    background: repeating-conic-gradient(#f4efe6 0% 25%, #e9e1d3 0% 50%) 0 0 / 28px 28px;
+}
+.lobby-map .room-cell.place { min-height: 64px; }
+.modal-content .room-cell.place.restaurant { background-color: #ffe2c7; color: #b55a1c; }
+.modal-content .room-cell.place.shop { background-color: #eadcf7; color: #6b3fa0; }
+.modal-content .room-cell.place.lounge { background-color: #d6f0dc; color: #2c7a43; }
+.modal-content .room-cell.place.elevator { background-color: #c9d6e3; color: #3a4a5c; }
+.modal-content .room-cell.place.desk { background-color: #c69c6d; color: white; border-color: #8a6440; }
+.modal-content .room-cell.place.entrance {
+    background-color: #bfe6ff;
+    color: var(--hotel-roof);
+    border: 3px dashed var(--hotel-roof);
+}
+
+/* The rooftop terrace on the top floor */
+.map-terrace {
+    grid-column: 1 / -1;
+    margin-bottom: 6px;
+    padding: 8px;
+    border-radius: 12px;
+    background: linear-gradient(#ffd27f, #ffeccc);
+}
+.map-terrace-title {
+    font-weight: 900;
+    color: #b55a1c;
+    margin-bottom: 6px;
+}
+.map-terrace-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
 .room-cell.place i {
     display: block;
     margin-bottom: 2px;

@@ -26,7 +26,7 @@ The core data is stored in the `reservations` array within `script.js`. Each obj
 *   **`id` (Number):** Unique identifier for the reservation.
 *   **`guestName` (String):** The name of the guest.
 *   **`confirmationCode` (String):** A unique code string used for interaction and display (e.g., for upgrades).
-*   **`roomNumber` (Number):** The guest's room number (e.g., 501). Fancier rooms are on higher floors.
+*   **`roomNumber` (Number):** The guest's room number (e.g., 601). Fancier rooms are on higher floors; floor 1 is the lobby, so guest rooms start on floor 2.
 *   **`roomType` (String):** The type of room (e.g., 'Suite King', 'Deluxe Queen').
 *   **`nights` (Number):** The duration of the stay in nights.
 *   **`phone` (String):** A made-up phone number (555-01xx), shown under Contact Information.
@@ -38,9 +38,10 @@ The core data is stored in the `reservations` array within `script.js`. Each obj
 ### Hotel Floors
 
 The `hotelFloors` list in `script.js` describes the building. Each floor has:
-*   **`floor` (Number):** The floor number. A room's floor is the first digit of its room number (room 221 is on floor 2).
+*   **`floor` (Number):** The floor number. A room's floor is the first digit of its room number (room 321 is on floor 3).
 *   **`name` (String):** A fun name, e.g., 'Beach Floor' or 'Penthouse'.
 *   **`roomCount` (Number):** How many rooms the floor has (rooms are numbered x01, x02, ...).
+*   **`places` (List, Lobby only):** Floor 1 is the Lobby. It has no guest rooms; instead it lists places (front desk, gift shop, restaurants...) with a `name`, `icon` and `about` text.
 
 The Hotel Map uses this list to draw each floor, and new bookings only get rooms that exist on a floor.
 

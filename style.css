@@ -553,6 +553,21 @@ footer button {
     display: block;
 }
 .room-cell.empty { background-color: #eeeeee; color: #999; }
+.modal-content .room-cell.place {
+    background-color: #d9ecff;
+    color: var(--hotel-roof);
+    cursor: pointer;
+}
+.room-cell.place i {
+    display: block;
+    margin-bottom: 2px;
+}
+.checked-in-meal {
+    display: block;
+    margin: 4px 0 0 24px;
+    font-size: 0.9em;
+    color: var(--accent-red);
+}
 .room-cell.booked { background-color: #ffe48a; }
 .room-cell.checked-in { background-color: #8fdca0; }
 .map-legend {

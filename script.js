@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 1, guestName: 'Michael Saji', confirmationCode: '#A735B', roomNumber: 501, roomType: 'Suite King', nights: 1, guestCount: 4, phone: '555-0101', email: 'michael.saji@example.com', rowColor: 'var(--color-row1)', icon: 'fa-sun' },
         { id: 2, guestName: 'David Lee & Sarah Brown', confirmationCode: '#A70B', roomNumber: 304, roomType: 'Deluxe Queen', nights: 1, guestCount: 9, phone: '555-0102', email: 'david.lee.sarah.brown@example.com', rowColor: 'var(--color-row2)', icon: 'fa-ship' },
         { id: 3, guestName: 'David Lee', confirmationCode: '#700B', roomNumber: 502, roomType: 'Premier Suite', nights: 3, guestCount: 5, phone: '555-0103', email: 'david.lee@example.com', rowColor: 'var(--color-row3)', icon: 'fa-cloud' },
-        { id: 4, guestName: 'James Wilson', confirmationCode: '#EXETUBLE', roomNumber: 112, roomType: 'Standard King', nights: 4, guestCount: 1, phone: '555-0104', email: 'james.wilson@example.com', rowColor: 'var(--color-row4)', icon: 'fa-palm-tree' },
-        { id: 5, guestName: 'Jenjamin Green', confirmationCode: '#A728IE', roomNumber: 405, roomType: 'Junior Suite', nights: 3, guestCount: 3, phone: '555-0105', email: 'jenjamin.green@example.com', rowColor: 'var(--color-row5)', icon: 'fa-treasure-chest' },
+        { id: 4, guestName: 'James Wilson', confirmationCode: '#EXETUBLE', roomNumber: 112, roomType: 'Standard King', nights: 4, guestCount: 1, phone: '555-0104', email: 'james.wilson@example.com', rowColor: 'var(--color-row4)', icon: 'fa-umbrella-beach' },
+        { id: 5, guestName: 'Jenjamin Green', confirmationCode: '#A728IE', roomNumber: 405, roomType: 'Junior Suite', nights: 3, guestCount: 3, phone: '555-0105', email: 'jenjamin.green@example.com', rowColor: 'var(--color-row5)', icon: 'fa-gem' },
         { id: 6, guestName: 'Emily Clark', confirmationCode: '#C123D', roomNumber: 108, roomType: 'Standard Queen', nights: 2, guestCount: 1, phone: '555-0106', email: 'emily.clark@example.com', rowColor: 'var(--color-row1)', icon: 'fa-star' },
         { id: 7, guestName: 'Michael Scott', confirmationCode: '#D456E', roomNumber: 801, roomType: 'Presidential Suite', nights: 1, guestCount: 2, phone: '555-0107', email: 'michael.scott@example.com', rowColor: 'var(--color-row2)', icon: 'fa-crown' },
         { id: 8, guestName: 'Jessica Day', confirmationCode: '#F789G', roomNumber: 610, roomType: 'Loft', nights: 5, guestCount: 1, phone: '555-0108', email: 'jessica.day@example.com', rowColor: 'var(--color-row3)', icon: 'fa-couch' },
@@ -40,6 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function floorOf(roomNumber) {
         return Math.floor(roomNumber / 100);
+    }
+
+    // The floor a room is on, from the floors list, e.g. the Library Floor for room 221
+    function floorFor(roomNumber) {
+        return hotelFloors.find(f => f.floor === floorOf(roomNumber))
+            || { floor: floorOf(roomNumber), name: `Floor ${floorOf(roomNumber)}` };
     }
 
     // A copy of the full guest list. Checking in removes a guest from the
@@ -168,6 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="room-info">
                         <p class="details">ROOM ${res.roomNumber} &middot; ${res.roomType}, ${plural(res.nights, 'NIGHT')}</p>
+                        <p class="floor-name"><i class="fas fa-building"></i> ${floorFor(res.roomNumber).name} &middot; Floor ${floorOf(res.roomNumber)}</p>
                     </div>
                     <div class="icon">
                         <i class="fas ${res.icon}"></i>
@@ -209,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (reservation) {
             activeReservationId = reservationId;
             confirmationMsg.classList.remove('show'); // clear the last guest's message
-            checkInModalText.textContent = `Ready to check in ${reservation.guestName}? Room ${reservation.roomNumber} (${reservation.roomType})`;
+            checkInModalText.textContent = `Ready to check in ${reservation.guestName}? Room ${reservation.roomNumber} (${reservation.roomType}) on the ${floorFor(reservation.roomNumber).name}`;
 
             // Hide any contact info shown for the last guest
             contactInfo.style.display = 'none';
@@ -1058,6 +1065,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <h2>${reservation.guestName}'s Stay Planner</h2>
             <p><strong>Confirmation:</strong> ${reservation.confirmationCode}</p>
             <p><strong>Room Number:</strong> ${reservation.roomNumber}</p>
+            <p><strong>Floor:</strong> ${floorFor(reservation.roomNumber).name} (Floor ${floorOf(reservation.roomNumber)})</p>
             <p><strong>Room Type:</strong> ${reservation.roomType}</p>
             <p><strong>Guests:</strong> ${reservation.guestCount}</p>
             <p><strong>Nights:</strong> ${reservation.nights}</p>

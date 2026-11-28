@@ -44,7 +44,7 @@ The Hotel Map uses this list to draw each floor, and new bookings only get rooms
 
 ### Restaurants
 
-The `restaurants` list in `script.js` holds each restaurant's `name`, `icon`, `about` text and `tablesLeft`. A booking uses one table; at 0 the restaurant is FULL.
+The `restaurants` list in `script.js` holds each restaurant's `name`, `icon`, `about` text, `tables` (tables per meal time), `meals` (which meal times it is open) and `closedDays` (days of the week it is closed). Availability is worked out for the chosen day and meal time: a booking uses one table at that day and time, meal times that have already started today can't be picked, and a restaurant shows FULL, "Not open for ..." or "Closed on ..." when it can't be booked.
 
 ## 4. CSS Design & Theme
 

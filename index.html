@@ -114,23 +114,18 @@
                 <span class="close-btn">&times;</span>
                 <h3>Restaurant Reservation</h3>
                 <form id="restaurant-form">
-                    <p>Which restaurant would you like?</p>
-                    <div class="restaurant-choices" id="restaurant-choices">
-                        <!-- Filled in by JavaScript from the restaurants list -->
-                    </div>
                     <p>When would you like to eat?</p>
                     <div class="restaurant-when">
                         <select id="restaurant-day" required>
-                            <!-- The next 7 days, filled in by JavaScript -->
+                            <!-- Today and the next 6 days, filled in by JavaScript -->
                         </select>
                         <select id="restaurant-time" required>
-                            <option value="">Pick a time</option>
-                            <option value="0">Breakfast, 8:00 AM</option>
-                            <option value="1">Lunch, 12:00 PM</option>
-                            <option value="2">Tea time, 3:00 PM</option>
-                            <option value="3">Dinner, 6:00 PM</option>
-                            <option value="4">Late dinner, 8:00 PM</option>
+                            <!-- Meal times, filled in by JavaScript -->
                         </select>
+                    </div>
+                    <p>Which restaurant would you like?</p>
+                    <div class="restaurant-choices" id="restaurant-choices">
+                        <!-- Filled in by JavaScript from the restaurants list -->
                     </div>
                     <p>What is your name?</p>
                     <input type="text" id="restaurant-name-input" placeholder="e.g., Michael Saji" required>

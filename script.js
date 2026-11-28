@@ -868,65 +868,136 @@ document.addEventListener('DOMContentLoaded', () => {
     // guest it belongs to (or null for visitors), and the day and meal time
     const restaurantBookings = [];
 
-    // Meal times you can pick, in order through the day
+    // Meal times you can pick, in order through the day.
+    // "hour" is when the meal starts, on a 24-hour clock (18 = 6 PM).
     const mealTimes = [
-        { meal: 'Breakfast', time: '8:00 AM' },
-        { meal: 'Lunch', time: '12:00 PM' },
-        { meal: 'Tea time', time: '3:00 PM' },
-        { meal: 'Dinner', time: '6:00 PM' },
-        { meal: 'Late dinner', time: '8:00 PM' }
+        { meal: 'Breakfast', time: '8:00 AM', hour: 8 },
+        { meal: 'Lunch', time: '12:00 PM', hour: 12 },
+        { meal: 'Tea time', time: '3:00 PM', hour: 15 },
+        { meal: 'Dinner', time: '6:00 PM', hour: 18 },
+        { meal: 'Late dinner', time: '8:00 PM', hour: 20 }
+    ];
+    const weekdayNames = ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays'];
+
+    // The hotel's restaurants:
+    //   tables     - how many tables each meal time has
+    //   meals      - which meal times it is open for (numbers from mealTimes)
+    //   closedDays - days of the week it is closed (0 = Sunday, 1 = Monday, ...)
+    const restaurants = [
+        { name: 'The Coral Grill', icon: 'fa-fish', about: 'seafood by the sea', tables: 4, meals: [1, 3, 4], closedDays: [] },
+        { name: 'Dragon Pearl Dim Sum', icon: 'fa-bowl-rice', about: 'dumplings and buns on spinning tables', tables: 3, meals: [0, 1, 2], closedDays: [] },
+        { name: 'Seashell Tea Lounge', icon: 'fa-mug-hot', about: 'tea and little cakes, pinkies up', tables: 2, meals: [0, 2], closedDays: [] },
+        { name: 'Submarine Sushi Bar', icon: 'fa-water', about: 'sushi with fish tank windows all around', tables: 2, meals: [1, 3, 4], closedDays: [] },
+        { name: 'Gelato Whirlpool', icon: 'fa-ice-cream', about: 'ice cream swirled round and round with sprinkles', tables: 5, meals: [1, 2, 3, 4], closedDays: [] },
+        { name: 'Mermaid Lagoon Pizza', icon: 'fa-pizza-slice', about: 'pizza by the pool, mermaid tails optional', tables: 3, meals: [1, 3, 4], closedDays: [1], closedWhy: 'pool cleaning' },
+        { name: 'Midnight Moon Café', icon: 'fa-moon', about: 'dinner under the stars on the roof', tables: 1, meals: [3, 4], closedDays: [] }
     ];
 
     const restaurantDay = document.getElementById('restaurant-day');
     const restaurantTime = document.getElementById('restaurant-time');
+    let restaurantOpenedAt = new Date(); // when the RESTAURANT button was pressed
+
+    // Has this meal time already started on this day? (checked against the
+    // time the RESTAURANT button was pressed)
+    function mealHasPassed(day, mealTime) {
+        if (day !== dateKey(restaurantOpenedAt)) return false; // only today can be in the past
+        const nowInHours = restaurantOpenedAt.getHours() + restaurantOpenedAt.getMinutes() / 60;
+        return mealTimes[mealTime].hour <= nowInHours;
+    }
 
     // Fill the day dropdown with today and the next 6 days
     function fillRestaurantDays() {
         restaurantDay.innerHTML = '<option value="">Pick a day</option>';
         for (let i = 0; i < 7; i++) {
-            const day = new Date();
+            const day = new Date(restaurantOpenedAt);
             day.setDate(day.getDate() + i);
             const label = day.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
             const option = document.createElement('option');
             option.value = dateKey(day);
             option.textContent = i === 0 ? `Today (${label})` : i === 1 ? `Tomorrow (${label})` : label;
+            // If every meal today has already started, today can't be picked
+            if (i === 0 && mealTimes.every((m, t) => mealHasPassed(option.value, t))) {
+                option.disabled = true;
+                option.textContent += ' - no more meals today';
+            }
             restaurantDay.appendChild(option);
         }
     }
 
-    // The hotel's restaurants. Each booking uses up one table.
-    // When tablesLeft reaches 0, the restaurant is FULL.
-    const restaurants = [
-        { name: 'The Coral Grill', icon: 'fa-fish', about: 'seafood by the sea', tablesLeft: 4 },
-        { name: 'Dragon Pearl Dim Sum', icon: 'fa-bowl-rice', about: 'dumplings and buns on spinning tables', tablesLeft: 3 },
-        { name: 'Seashell Tea Lounge', icon: 'fa-mug-hot', about: 'tea and little cakes, pinkies up', tablesLeft: 2 },
-        { name: 'Submarine Sushi Bar', icon: 'fa-water', about: 'sushi with fish tank windows all around', tablesLeft: 2 },
-        { name: 'Gelato Whirlpool', icon: 'fa-ice-cream', about: 'ice cream swirled round and round with sprinkles', tablesLeft: 5 },
-        { name: 'Mermaid Lagoon Pizza', icon: 'fa-pizza-slice', about: 'pizza by the pool, mermaid tails optional', tablesLeft: 0 },
-        { name: 'Midnight Moon Café', icon: 'fa-moon', about: 'dinner under the stars on the roof', tablesLeft: 1 }
-    ];
+    // Fill the time dropdown, greying out times that have passed on the chosen day
+    function fillRestaurantTimes() {
+        const picked = restaurantTime.value;
+        restaurantTime.innerHTML = '<option value="">Pick a time</option>';
+        mealTimes.forEach((m, t) => {
+            const option = document.createElement('option');
+            option.value = t;
+            const passed = mealHasPassed(restaurantDay.value, t);
+            option.disabled = passed;
+            option.textContent = `${m.meal}, ${m.time}${passed ? ' (already started)' : ''}`;
+            restaurantTime.appendChild(option);
+        });
+        // Keep the earlier choice if it is still possible
+        if (picked !== '' && !mealHasPassed(restaurantDay.value, Number(picked))) restaurantTime.value = picked;
+    }
 
+    // How many tables a restaurant still has for one day and meal time
+    function tablesLeft(restaurant, day, mealTime) {
+        const booked = restaurantBookings.filter(b => b.restaurant === restaurant && b.day === day && b.mealTime === mealTime).length;
+        return restaurant.tables - booked;
+    }
+
+    // Why a restaurant can't be booked for this day and time (or '' if it can)
+    function whyNotAvailable(restaurant, day, mealTime) {
+        const weekday = new Date(day + 'T12:00').getDay();
+        if (restaurant.closedDays.includes(weekday)) {
+            return `Closed on ${weekdayNames[weekday]}${restaurant.closedWhy ? ' for ' + restaurant.closedWhy : ''}`;
+        }
+        if (!restaurant.meals.includes(mealTime)) return `Not open for ${mealTimes[mealTime].meal.toLowerCase()}`;
+        if (tablesLeft(restaurant, day, mealTime) <= 0) return 'FULL';
+        return '';
+    }
+
+    // Show every restaurant with what it has for the chosen day and time
     function renderRestaurantChoices() {
+        const day = restaurantDay.value;
+        const mealTime = restaurantTime.value === '' ? null : Number(restaurantTime.value);
+        const ready = day !== '' && mealTime !== null;
+        const picked = restaurantForm.querySelector('input[name="restaurant"]:checked');
         restaurantChoices.innerHTML = '';
+
         restaurants.forEach((r, i) => {
-            const full = r.tablesLeft === 0;
+            const why = ready ? whyNotAvailable(r, day, mealTime) : '';
+            const canBook = ready && why === '';
+            let status = 'Pick a day and time';
+            if (ready) {
+                const left = tablesLeft(r, day, mealTime);
+                status = why || (left === 1 ? '1 table left' : `${left} tables left`);
+            }
             const label = document.createElement('label');
-            if (full) label.classList.add('full');
+            if (ready && !canBook) label.classList.add('full');
+            if (!ready) label.classList.add('waiting');
             label.innerHTML = `
-                <input type="radio" name="restaurant" value="${i}" ${full ? 'disabled' : ''} required>
+                <input type="radio" name="restaurant" value="${i}" ${canBook ? '' : 'disabled'} required>
                 <i class="fas ${r.icon}"></i> ${r.name}
-                <em class="tables-left">${full ? 'FULL' : (r.tablesLeft === 1 ? '1 table left' : r.tablesLeft + ' tables left')}</em>
+                <em class="tables-left">${status}</em>
                 <span>${r.about}</span>
             `;
+            // Keep the earlier choice if it is still possible
+            if (canBook && picked && Number(picked.value) === i) label.querySelector('input').checked = true;
             restaurantChoices.appendChild(label);
         });
     }
 
+    restaurantDay.addEventListener('change', () => { fillRestaurantTimes(); renderRestaurantChoices(); });
+    restaurantTime.addEventListener('change', renderRestaurantChoices);
+
     restaurantLink.addEventListener('click', (e) => {
         e.preventDefault();
+        restaurantOpenedAt = new Date(); // availability depends on when you open it
         restaurantForm.reset();
-        renderRestaurantChoices();
         fillRestaurantDays();
+        fillRestaurantTimes();
+        renderRestaurantChoices();
         restaurantForm.style.display = 'block';
         restaurantResult.style.display = 'none';
         openModal(restaurantModal);
@@ -934,9 +1005,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     restaurantForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const chosen = restaurants[Number(restaurantForm.querySelector('input[name="restaurant"]:checked').value)];
-        if (chosen.tablesLeft === 0) return; // full: can't book
-        chosen.tablesLeft--;
+        const checked = restaurantForm.querySelector('input[name="restaurant"]:checked');
+        if (!checked) return; // nothing could be picked (every restaurant closed or full)
+        const chosen = restaurants[Number(checked.value)];
+        const day = restaurantDay.value;
+        const mealTime = Number(restaurantTime.value);
+        // Double-check: the meal hasn't started and there's still a table
+        if (mealHasPassed(day, mealTime) || whyNotAvailable(chosen, day, mealTime) !== '') return;
+
         const restaurant = chosen.name;
         sounds.newBooking();
         const name = restaurantNameInput.value.trim();
@@ -946,9 +1022,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const guest = found && found.guestName.toLowerCase() === name.toLowerCase() ? found : null;
         const roomNote = guest ? ` We'll find you in Room ${guest.roomNumber} if we need you.` : '';
 
-        // Remember the booking, so the guest's planner can show it
-        const day = restaurantDay.value;
-        const mealTime = Number(restaurantTime.value);
+        // Remember the booking: it uses one table at that day and time,
+        // and the guest's planner can show it
         restaurantBookings.push({ restaurant: chosen, name, guest, day, mealTime });
         const when = `${restaurantDay.options[restaurantDay.selectedIndex].textContent} at ${mealTimes[mealTime].time}`;
 

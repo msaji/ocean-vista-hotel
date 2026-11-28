@@ -611,6 +611,29 @@ footer button {
     font-size: 0.85em;
     color: #777;
 }
+.restaurant-when {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+.restaurant-when select {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-family: var(--font-family);
+    font-size: 0.95em;
+}
+.planner-meal {
+    display: block;
+    margin-top: 6px;
+    font-weight: 700;
+    color: var(--accent-red);
+}
+.planner-meal i {
+    margin-right: 4px;
+}
+
 #restaurant-name-input {
     width: 80%;
     padding: 10px;
@@ -803,6 +826,22 @@ footer button {
 #planner-content p {
     text-align: left;
     margin: 5px 0;
+}
+
+#planner-restaurants {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+}
+#planner-restaurants li {
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    background-color: #fff4e0;
+}
+#planner-restaurants i {
+    margin-right: 6px;
+    color: var(--accent-red);
 }
 
 #planner-schedule {

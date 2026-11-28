@@ -16,12 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 13, guestName: 'Sherlock Holmes', confirmationCode: '#P234Q', roomNumber: 221, roomType: 'Study', nights: 4, guestCount: 2, phone: '555-0113', email: 'sherlock.holmes@example.com', rowColor: 'var(--color-row3)', icon: 'fa-search' },
         { id: 14, guestName: 'Dana Scully', confirmationCode: '#R567S', roomNumber: 118, roomType: 'Standard Queen', nights: 2, guestCount: 1, phone: '555-0114', email: 'dana.scully@example.com', rowColor: 'var(--color-row4)', icon: 'fa-satellite' },
         { id: 15, guestName: 'Fox Mulder', confirmationCode: '#T890U', roomNumber: 119, roomType: 'Standard Queen', nights: 2, guestCount: 1, phone: '555-0115', email: 'fox.mulder@example.com', rowColor: 'var(--color-row5)', icon: 'fa-pastafarianism' },
-        { id: 16, guestName: 'Gung Gung and Poh Poh', confirmationCode: '#GGPP1', roomNumber: 310, roomType: 'Deluxe King', nights: 50, guestCount: 2, phone: '555-0116', email: 'gung.gung.and.poh.poh@example.com', rowColor: 'var(--color-row1)', icon: 'fa-users' },
+        { id: 16, guestName: 'Gung Gung and Poh Poh', confirmationCode: '#GGPP1', roomNumber: 802, roomType: 'Deluxe King', nights: 50, guestCount: 2, phone: '555-0116', email: 'gung.gung.and.poh.poh@example.com', rowColor: 'var(--color-row1)', icon: 'fa-users' },
 		{ id: 17, guestName: 'Evelyn Holman', confirmationCode: '#148EH', roomNumber: 408, roomType: 'Junior Suite', nights: 21, guestCount: 1, phone: '555-0117', email: 'evelyn.holman@example.com', rowColor: 'var(--color-row5)', icon: 'fa-book' },
         { id: 18, guestName: 'Kai-Mah', confirmationCode: '#KM18A', roomNumber: 312, roomType: 'Deluxe Queen', nights: 3, guestCount: 1, phone: '555-0118', email: 'kai.mah@example.com', rowColor: 'var(--color-row3)', icon: 'fa-star' },
         { id: 19, guestName: 'Alexander and Eliza Hamilton', confirmationCode: '#AEH10', roomNumber: 410, roomType: 'Junior Suite', nights: 3, guestCount: 2, phone: '555-0119', email: 'alexander.eliza.hamilton@example.com', rowColor: 'var(--color-row4)', icon: 'fa-feather' },
         { id: 20, guestName: 'Charlie Brown and Snoopy', confirmationCode: '#CBSNP', roomNumber: 106, roomType: 'Standard Queen', nights: 4, guestCount: 2, phone: '555-0120', email: 'charlie.brown.snoopy@example.com', rowColor: 'var(--color-row5)', icon: 'fa-dog' },
-        { id: 21, guestName: 'Lucy Saji', confirmationCode: '#LUCY5', roomNumber: 109, roomType: 'Single', nights: 2, guestCount: 1, phone: '555-0121', email: 'lucy.saji@example.com', rowColor: 'var(--color-row1)', icon: 'fa-football' }
+        { id: 21, guestName: 'Lucy Saji', confirmationCode: '#LUCY5', roomNumber: 109, roomType: 'Single', nights: 2, guestCount: 1, phone: '555-0121', email: 'lucy.saji@example.com', rowColor: 'var(--color-row1)', icon: 'fa-heart' }
 	];
 
     // --- THE HOTEL BUILDING ---
@@ -97,6 +97,13 @@ document.addEventListener('DOMContentLoaded', () => {
         newBooking: () => playPingPong(880, 1047),  // bright ping-pong
         chat: () => playPingPong(1319, 1047)        // quick high ping for a chat message
     };
+
+    // A date as "2026-11-27", so two dates can be compared easily
+    function dateKey(date) {
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${date.getFullYear()}-${month}-${day}`;
+    }
 
     // --- ELEMENTS ---
     const dateTimeElement = document.getElementById('datetime');
@@ -201,6 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const reservation = reservations.find(r => r.id === reservationId);
         if (reservation) {
             activeReservationId = reservationId;
+            confirmationMsg.classList.remove('show'); // clear the last guest's message
             checkInModalText.textContent = `Ready to check in ${reservation.guestName}? Room ${reservation.roomNumber} (${reservation.roomType})`;
 
             // Hide any contact info shown for the last guest
@@ -223,39 +231,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     confirmCheckInBtn.addEventListener('click', () => {
-        // 4. Display confirmation message
+        // 1. Remember exactly which guest we are checking in, right now.
+        //    The later steps use this guest, never the "active guest" note,
+        //    because that note changes as soon as another window is opened.
+        const guest = reservations.find(r => r.id === activeReservationId);
+        if (!guest) return; // already checked in (e.g. Confirm pressed twice)
+        activeReservationId = null;
+
+        // 2. Check them in straight away, so there is no moment where they are
+        //    half checked in. Only the message and the fade-out wait.
+        reservations.splice(reservations.indexOf(guest), 1);
+        removeFromArrivalQueue(guest);
+        makeServiceRequests(guest);
+        updateCheckedInCount();
+
+        // 3. Show the success message
         sounds.checkIn();
         confirmationMsg.textContent = 'Check-in Successful!';
         confirmationMsg.classList.add('show');
 
-        // 5. Hide confirmation message after 2 seconds
+        // 4. After 2 seconds, hide the message and fade out this guest's row
         setTimeout(() => {
             confirmationMsg.classList.remove('show');
-            closeModal(checkInModal);
+            // Close the window unless another guest's window was opened meanwhile
+            if (activeReservationId === null) closeModal(checkInModal);
 
-            if (activeReservationId) {
-                const rowToRemove = document.getElementById(`res-${activeReservationId}`);
-                if (rowToRemove) {
-                    // 1. Start fade-out animation
-                    rowToRemove.classList.add('fade-out');
-
-                    // 2. Wait for the animation to complete (0.5s defined in CSS)
-                    setTimeout(() => {
-                        // 3. Perform removal and update state
-                        rowToRemove.remove();
-
-                        // Remove from array as well
-                        const indexToRemove = reservations.findIndex(r => r.id === activeReservationId);
-                        if (indexToRemove > -1) {
-                            const guest = reservations[indexToRemove];
-                            reservations.splice(indexToRemove, 1);
-                            removeFromArrivalQueue(guest);
-                            makeServiceRequests(guest);
-                        }
-                        updateCheckedInCount();
-                        activeReservationId = null;
-                    }, 500);
-                }
+            // Look the row up now, in case the list was redrawn in the meantime
+            const row = document.getElementById(`res-${guest.id}`);
+            if (row) {
+                row.classList.add('fade-out');               // fade (0.5s, set in CSS)
+                setTimeout(() => row.remove(), 500);
             }
         }, 2000);
     });
@@ -311,21 +316,21 @@ document.addEventListener('DOMContentLoaded', () => {
         newGuestNameInput.focus();
     });
 
-    newReservationForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+    // Make a new booking with a surprise room for this name, and show it
+    function createReservation(name) {
         const choice = pickRandom(newRoomChoices);
         const newId = Math.max(0, ...allGuests.map(g => g.id)) + 1;
 
         const newReservation = {
             id: newId,
-            guestName: newGuestNameInput.value.trim(),
+            guestName: name,
             confirmationCode: makeConfirmationCode(),
             roomNumber: findFreeRoom(choice.floor),
             roomType: choice.roomType,
             nights: 1 + Math.floor(Math.random() * 5), // 1 to 5 nights
             guestCount: 1,
             phone: `555-01${String(newId % 100).padStart(2, '0')}`,
-            email: (newGuestNameInput.value.toLowerCase().match(/[a-z]+/g) || ['guest']).join('.') + '@example.com',
+            email: (name.toLowerCase().match(/[a-z]+/g) || ['guest']).join('.') + '@example.com',
             rowColor: `var(--color-row${(newId % 5) + 1})`,
             icon: pickRandom(newIcons)
         };
@@ -334,15 +339,43 @@ document.addEventListener('DOMContentLoaded', () => {
         reservations.push(newReservation);
         allGuests.push(newReservation);
 
-        closeModal(newReservationModal);
         renderReservations();
         sounds.newBooking();
 
-        // Scroll to the new booking and make it glow
-        const newRow = document.getElementById(`res-${newId}`);
-        newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        newRow.classList.add('new-row');
+        // Make the new booking glow
+        document.getElementById(`res-${newId}`).classList.add('new-row');
+        return newReservation;
+    }
+
+    newReservationForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        closeModal(newReservationModal);
+        const newReservation = createReservation(newGuestNameInput.value.trim());
+        // Scroll to the new booking
+        document.getElementById(`res-${newReservation.id}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
+
+    // In Game Mode, a new guest books a room every hour
+    const ONE_HOUR = 60 * 60 * 1000;
+    let bookingTimer = null;
+    const newGuestNames = [
+        'Maya Torres', 'Oliver Chen', 'Priya Patel', 'Noah Kim', 'Zoe Martin',
+        'Leo Rossi', 'Ava Johnson', 'Sam Okafor', 'Mia Nguyen', 'Ethan Brooks',
+        'Luna Garcia', 'Finn Murphy', 'Isla Novak', 'Kai Tanaka', 'Rosa Silva'
+    ];
+
+    function scheduleNextBooking() {
+        if (!gameMode) return;
+        bookingTimer = setTimeout(() => {
+            if (!gameMode) return;
+            // Pick a name that isn't already staying here
+            const unused = newGuestNames.filter(n => !allGuests.some(g => g.guestName === n));
+            const name = unused.length > 0 ? pickRandom(unused) : `Guest ${allGuests.length + 1}`;
+            const booking = createReservation(name);
+            showToast(`<i class="fas fa-calendar-plus"></i> New reservation: ${booking.guestName}, Room ${booking.roomNumber}!`);
+            scheduleNextBooking();
+        }, ONE_HOUR);
+    }
 
     // --- SERVICE REQUESTS ---
     // When a guest checks in, they ask for one or two things.
@@ -515,8 +548,10 @@ document.addEventListener('DOMContentLoaded', () => {
         clearTimeout(requestTimer);
         clearTimeout(arrivalTimer);
         clearTimeout(chatTimer);
+        clearTimeout(bookingTimer);
         if (gameMode) {
             scheduleNextChat();
+            scheduleNextBooking();
             showToast('<i class="fas fa-gamepad"></i> Game Mode ON! Guests will arrive and ask for things.');
             scheduleNextArrival();
             scheduleNextRequest();
@@ -702,7 +737,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const reservation = reservations.find(res => res.confirmationCode === formattedCode);
 
         if (reservation) {
-            activeReservationId = reservation.id;
             initializeUpgradeModal(reservation.id);
             openModal(upgradeModal);
         } else {
@@ -823,6 +857,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const restaurantChoices = document.getElementById('restaurant-choices');
 
+    // Every table booked so far: which restaurant, the name given, the hotel
+    // guest it belongs to (or null for visitors), and the day and meal time
+    const restaurantBookings = [];
+
+    // Meal times you can pick, in order through the day
+    const mealTimes = [
+        { meal: 'Breakfast', time: '8:00 AM' },
+        { meal: 'Lunch', time: '12:00 PM' },
+        { meal: 'Tea time', time: '3:00 PM' },
+        { meal: 'Dinner', time: '6:00 PM' },
+        { meal: 'Late dinner', time: '8:00 PM' }
+    ];
+
+    const restaurantDay = document.getElementById('restaurant-day');
+    const restaurantTime = document.getElementById('restaurant-time');
+
+    // Fill the day dropdown with today and the next 6 days
+    function fillRestaurantDays() {
+        restaurantDay.innerHTML = '<option value="">Pick a day</option>';
+        for (let i = 0; i < 7; i++) {
+            const day = new Date();
+            day.setDate(day.getDate() + i);
+            const label = day.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            const option = document.createElement('option');
+            option.value = dateKey(day);
+            option.textContent = i === 0 ? `Today (${label})` : i === 1 ? `Tomorrow (${label})` : label;
+            restaurantDay.appendChild(option);
+        }
+    }
+
     // The hotel's restaurants. Each booking uses up one table.
     // When tablesLeft reaches 0, the restaurant is FULL.
     const restaurants = [
@@ -855,6 +919,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         restaurantForm.reset();
         renderRestaurantChoices();
+        fillRestaurantDays();
         restaurantForm.style.display = 'block';
         restaurantResult.style.display = 'none';
         openModal(restaurantModal);
@@ -870,17 +935,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = restaurantNameInput.value.trim();
 
         // If the name belongs to a hotel guest, mention their room too
-        const guest = findGuest(name);
-        const roomNote = guest && guest.guestName.toLowerCase() === name.toLowerCase()
-            ? ` We'll find you in Room ${guest.roomNumber} if we need you.`
-            : '';
+        const found = findGuest(name);
+        const guest = found && found.guestName.toLowerCase() === name.toLowerCase() ? found : null;
+        const roomNote = guest ? ` We'll find you in Room ${guest.roomNumber} if we need you.` : '';
+
+        // Remember the booking, so the guest's planner can show it
+        const day = restaurantDay.value;
+        const mealTime = Number(restaurantTime.value);
+        restaurantBookings.push({ restaurant: chosen, name, guest, day, mealTime });
+        const when = `${restaurantDay.options[restaurantDay.selectedIndex].textContent} at ${mealTimes[mealTime].time}`;
 
         restaurantResult.innerHTML = `
             <p><i class="fas fa-check-circle"></i> <strong>Table booked!</strong></p>
             <p></p>
         `;
         // textContent shows the name exactly as typed
-        restaurantResult.querySelectorAll('p')[1].textContent = `${restaurant} is ready for ${name}.${roomNote}`;
+        restaurantResult.querySelectorAll('p')[1].textContent = `${restaurant} is ready for ${name}, ${when}.${roomNote}`;
         restaurantForm.style.display = 'none';
         restaurantResult.style.display = 'block';
     });
@@ -922,6 +992,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         const checkInDateFormatted = checkInDate.toLocaleDateString('en-US', options);
         const checkOutDateFormatted = checkOutDate.toLocaleDateString('en-US', options);
+
+        // This guest's restaurant bookings, earliest first
+        const myBookings = restaurantBookings
+            .filter(b => b.guest === reservation)
+            .sort((a, b) => a.day.localeCompare(b.day) || a.mealTime - b.mealTime);
+
+        // The bookings on one day, as extra lines for that day of the itinerary
+        function mealsOn(date) {
+            return myBookings
+                .filter(b => b.day === dateKey(date))
+                .map(b => `<span class="planner-meal"><i class="fas fa-utensils"></i> ${mealTimes[b.mealTime].meal} at ${b.restaurant.name}, ${mealTimes[b.mealTime].time}</span>`)
+                .join('');
+        }
 
         let scheduleHtml = '<h4>Your Itinerary:</h4><ul id="planner-schedule">';
         const baseDailyActivities = [
@@ -967,9 +1050,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const dayDateFormatted = dayDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
             // Use modulo operator to cycle through shuffled activities if nights > activities count
             const activity = shuffledActivities[i % shuffledActivities.length];
-            scheduleHtml += `<li><strong>${dayDateFormatted}:</strong> ${activity}</li>`;
+            scheduleHtml += `<li><strong>${dayDateFormatted}:</strong> ${activity}${mealsOn(dayDate)}</li>`;
         }
-        scheduleHtml += `<li><strong>${checkOutDateFormatted} (Check-out):</strong> Enjoy breakfast, prepare for departure.</li></ul>`;
+        scheduleHtml += `<li><strong>${checkOutDateFormatted} (Check-out):</strong> Enjoy breakfast, prepare for departure.${mealsOn(checkOutDate)}</li></ul>`;
 
         plannerContent.innerHTML = `
             <h2>${reservation.guestName}'s Stay Planner</h2>
@@ -981,7 +1064,22 @@ document.addEventListener('DOMContentLoaded', () => {
             <p><strong>Check-in:</strong> ${checkInDateFormatted}</p>
             <p><strong>Check-out:</strong> ${checkOutDateFormatted}</p>
             ${scheduleHtml}
+            <h4>Your Restaurant Reservations:</h4>
+            <ul id="planner-restaurants"></ul>
         `;
+
+        // Show every table this guest has booked
+        const plannerRestaurants = document.getElementById('planner-restaurants');
+        if (myBookings.length === 0) {
+            plannerRestaurants.innerHTML = '<li>None yet. Book a table with the RESTAURANT link!</li>';
+        } else {
+            myBookings.forEach(b => {
+                const item = document.createElement('li');
+                const dayLabel = new Date(b.day + 'T12:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                item.innerHTML = `<i class="fas ${b.restaurant.icon}"></i> <strong>${b.restaurant.name}</strong> &middot; ${dayLabel}, ${mealTimes[b.mealTime].time}`;
+                plannerRestaurants.appendChild(item);
+            });
+        }
         openModal(mobilePlannerModal);
     }
 

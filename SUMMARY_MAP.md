@@ -41,7 +41,7 @@ The `hotelFloors` list in `script.js` describes the building. Each floor has:
 *   **`floor` (Number):** The floor number. A room's floor is the first digit of its room number (room 321 is on floor 3).
 *   **`name` (String):** A fun name, e.g., 'Beach Floor' or 'Penthouse'.
 *   **`roomCount` (Number):** How many rooms the floor has (rooms are numbered x01, x02, ...).
-*   **`places` (List, Lobby only):** Floor 1 is the Lobby. It has no guest rooms; instead it lists places (front desk, gift shop, restaurants...) with a `name`, `icon` and `about` text.
+*   **`places` (List):** Places that aren't guest rooms, each with a `name`, `kind` (restaurant, shop, lounge, desk...), `icon` and `about` text. Floor 1 (Lobby) and Floor 10 (Rooftop) have no guest rooms. They are drawn as open floor plans: `plan` lists the rows of the floor plan, and each place has an `area` saying where it sits (the lobby entrance is along the bottom; the rooftop's ocean view deck is along the top). The rooftop has three restaurants and a pool, so all seven restaurants are on the map.
 
 The Hotel Map uses this list to draw each floor, and new bookings only get rooms that exist on a floor.
 

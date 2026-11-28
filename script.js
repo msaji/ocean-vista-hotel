@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 18, guestName: 'Kai-Mah', confirmationCode: '#KM18A', roomNumber: 412, roomType: 'Deluxe Queen', nights: 3, guestCount: 1, phone: '555-0118', email: 'kai.mah@example.com', rowColor: 'var(--color-row3)', icon: 'fa-star' },
         { id: 19, guestName: 'Alexander and Eliza Hamilton', confirmationCode: '#AEH10', roomNumber: 510, roomType: 'Junior Suite', nights: 3, guestCount: 2, phone: '555-0119', email: 'alexander.eliza.hamilton@example.com', rowColor: 'var(--color-row4)', icon: 'fa-feather' },
         { id: 20, guestName: 'Charlie Brown and Snoopy', confirmationCode: '#CBSNP', roomNumber: 206, roomType: 'Standard Queen', nights: 4, guestCount: 2, phone: '555-0120', email: 'charlie.brown.snoopy@example.com', rowColor: 'var(--color-row5)', icon: 'fa-dog' },
-        { id: 21, guestName: 'Lucy Saji', confirmationCode: '#LUCY5', roomNumber: 209, roomType: 'Single', nights: 2, guestCount: 1, phone: '555-0121', email: 'lucy.saji@example.com', rowColor: 'var(--color-row1)', icon: 'fa-heart' }
+        { id: 21, guestName: 'Lucy Saji', confirmationCode: '#LUCY5', roomNumber: 709, roomType: 'Loft', nights: 2, guestCount: 1, phone: '555-0121', email: 'lucy.saji@example.com', rowColor: 'var(--color-purple)', icon: 'fa-heart' }
 	];
 
     // --- THE HOTEL BUILDING ---
@@ -29,15 +29,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // A room's floor is the first digit of its room number: room 321 is on floor 3.
     // Floor 1 is the lobby: it has no guest rooms, just places to visit.
     const hotelFloors = [
-        { floor: 1, name: 'Lobby', roomCount: 0, places: [
-            { name: 'Front Desk', icon: 'fa-bell-concierge', about: 'Where guests check in. That is you!' },
-            { name: 'Main Entrance', icon: 'fa-door-open', about: 'Big glass doors facing the beach.' },
-            { name: 'Gift Shop', icon: 'fa-gift', about: 'Sunglasses, postcards and rubber ducks.' },
-            { name: 'Luggage Room', icon: 'fa-suitcase', about: 'Bags wait here until rooms are ready.' },
-            { name: 'The Coral Grill', icon: 'fa-fish', about: 'Restaurant: seafood by the sea.' },
-            { name: 'Dragon Pearl Dim Sum', icon: 'fa-bowl-rice', about: 'Restaurant: dumplings and buns on spinning tables.' },
-            { name: 'Seashell Tea Lounge', icon: 'fa-mug-hot', about: 'Restaurant: tea and little cakes, pinkies up.' },
-            { name: 'Gelato Whirlpool', icon: 'fa-ice-cream', about: 'Restaurant: ice cream swirled round and round.' }
+        { floor: 1, name: 'Lobby', roomCount: 0, layout: 'lobby',
+          // Where each place sits on the lobby floor plan: the entrance is along the bottom
+          plan: ['coral elevator dimsum', 'tea lounge gelato', 'gift desk luggage', 'entrance entrance entrance'],
+          places: [
+            // "area" says where each place sits on the lobby floor plan
+            { name: 'The Coral Grill', area: 'coral', kind: 'restaurant', icon: 'fa-fish', about: 'Restaurant: seafood by the sea.' },
+            { name: 'Elevators', area: 'elevator', kind: 'elevator', icon: 'fa-elevator', about: 'Up to the guest floors and the rooftop.' },
+            { name: 'Dragon Pearl Dim Sum', area: 'dimsum', kind: 'restaurant', icon: 'fa-bowl-rice', about: 'Restaurant: dumplings and buns on spinning tables.' },
+            { name: 'Seashell Tea Lounge', area: 'tea', kind: 'restaurant', icon: 'fa-mug-hot', about: 'Restaurant: tea and little cakes, pinkies up.' },
+            { name: 'Lounge', area: 'lounge', kind: 'lounge', icon: 'fa-couch', about: 'Comfy sofas and a fish tank to wait by.' },
+            { name: 'Gelato Whirlpool', area: 'gelato', kind: 'restaurant', icon: 'fa-ice-cream', about: 'Restaurant: ice cream swirled round and round.' },
+            { name: 'Gift Shop', area: 'gift', kind: 'shop', icon: 'fa-gift', about: 'Sunglasses, postcards and rubber ducks.' },
+            { name: 'Front Desk', area: 'desk', kind: 'desk', icon: 'fa-bell-concierge', about: 'Where guests check in. That is you!' },
+            { name: 'Luggage Room', area: 'luggage', kind: 'shop', icon: 'fa-suitcase', about: 'Bags wait here until rooms are ready.' },
+            { name: 'Main Entrance', area: 'entrance', kind: 'entrance', icon: 'fa-door-open', about: 'Big glass doors that open onto the beach.' }
         ] },
         { floor: 2, name: 'Beach Floor', roomCount: 24 },
         { floor: 3, name: 'Library Floor', roomCount: 24 },
@@ -46,7 +52,18 @@ document.addEventListener('DOMContentLoaded', () => {
         { floor: 6, name: 'Seagull Floor', roomCount: 12 },
         { floor: 7, name: 'Cloud Floor', roomCount: 12 },
         { floor: 8, name: 'Treetop Floor', roomCount: 8 },
-        { floor: 9, name: 'Penthouse', roomCount: 4 }
+        { floor: 9, name: 'Penthouse', roomCount: 4 },
+        { floor: 10, name: 'Rooftop', roomCount: 0, layout: 'rooftop',
+          // Where each place sits on the rooftop: the ocean view is along the top edge
+          plan: ['view view view', 'moon pool pizza', 'sushi pool elevator'],
+          places: [
+            { name: 'Ocean View Deck', area: 'view', kind: 'lounge', icon: 'fa-binoculars', about: 'Look out over the whole ocean. You might spot a dolphin!' },
+            { name: 'Midnight Moon Café', area: 'moon', kind: 'restaurant', icon: 'fa-moon', about: 'Rooftop restaurant: dinner under the stars.' },
+            { name: 'Rooftop Pool', area: 'pool', kind: 'pool', icon: 'fa-person-swimming', about: 'A pool on the roof, with the whole ocean to look at.' },
+            { name: 'Mermaid Lagoon Pizza', area: 'pizza', kind: 'restaurant', icon: 'fa-pizza-slice', about: 'Rooftop restaurant: pizza by the rooftop pool.' },
+            { name: 'Submarine Sushi Bar', area: 'sushi', kind: 'restaurant', icon: 'fa-water', about: 'Rooftop restaurant: sushi with an ocean view.' },
+            { name: 'Elevators', area: 'elevator', kind: 'elevator', icon: 'fa-elevator', about: 'Back down to the guest floors and the lobby.' }
+        ] }
     ];
 
     function floorOf(roomNumber) {
@@ -816,6 +833,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const floorSummary = document.getElementById('floor-summary');
     const floorGrid = document.getElementById('floor-grid');
     const roomInfo = document.getElementById('room-info');
+    const mapLegend = document.querySelector('#hotel-map-modal .map-legend');
 
     // Fill the dropdown with every floor, top floor first like a real building
     [...hotelFloors].reverse().forEach(f => {
@@ -826,25 +844,56 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     floorSelect.value = 1;
 
+    // A clickable square for a place (not a guest room), e.g. the Gift Shop
+    function makePlace(place) {
+        const cell = document.createElement('button');
+        cell.className = `room-cell place ${place.kind}`;
+        cell.innerHTML = `<i class="fas ${place.icon}"></i><span>${place.name}</span>`;
+        cell.addEventListener('click', () => { roomInfo.textContent = `${place.name}: ${place.about}`; });
+        return cell;
+    }
+
     function drawFloor() {
         const floor = hotelFloors.find(f => f.floor === Number(floorSelect.value));
         floorGrid.innerHTML = '';
-        let taken = 0;
+        const places = floor.places || [];
+
+        // The lobby and the rooftop are open floor plans, not hallways: each
+        // place sits in its own spot (its "area") on the floor's plan.
+        if (floor.plan) {
+            floorGrid.className = `floor-grid open-plan map-${floor.layout}`;
+            floorGrid.style.gridTemplateAreas = floor.plan.map(row => `"${row}"`).join(' ');
+            mapLegend.style.display = 'none';
+            places.forEach(place => {
+                const cell = makePlace(place);
+                cell.style.gridArea = place.area;
+                floorGrid.appendChild(cell);
+            });
+            floorSummary.textContent = floor.layout === 'lobby'
+                ? 'No guest rooms here: this is where everyone comes in!'
+                : 'No guest rooms up here: just restaurants, a pool and the best view!';
+            roomInfo.textContent = 'Click a place to find out what it is.';
+            return;
+        }
+        floorGrid.className = 'floor-grid';
+        floorGrid.style.gridTemplateAreas = '';
+        mapLegend.style.display = 'flex';
 
         // Like a real hotel: odd rooms on the left, even rooms on the right,
         // with a hallway down the middle and the elevator and stairs at the end.
-        // The lobby has places instead of rooms, laid out the same way.
-        const places = floor.places || [];
-        const rows = Math.ceil((floor.roomCount + places.length) / 2);
+        const firstRow = 1;
+        const rows = Math.ceil(floor.roomCount / 2);
+        let taken = 0;
 
-        const lobby = document.createElement('div');
-        lobby.className = 'map-elevator';
-        lobby.innerHTML = '<i class="fas fa-stairs"></i> Stairs &nbsp; <i class="fas fa-elevator"></i> Elevator';
-        floorGrid.appendChild(lobby);
+        const lift = document.createElement('div');
+        lift.className = 'map-elevator';
+        lift.style.gridRow = String(firstRow);
+        lift.innerHTML = '<i class="fas fa-stairs"></i> Stairs &nbsp; <i class="fas fa-elevator"></i> Elevator';
+        floorGrid.appendChild(lift);
 
         const hallway = document.createElement('div');
         hallway.className = 'map-hallway';
-        hallway.style.gridRow = `2 / ${rows + 2}`;
+        hallway.style.gridRow = `${firstRow + 1} / ${firstRow + rows + 1}`;
         hallway.innerHTML = '<span>HALLWAY</span>';
         floorGrid.appendChild(hallway);
 
@@ -856,8 +905,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const cell = document.createElement('button');
             cell.className = 'room-cell ' + (guest ? (checkedIn ? 'checked-in' : 'booked') : 'empty');
-            cell.style.gridColumn = n % 2 === 1 ? '1' : '3';   // odd left, even right
-            cell.style.gridRow = String(Math.ceil(n / 2) + 1);  // row 1 is the elevator
+            cell.style.gridColumn = n % 2 === 1 ? '1' : '3';                  // odd left, even right
+            cell.style.gridRow = String(firstRow + Math.ceil(n / 2));
             cell.innerHTML = `<span>${roomNumber}</span>${guest ? `<i class="fas ${guest.icon}"></i>` : ''}`;
             cell.addEventListener('click', () => {
                 roomInfo.textContent = guest
@@ -866,23 +915,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             floorGrid.appendChild(cell);
         }
-        places.forEach((place, i) => {
-            const cell = document.createElement('button');
-            cell.className = 'room-cell place';
-            cell.style.gridColumn = i % 2 === 0 ? '1' : '3';
-            cell.style.gridRow = String(Math.floor(i / 2) + 2);
-            cell.innerHTML = `<i class="fas ${place.icon}"></i><span>${place.name}</span>`;
-            cell.addEventListener('click', () => { roomInfo.textContent = `${place.name}: ${place.about}`; });
-            floorGrid.appendChild(cell);
-        });
-
-        if (floor.roomCount === 0) {
-            floorSummary.textContent = 'No guest rooms here: this is where everyone comes in!';
-            roomInfo.textContent = 'Click a place to find out what it is.';
-        } else {
-            floorSummary.textContent = `${taken} of ${floor.roomCount} rooms taken`;
-            roomInfo.textContent = 'Click a room to see who is staying there.';
-        }
+        floorSummary.textContent = `${taken} of ${floor.roomCount} rooms taken`;
+        roomInfo.textContent = 'Click a room to see who is staying there.';
     }
 
     floorSelect.addEventListener('change', drawFloor);
@@ -924,10 +958,10 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'The Coral Grill', icon: 'fa-fish', about: 'seafood by the sea', tables: 4, meals: [1, 3, 4], closedDays: [] },
         { name: 'Dragon Pearl Dim Sum', icon: 'fa-bowl-rice', about: 'dumplings and buns on spinning tables', tables: 3, meals: [0, 1, 2], closedDays: [] },
         { name: 'Seashell Tea Lounge', icon: 'fa-mug-hot', about: 'tea and little cakes, pinkies up', tables: 2, meals: [0, 2], closedDays: [] },
-        { name: 'Submarine Sushi Bar', icon: 'fa-water', about: 'sushi with fish tank windows all around', tables: 2, meals: [1, 3, 4], closedDays: [] },
+        { name: 'Submarine Sushi Bar', icon: 'fa-water', about: 'sushi with a rooftop ocean view', tables: 2, meals: [1, 3, 4], closedDays: [] },
         { name: 'Gelato Whirlpool', icon: 'fa-ice-cream', about: 'ice cream swirled round and round with sprinkles', tables: 5, meals: [1, 2, 3, 4], closedDays: [] },
-        { name: 'Mermaid Lagoon Pizza', icon: 'fa-pizza-slice', about: 'pizza by the pool, mermaid tails optional', tables: 3, meals: [1, 3, 4], closedDays: [1], closedWhy: 'pool cleaning' },
-        { name: 'Midnight Moon Café', icon: 'fa-moon', about: 'dinner under the stars on the roof', tables: 1, meals: [3, 4], closedDays: [] }
+        { name: 'Mermaid Lagoon Pizza', icon: 'fa-pizza-slice', about: 'pizza by the rooftop pool, mermaid tails optional', tables: 3, meals: [1, 3, 4], closedDays: [1], closedWhy: 'pool cleaning' },
+        { name: 'Midnight Moon Café', icon: 'fa-moon', about: 'dinner under the stars on the rooftop', tables: 1, meals: [3, 4], closedDays: [] }
     ];
 
     const restaurantDay = document.getElementById('restaurant-day');

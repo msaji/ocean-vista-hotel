@@ -15,6 +15,7 @@
     --color-row4: #FAD9C1;
     --color-row5: #FFDDC1;
     --color-upgrade-success: #E6D5F7;
+    --color-purple: #D9C2F2;
 }
 
 body {
@@ -558,6 +559,41 @@ footer button {
     color: var(--hotel-roof);
     cursor: pointer;
 }
+/* The lobby: an open floor plan instead of a hallway */
+/* Open floor plans (the lobby and the rooftop): where each place sits
+   comes from the floor's "plan" in script.js */
+.floor-grid.open-plan {
+    grid-template-columns: 1fr 1.3fr 1fr;
+    gap: 8px;
+    padding: 10px;
+    max-height: none; /* the whole floor always shows */
+    border-radius: 12px;
+}
+.open-plan .room-cell.place { min-height: 64px; }
+/* the lobby has a checkered marble floor */
+.floor-grid.map-lobby {
+    background: repeating-conic-gradient(#f4efe6 0% 25%, #e9e1d3 0% 50%) 0 0 / 28px 28px;
+}
+/* the rooftop has a sunny wooden deck */
+.floor-grid.map-rooftop {
+    background: repeating-linear-gradient(90deg, #e8c48f, #e8c48f 18px, #ddb47a 18px, #ddb47a 20px);
+}
+.modal-content .room-cell.place.pool {
+    background-color: #7fd3f0;
+    color: #0b5a7a;
+    border-color: #4fb6db;
+}
+.modal-content .room-cell.place.restaurant { background-color: #ffe2c7; color: #b55a1c; }
+.modal-content .room-cell.place.shop { background-color: #eadcf7; color: #6b3fa0; }
+.modal-content .room-cell.place.lounge { background-color: #d6f0dc; color: #2c7a43; }
+.modal-content .room-cell.place.elevator { background-color: #c9d6e3; color: #3a4a5c; }
+.modal-content .room-cell.place.desk { background-color: #c69c6d; color: white; border-color: #8a6440; }
+.modal-content .room-cell.place.entrance {
+    background-color: #bfe6ff;
+    color: var(--hotel-roof);
+    border: 3px dashed var(--hotel-roof);
+}
+
 .room-cell.place i {
     display: block;
     margin-bottom: 2px;

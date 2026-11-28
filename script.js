@@ -42,6 +42,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.floor(roomNumber / 100);
     }
 
+    // The floor a room is on, from the floors list, e.g. the Library Floor for room 221
+    function floorFor(roomNumber) {
+        return hotelFloors.find(f => f.floor === floorOf(roomNumber))
+            || { floor: floorOf(roomNumber), name: `Floor ${floorOf(roomNumber)}` };
+    }
+
     // A copy of the full guest list. Checking in removes a guest from the
     // list on screen, but they still need their key and their planner.
     const allGuests = [...reservations];
@@ -168,6 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="room-info">
                         <p class="details">ROOM ${res.roomNumber} &middot; ${res.roomType}, ${plural(res.nights, 'NIGHT')}</p>
+                        <p class="floor-name"><i class="fas fa-building"></i> ${floorFor(res.roomNumber).name} &middot; Floor ${floorOf(res.roomNumber)}</p>
                     </div>
                     <div class="icon">
                         <i class="fas ${res.icon}"></i>
@@ -209,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (reservation) {
             activeReservationId = reservationId;
             confirmationMsg.classList.remove('show'); // clear the last guest's message
-            checkInModalText.textContent = `Ready to check in ${reservation.guestName}? Room ${reservation.roomNumber} (${reservation.roomType})`;
+            checkInModalText.textContent = `Ready to check in ${reservation.guestName}? Room ${reservation.roomNumber} (${reservation.roomType}) on the ${floorFor(reservation.roomNumber).name}`;
 
             // Hide any contact info shown for the last guest
             contactInfo.style.display = 'none';
@@ -1058,6 +1065,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <h2>${reservation.guestName}'s Stay Planner</h2>
             <p><strong>Confirmation:</strong> ${reservation.confirmationCode}</p>
             <p><strong>Room Number:</strong> ${reservation.roomNumber}</p>
+            <p><strong>Floor:</strong> ${floorFor(reservation.roomNumber).name} (Floor ${floorOf(reservation.roomNumber)})</p>
             <p><strong>Room Type:</strong> ${reservation.roomType}</p>
             <p><strong>Guests:</strong> ${reservation.guestCount}</p>
             <p><strong>Nights:</strong> ${reservation.nights}</p>

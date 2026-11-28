@@ -359,6 +359,15 @@ main h2 {
     margin: 0 0 5px 0;
 }
 
+.reservation-row .floor-name {
+    margin: 4px 0 0;
+    font-size: 0.85em;
+    color: var(--hotel-roof);
+    font-weight: 700;
+}
+.reservation-row .floor-name i {
+    margin-right: 4px;
+}
 .reservation-row .conf-code,
 .reservation-row .details {
     font-size: 0.9em;

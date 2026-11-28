@@ -29,7 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // A room's floor is the first digit of its room number: room 321 is on floor 3.
     // Floor 1 is the lobby: it has no guest rooms, just places to visit.
     const hotelFloors = [
-        { floor: 1, name: 'Lobby', roomCount: 0, layout: 'lobby', places: [
+        { floor: 1, name: 'Lobby', roomCount: 0, layout: 'lobby',
+          // Where each place sits on the lobby floor plan: the entrance is along the bottom
+          plan: ['coral elevator dimsum', 'tea lounge gelato', 'gift desk luggage', 'entrance entrance entrance'],
+          places: [
             // "area" says where each place sits on the lobby floor plan
             { name: 'The Coral Grill', area: 'coral', kind: 'restaurant', icon: 'fa-fish', about: 'Restaurant: seafood by the sea.' },
             { name: 'Elevators', area: 'elevator', kind: 'elevator', icon: 'fa-elevator', about: 'Up to the guest floors and the rooftop.' },
@@ -49,12 +52,17 @@ document.addEventListener('DOMContentLoaded', () => {
         { floor: 6, name: 'Seagull Floor', roomCount: 12 },
         { floor: 7, name: 'Cloud Floor', roomCount: 12 },
         { floor: 8, name: 'Treetop Floor', roomCount: 8 },
-        { floor: 9, name: 'Penthouse', roomCount: 4, places: [
-            // The rooftop terrace on the top floor, with a view over the ocean
-            { name: 'Midnight Moon Café', kind: 'restaurant', icon: 'fa-moon', about: 'Rooftop restaurant: dinner under the stars.' },
-            { name: 'Mermaid Lagoon Pizza', kind: 'restaurant', icon: 'fa-pizza-slice', about: 'Rooftop restaurant: pizza by the rooftop pool.' },
-            { name: 'Submarine Sushi Bar', kind: 'restaurant', icon: 'fa-water', about: 'Rooftop restaurant: sushi with an ocean view.' },
-            { name: 'Rooftop Pool', kind: 'lounge', icon: 'fa-person-swimming', about: 'A pool on the roof, with the whole ocean to look at.' }
+        { floor: 9, name: 'Penthouse', roomCount: 4 },
+        { floor: 10, name: 'Rooftop', roomCount: 0, layout: 'rooftop',
+          // Where each place sits on the rooftop: the ocean view is along the top edge
+          plan: ['view view view', 'moon pool pizza', 'sushi pool elevator'],
+          places: [
+            { name: 'Ocean View Deck', area: 'view', kind: 'lounge', icon: 'fa-binoculars', about: 'Look out over the whole ocean. You might spot a dolphin!' },
+            { name: 'Midnight Moon Café', area: 'moon', kind: 'restaurant', icon: 'fa-moon', about: 'Rooftop restaurant: dinner under the stars.' },
+            { name: 'Rooftop Pool', area: 'pool', kind: 'pool', icon: 'fa-person-swimming', about: 'A pool on the roof, with the whole ocean to look at.' },
+            { name: 'Mermaid Lagoon Pizza', area: 'pizza', kind: 'restaurant', icon: 'fa-pizza-slice', about: 'Rooftop restaurant: pizza by the rooftop pool.' },
+            { name: 'Submarine Sushi Bar', area: 'sushi', kind: 'restaurant', icon: 'fa-water', about: 'Rooftop restaurant: sushi with an ocean view.' },
+            { name: 'Elevators', area: 'elevator', kind: 'elevator', icon: 'fa-elevator', about: 'Back down to the guest floors and the lobby.' }
         ] }
     ];
 
@@ -850,38 +858,30 @@ document.addEventListener('DOMContentLoaded', () => {
         floorGrid.innerHTML = '';
         const places = floor.places || [];
 
-        // The lobby is an open floor plan, not a hallway: each place sits in
-        // its own spot (its "area"), with the entrance along the bottom.
-        if (floor.layout === 'lobby') {
-            floorGrid.className = 'floor-grid lobby-map';
+        // The lobby and the rooftop are open floor plans, not hallways: each
+        // place sits in its own spot (its "area") on the floor's plan.
+        if (floor.plan) {
+            floorGrid.className = `floor-grid open-plan map-${floor.layout}`;
+            floorGrid.style.gridTemplateAreas = floor.plan.map(row => `"${row}"`).join(' ');
             mapLegend.style.display = 'none';
             places.forEach(place => {
                 const cell = makePlace(place);
                 cell.style.gridArea = place.area;
                 floorGrid.appendChild(cell);
             });
-            floorSummary.textContent = 'No guest rooms here: this is where everyone comes in!';
+            floorSummary.textContent = floor.layout === 'lobby'
+                ? 'No guest rooms here: this is where everyone comes in!'
+                : 'No guest rooms up here: just restaurants, a pool and the best view!';
             roomInfo.textContent = 'Click a place to find out what it is.';
             return;
         }
         floorGrid.className = 'floor-grid';
+        floorGrid.style.gridTemplateAreas = '';
         mapLegend.style.display = 'flex';
-
-        // A rooftop terrace (on the top floor) goes above the rooms
-        if (places.length > 0) {
-            const terrace = document.createElement('div');
-            terrace.className = 'map-terrace';
-            terrace.innerHTML = '<div class="map-terrace-title"><i class="fas fa-sun"></i> Rooftop Terrace <i class="fas fa-water"></i> ocean view</div>';
-            const terraceGrid = document.createElement('div');
-            terraceGrid.className = 'map-terrace-grid';
-            places.forEach(place => terraceGrid.appendChild(makePlace(place)));
-            terrace.appendChild(terraceGrid);
-            floorGrid.appendChild(terrace);
-        }
 
         // Like a real hotel: odd rooms on the left, even rooms on the right,
         // with a hallway down the middle and the elevator and stairs at the end.
-        const firstRow = places.length > 0 ? 2 : 1; // leave room for the terrace
+        const firstRow = 1;
         const rows = Math.ceil(floor.roomCount / 2);
         let taken = 0;
 
@@ -916,9 +916,7 @@ document.addEventListener('DOMContentLoaded', () => {
             floorGrid.appendChild(cell);
         }
         floorSummary.textContent = `${taken} of ${floor.roomCount} rooms taken`;
-        roomInfo.textContent = places.length > 0
-            ? 'Click a room or a rooftop place to find out more.'
-            : 'Click a room to see who is staying there.';
+        roomInfo.textContent = 'Click a room to see who is staying there.';
     }
 
     floorSelect.addEventListener('change', drawFloor);

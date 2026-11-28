@@ -559,22 +559,29 @@ footer button {
     cursor: pointer;
 }
 /* The lobby: an open floor plan instead of a hallway */
-.floor-grid.lobby-map {
+/* Open floor plans (the lobby and the rooftop): where each place sits
+   comes from the floor's "plan" in script.js */
+.floor-grid.open-plan {
     grid-template-columns: 1fr 1.3fr 1fr;
-    grid-template-rows: repeat(4, auto);
-    grid-template-areas:
-        "coral    elevator dimsum"
-        "tea      lounge   gelato"
-        "gift     desk     luggage"
-        "entrance entrance entrance";
     gap: 8px;
     padding: 10px;
-    max-height: none; /* the whole lobby always shows */
+    max-height: none; /* the whole floor always shows */
     border-radius: 12px;
-    /* a checkered marble floor */
+}
+.open-plan .room-cell.place { min-height: 64px; }
+/* the lobby has a checkered marble floor */
+.floor-grid.map-lobby {
     background: repeating-conic-gradient(#f4efe6 0% 25%, #e9e1d3 0% 50%) 0 0 / 28px 28px;
 }
-.lobby-map .room-cell.place { min-height: 64px; }
+/* the rooftop has a sunny wooden deck */
+.floor-grid.map-rooftop {
+    background: repeating-linear-gradient(90deg, #e8c48f, #e8c48f 18px, #ddb47a 18px, #ddb47a 20px);
+}
+.modal-content .room-cell.place.pool {
+    background-color: #7fd3f0;
+    color: #0b5a7a;
+    border-color: #4fb6db;
+}
 .modal-content .room-cell.place.restaurant { background-color: #ffe2c7; color: #b55a1c; }
 .modal-content .room-cell.place.shop { background-color: #eadcf7; color: #6b3fa0; }
 .modal-content .room-cell.place.lounge { background-color: #d6f0dc; color: #2c7a43; }
@@ -584,25 +591,6 @@ footer button {
     background-color: #bfe6ff;
     color: var(--hotel-roof);
     border: 3px dashed var(--hotel-roof);
-}
-
-/* The rooftop terrace on the top floor */
-.map-terrace {
-    grid-column: 1 / -1;
-    margin-bottom: 6px;
-    padding: 8px;
-    border-radius: 12px;
-    background: linear-gradient(#ffd27f, #ffeccc);
-}
-.map-terrace-title {
-    font-weight: 900;
-    color: #b55a1c;
-    margin-bottom: 6px;
-}
-.map-terrace-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
 }
 
 .room-cell.place i {

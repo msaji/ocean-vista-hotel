@@ -1,41 +1,52 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- DATA ---
     const reservations = [
-        { id: 1, guestName: 'Michael Saji', confirmationCode: '#A735B', roomNumber: 501, roomType: 'Suite King', nights: 1, guestCount: 4, phone: '555-0101', email: 'michael.saji@example.com', rowColor: 'var(--color-row1)', icon: 'fa-sun' },
-        { id: 2, guestName: 'David Lee & Sarah Brown', confirmationCode: '#A70B', roomNumber: 304, roomType: 'Deluxe Queen', nights: 1, guestCount: 9, phone: '555-0102', email: 'david.lee.sarah.brown@example.com', rowColor: 'var(--color-row2)', icon: 'fa-ship' },
-        { id: 3, guestName: 'David Lee', confirmationCode: '#700B', roomNumber: 502, roomType: 'Premier Suite', nights: 3, guestCount: 5, phone: '555-0103', email: 'david.lee@example.com', rowColor: 'var(--color-row3)', icon: 'fa-cloud' },
-        { id: 4, guestName: 'James Wilson', confirmationCode: '#EXETUBLE', roomNumber: 112, roomType: 'Standard King', nights: 4, guestCount: 1, phone: '555-0104', email: 'james.wilson@example.com', rowColor: 'var(--color-row4)', icon: 'fa-umbrella-beach' },
-        { id: 5, guestName: 'Jenjamin Green', confirmationCode: '#A728IE', roomNumber: 405, roomType: 'Junior Suite', nights: 3, guestCount: 3, phone: '555-0105', email: 'jenjamin.green@example.com', rowColor: 'var(--color-row5)', icon: 'fa-gem' },
-        { id: 6, guestName: 'Emily Clark', confirmationCode: '#C123D', roomNumber: 108, roomType: 'Standard Queen', nights: 2, guestCount: 1, phone: '555-0106', email: 'emily.clark@example.com', rowColor: 'var(--color-row1)', icon: 'fa-star' },
-        { id: 7, guestName: 'Michael Scott', confirmationCode: '#D456E', roomNumber: 801, roomType: 'Presidential Suite', nights: 1, guestCount: 2, phone: '555-0107', email: 'michael.scott@example.com', rowColor: 'var(--color-row2)', icon: 'fa-crown' },
-        { id: 8, guestName: 'Jessica Day', confirmationCode: '#F789G', roomNumber: 610, roomType: 'Loft', nights: 5, guestCount: 1, phone: '555-0108', email: 'jessica.day@example.com', rowColor: 'var(--color-row3)', icon: 'fa-couch' },
-        { id: 9, guestName: 'Walter White', confirmationCode: '#H012I', roomNumber: 115, roomType: 'Standard King', nights: 3, guestCount: 2, phone: '555-0109', email: 'walter.white@example.com', rowColor: 'var(--color-row4)', icon: 'fa-flask' },
-        { id: 10, guestName: 'Liz Lemon', confirmationCode: '#J345K', roomNumber: 307, roomType: 'Deluxe King', nights: 2, guestCount: 1, phone: '555-0110', email: 'liz.lemon@example.com', rowColor: 'var(--color-row5)', icon: 'fa-pencil-alt' },
-        { id: 11, guestName: 'Ron Swanson', confirmationCode: '#L678M', roomNumber: 701, roomType: 'Cabin', nights: 7, guestCount: 1, phone: '555-0111', email: 'ron.swanson@example.com', rowColor: 'var(--color-row1)', icon: 'fa-tree' },
-        { id: 12, guestName: 'Arya Stark', confirmationCode: '#N901O', roomNumber: 104, roomType: 'Single', nights: 1, guestCount: 1, phone: '555-0112', email: 'arya.stark@example.com', rowColor: 'var(--color-row2)', icon: 'fa-user-ninja' },
-        { id: 13, guestName: 'Sherlock Holmes', confirmationCode: '#P234Q', roomNumber: 221, roomType: 'Study', nights: 4, guestCount: 2, phone: '555-0113', email: 'sherlock.holmes@example.com', rowColor: 'var(--color-row3)', icon: 'fa-search' },
-        { id: 14, guestName: 'Dana Scully', confirmationCode: '#R567S', roomNumber: 118, roomType: 'Standard Queen', nights: 2, guestCount: 1, phone: '555-0114', email: 'dana.scully@example.com', rowColor: 'var(--color-row4)', icon: 'fa-satellite' },
-        { id: 15, guestName: 'Fox Mulder', confirmationCode: '#T890U', roomNumber: 119, roomType: 'Standard Queen', nights: 2, guestCount: 1, phone: '555-0115', email: 'fox.mulder@example.com', rowColor: 'var(--color-row5)', icon: 'fa-pastafarianism' },
-        { id: 16, guestName: 'Gung Gung and Poh Poh', confirmationCode: '#GGPP1', roomNumber: 802, roomType: 'Deluxe King', nights: 50, guestCount: 2, phone: '555-0116', email: 'gung.gung.and.poh.poh@example.com', rowColor: 'var(--color-row1)', icon: 'fa-users' },
-		{ id: 17, guestName: 'Evelyn Holman', confirmationCode: '#148EH', roomNumber: 408, roomType: 'Junior Suite', nights: 21, guestCount: 1, phone: '555-0117', email: 'evelyn.holman@example.com', rowColor: 'var(--color-row5)', icon: 'fa-book' },
-        { id: 18, guestName: 'Kai-Mah', confirmationCode: '#KM18A', roomNumber: 312, roomType: 'Deluxe Queen', nights: 3, guestCount: 1, phone: '555-0118', email: 'kai.mah@example.com', rowColor: 'var(--color-row3)', icon: 'fa-star' },
-        { id: 19, guestName: 'Alexander and Eliza Hamilton', confirmationCode: '#AEH10', roomNumber: 410, roomType: 'Junior Suite', nights: 3, guestCount: 2, phone: '555-0119', email: 'alexander.eliza.hamilton@example.com', rowColor: 'var(--color-row4)', icon: 'fa-feather' },
-        { id: 20, guestName: 'Charlie Brown and Snoopy', confirmationCode: '#CBSNP', roomNumber: 106, roomType: 'Standard Queen', nights: 4, guestCount: 2, phone: '555-0120', email: 'charlie.brown.snoopy@example.com', rowColor: 'var(--color-row5)', icon: 'fa-dog' },
-        { id: 21, guestName: 'Lucy Saji', confirmationCode: '#LUCY5', roomNumber: 109, roomType: 'Single', nights: 2, guestCount: 1, phone: '555-0121', email: 'lucy.saji@example.com', rowColor: 'var(--color-row1)', icon: 'fa-heart' }
+        { id: 1, guestName: 'Michael Saji', confirmationCode: '#A735B', roomNumber: 601, roomType: 'Suite King', nights: 1, guestCount: 4, phone: '555-0101', email: 'michael.saji@example.com', rowColor: 'var(--color-row1)', icon: 'fa-sun' },
+        { id: 2, guestName: 'David Lee & Sarah Brown', confirmationCode: '#A70B', roomNumber: 404, roomType: 'Deluxe Queen', nights: 1, guestCount: 9, phone: '555-0102', email: 'david.lee.sarah.brown@example.com', rowColor: 'var(--color-row2)', icon: 'fa-ship' },
+        { id: 3, guestName: 'David Lee', confirmationCode: '#700B', roomNumber: 602, roomType: 'Premier Suite', nights: 3, guestCount: 5, phone: '555-0103', email: 'david.lee@example.com', rowColor: 'var(--color-row3)', icon: 'fa-cloud' },
+        { id: 4, guestName: 'James Wilson', confirmationCode: '#EXETUBLE', roomNumber: 212, roomType: 'Standard King', nights: 4, guestCount: 1, phone: '555-0104', email: 'james.wilson@example.com', rowColor: 'var(--color-row4)', icon: 'fa-umbrella-beach' },
+        { id: 5, guestName: 'Jenjamin Green', confirmationCode: '#A728IE', roomNumber: 505, roomType: 'Junior Suite', nights: 3, guestCount: 3, phone: '555-0105', email: 'jenjamin.green@example.com', rowColor: 'var(--color-row5)', icon: 'fa-gem' },
+        { id: 6, guestName: 'Emily Clark', confirmationCode: '#C123D', roomNumber: 208, roomType: 'Standard Queen', nights: 2, guestCount: 1, phone: '555-0106', email: 'emily.clark@example.com', rowColor: 'var(--color-row1)', icon: 'fa-star' },
+        { id: 7, guestName: 'Michael Scott', confirmationCode: '#D456E', roomNumber: 901, roomType: 'Presidential Suite', nights: 1, guestCount: 2, phone: '555-0107', email: 'michael.scott@example.com', rowColor: 'var(--color-row2)', icon: 'fa-crown' },
+        { id: 8, guestName: 'Jessica Day', confirmationCode: '#F789G', roomNumber: 710, roomType: 'Loft', nights: 5, guestCount: 1, phone: '555-0108', email: 'jessica.day@example.com', rowColor: 'var(--color-row3)', icon: 'fa-couch' },
+        { id: 9, guestName: 'Walter White', confirmationCode: '#H012I', roomNumber: 215, roomType: 'Standard King', nights: 3, guestCount: 2, phone: '555-0109', email: 'walter.white@example.com', rowColor: 'var(--color-row4)', icon: 'fa-flask' },
+        { id: 10, guestName: 'Liz Lemon', confirmationCode: '#J345K', roomNumber: 407, roomType: 'Deluxe King', nights: 2, guestCount: 1, phone: '555-0110', email: 'liz.lemon@example.com', rowColor: 'var(--color-row5)', icon: 'fa-pencil-alt' },
+        { id: 11, guestName: 'Ron Swanson', confirmationCode: '#L678M', roomNumber: 801, roomType: 'Cabin', nights: 7, guestCount: 1, phone: '555-0111', email: 'ron.swanson@example.com', rowColor: 'var(--color-row1)', icon: 'fa-tree' },
+        { id: 12, guestName: 'Arya Stark', confirmationCode: '#N901O', roomNumber: 204, roomType: 'Single', nights: 1, guestCount: 1, phone: '555-0112', email: 'arya.stark@example.com', rowColor: 'var(--color-row2)', icon: 'fa-user-ninja' },
+        { id: 13, guestName: 'Sherlock Holmes', confirmationCode: '#P234Q', roomNumber: 321, roomType: 'Study', nights: 4, guestCount: 2, phone: '555-0113', email: 'sherlock.holmes@example.com', rowColor: 'var(--color-row3)', icon: 'fa-search' },
+        { id: 14, guestName: 'Dana Scully', confirmationCode: '#R567S', roomNumber: 218, roomType: 'Standard Queen', nights: 2, guestCount: 1, phone: '555-0114', email: 'dana.scully@example.com', rowColor: 'var(--color-row4)', icon: 'fa-satellite' },
+        { id: 15, guestName: 'Fox Mulder', confirmationCode: '#T890U', roomNumber: 219, roomType: 'Standard Queen', nights: 2, guestCount: 1, phone: '555-0115', email: 'fox.mulder@example.com', rowColor: 'var(--color-row5)', icon: 'fa-pastafarianism' },
+        { id: 16, guestName: 'Gung Gung and Poh Poh', confirmationCode: '#GGPP1', roomNumber: 902, roomType: 'Deluxe King', nights: 50, guestCount: 2, phone: '555-0116', email: 'gung.gung.and.poh.poh@example.com', rowColor: 'var(--color-row1)', icon: 'fa-users' },
+		{ id: 17, guestName: 'Evelyn Holman', confirmationCode: '#148EH', roomNumber: 508, roomType: 'Junior Suite', nights: 21, guestCount: 1, phone: '555-0117', email: 'evelyn.holman@example.com', rowColor: 'var(--color-row5)', icon: 'fa-book' },
+        { id: 18, guestName: 'Kai-Mah', confirmationCode: '#KM18A', roomNumber: 412, roomType: 'Deluxe Queen', nights: 3, guestCount: 1, phone: '555-0118', email: 'kai.mah@example.com', rowColor: 'var(--color-row3)', icon: 'fa-star' },
+        { id: 19, guestName: 'Alexander and Eliza Hamilton', confirmationCode: '#AEH10', roomNumber: 510, roomType: 'Junior Suite', nights: 3, guestCount: 2, phone: '555-0119', email: 'alexander.eliza.hamilton@example.com', rowColor: 'var(--color-row4)', icon: 'fa-feather' },
+        { id: 20, guestName: 'Charlie Brown and Snoopy', confirmationCode: '#CBSNP', roomNumber: 206, roomType: 'Standard Queen', nights: 4, guestCount: 2, phone: '555-0120', email: 'charlie.brown.snoopy@example.com', rowColor: 'var(--color-row5)', icon: 'fa-dog' },
+        { id: 21, guestName: 'Lucy Saji', confirmationCode: '#LUCY5', roomNumber: 209, roomType: 'Single', nights: 2, guestCount: 1, phone: '555-0121', email: 'lucy.saji@example.com', rowColor: 'var(--color-row1)', icon: 'fa-heart' }
 	];
 
     // --- THE HOTEL BUILDING ---
     // Each floor has a number, a fun name and how many rooms it has.
-    // A room's floor is the first digit of its room number: room 221 is on floor 2.
+    // A room's floor is the first digit of its room number: room 321 is on floor 3.
+    // Floor 1 is the lobby: it has no guest rooms, just places to visit.
     const hotelFloors = [
-        { floor: 1, name: 'Beach Floor', roomCount: 24 },
-        { floor: 2, name: 'Library Floor', roomCount: 24 },
-        { floor: 3, name: 'Coral Floor', roomCount: 20 },
-        { floor: 4, name: 'Starfish Floor', roomCount: 16 },
-        { floor: 5, name: 'Seagull Floor', roomCount: 12 },
-        { floor: 6, name: 'Cloud Floor', roomCount: 12 },
-        { floor: 7, name: 'Treetop Floor', roomCount: 8 },
-        { floor: 8, name: 'Penthouse', roomCount: 4 }
+        { floor: 1, name: 'Lobby', roomCount: 0, places: [
+            { name: 'Front Desk', icon: 'fa-bell-concierge', about: 'Where guests check in. That is you!' },
+            { name: 'Main Entrance', icon: 'fa-door-open', about: 'Big glass doors facing the beach.' },
+            { name: 'Gift Shop', icon: 'fa-gift', about: 'Sunglasses, postcards and rubber ducks.' },
+            { name: 'Luggage Room', icon: 'fa-suitcase', about: 'Bags wait here until rooms are ready.' },
+            { name: 'The Coral Grill', icon: 'fa-fish', about: 'Restaurant: seafood by the sea.' },
+            { name: 'Dragon Pearl Dim Sum', icon: 'fa-bowl-rice', about: 'Restaurant: dumplings and buns on spinning tables.' },
+            { name: 'Seashell Tea Lounge', icon: 'fa-mug-hot', about: 'Restaurant: tea and little cakes, pinkies up.' },
+            { name: 'Gelato Whirlpool', icon: 'fa-ice-cream', about: 'Restaurant: ice cream swirled round and round.' }
+        ] },
+        { floor: 2, name: 'Beach Floor', roomCount: 24 },
+        { floor: 3, name: 'Library Floor', roomCount: 24 },
+        { floor: 4, name: 'Coral Floor', roomCount: 20 },
+        { floor: 5, name: 'Starfish Floor', roomCount: 16 },
+        { floor: 6, name: 'Seagull Floor', roomCount: 12 },
+        { floor: 7, name: 'Cloud Floor', roomCount: 12 },
+        { floor: 8, name: 'Treetop Floor', roomCount: 8 },
+        { floor: 9, name: 'Penthouse', roomCount: 4 }
     ];
 
     function floorOf(roomNumber) {
@@ -282,10 +293,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // The new booking gets a surprise room. The first digit of the room is its floor.
     const newRoomChoices = [
-        { roomType: 'Standard King', floor: 1 },
-        { roomType: 'Standard Queen', floor: 1 },
-        { roomType: 'Deluxe King', floor: 3 },
-        { roomType: 'Junior Suite', floor: 4 }
+        { roomType: 'Standard King', floor: 2 },
+        { roomType: 'Standard Queen', floor: 2 },
+        { roomType: 'Deluxe King', floor: 4 },
+        { roomType: 'Junior Suite', floor: 5 }
     ];
     const newIcons = ['fa-umbrella-beach', 'fa-fish', 'fa-anchor', 'fa-sun', 'fa-star', 'fa-heart'];
 
@@ -588,6 +599,15 @@ document.addEventListener('DOMContentLoaded', () => {
             guests.forEach(g => {
                 const item = document.createElement('li');
                 item.innerHTML = `<i class="fas ${g.icon}"></i> <strong>${g.guestName}</strong> &middot; Room ${g.roomNumber}, ${g.roomType}, ${plural(g.nights, 'NIGHT')}`;
+
+                // Their restaurant bookings, earliest first
+                restaurantBookings
+                    .filter(b => b.guest === g)
+                    .sort((a, b) => a.day.localeCompare(b.day) || a.mealTime - b.mealTime)
+                    .forEach(b => {
+                        const dayLabel = new Date(b.day + 'T12:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                        item.innerHTML += `<span class="checked-in-meal"><i class="fas fa-utensils"></i> ${mealTimes[b.mealTime].meal} at ${b.restaurant.name}, ${dayLabel}, ${mealTimes[b.mealTime].time}</span>`;
+                    });
                 checkedInList.appendChild(item);
             });
         }
@@ -813,7 +833,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Like a real hotel: odd rooms on the left, even rooms on the right,
         // with a hallway down the middle and the elevator and stairs at the end.
-        const rows = Math.ceil(floor.roomCount / 2);
+        // The lobby has places instead of rooms, laid out the same way.
+        const places = floor.places || [];
+        const rows = Math.ceil((floor.roomCount + places.length) / 2);
 
         const lobby = document.createElement('div');
         lobby.className = 'map-elevator';
@@ -844,8 +866,23 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             floorGrid.appendChild(cell);
         }
-        floorSummary.textContent = `${taken} of ${floor.roomCount} rooms taken`;
-        roomInfo.textContent = 'Click a room to see who is staying there.';
+        places.forEach((place, i) => {
+            const cell = document.createElement('button');
+            cell.className = 'room-cell place';
+            cell.style.gridColumn = i % 2 === 0 ? '1' : '3';
+            cell.style.gridRow = String(Math.floor(i / 2) + 2);
+            cell.innerHTML = `<i class="fas ${place.icon}"></i><span>${place.name}</span>`;
+            cell.addEventListener('click', () => { roomInfo.textContent = `${place.name}: ${place.about}`; });
+            floorGrid.appendChild(cell);
+        });
+
+        if (floor.roomCount === 0) {
+            floorSummary.textContent = 'No guest rooms here: this is where everyone comes in!';
+            roomInfo.textContent = 'Click a place to find out what it is.';
+        } else {
+            floorSummary.textContent = `${taken} of ${floor.roomCount} rooms taken`;
+            roomInfo.textContent = 'Click a room to see who is staying there.';
+        }
     }
 
     floorSelect.addEventListener('change', drawFloor);
@@ -1226,13 +1263,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // In Game Mode, Housekeeping sends funny updates now and then
     const housekeepingNews = [
-        'Room 304 is clean and sparkly!',
-        'We ran out of tiny soaps on floor 3. Sending more!',
-        'Found a rubber duck in Room 108. Does anyone want it back?',
+        'Room 404 is clean and sparkly!',
+        'We ran out of tiny soaps on floor 4. Sending more!',
+        'Found a rubber duck in Room 208. Does anyone want it back?',
         'Snoopy is sleeping on the roof again.',
         'The elevator smells like popcorn. Investigating!',
         'Fresh sheets on the Seagull Floor are done.',
         'Someone built a pillow fort on the Treetop Floor. It is very good.',
+        'Somebody left a sandcastle in the Lobby. It has a moat!',
         'We folded the towels into swans today!'
     ];
 
